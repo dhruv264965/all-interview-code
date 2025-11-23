@@ -1,0 +1,40 @@
+🔄 1. Lazy Loading (Default in Hibernate for collections)
+Definition:
+Child entities are not loaded immediately with the parent. They are loaded only when accessed.
+Pros:
+Improves performance by fetching only what is needed.
+Saves memory and DB resources for unused associations.
+Cons:
+May throw LazyInitializationException if accessed outside of a session.
+
+@Entity
+public class Department {
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)  // Lazy loading
+    private List<Employee> employees;
+}
+Department dept = session.get(Department.class, 1); // employees NOT loaded yet
+dept.getEmployees().size(); // Triggers SQL query to fetch employees
+
+-----------------------------------------------------------------
+⚡ 2. Eager Loading
+Definition:
+Child entities are loaded immediately with the parent entity (at the time of fetching).
+Pros:
+Convenient if you always need the child data.
+Avoids LazyInitializationException.
+Cons:
+Slower queries if child data is large.
+Unnecessary joins or data fetched even if not used.
+
+@Entity
+public class Department {
+    @OneToMany(mappedBy = "department", fetch = FetchType.EAGER)  // Eager loading
+    private List<Employee> employees;
+}
+Department dept = session.get(Department.class, 1); // employees fetched along with department
+
+
+"Hibernate uses lazy loading by default for collections to optimize performance. However, if my use case
+requires related entities to always be loaded together, I use eager loading. I choose based on performance
+needs and access pattern. Lazy loading gives me more control, but I ensure access within the session to
+avoid exceptions."

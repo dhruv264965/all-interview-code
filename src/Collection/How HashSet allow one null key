@@ -1,0 +1,16 @@
+✅ How HashSet stores null internally
+🔧 Background:
+HashSet uses a HashMap<E, Object> internally.
+Each element you add to the HashSet is actually added as a key in the HashMap.
+
+✅ How does HashMap handle null keys?
+HashMap allows only one null key.
+When you insert a null key, it is placed in a special bucket (index 0).
+
+Set<String> set = new HashSet<>();
+set.add(null);
+set.add(null);  // Ignored, duplicate
+System.out.println(set); // Output: [null]
+
+Even though HashSet uses hashCode() and equals(), it can store null because the backing HashMap allows a single
+ null key, which is handled as a special case (bucket 0), bypassing the usual hashing mechanism.”

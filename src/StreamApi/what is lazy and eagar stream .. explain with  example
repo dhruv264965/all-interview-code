@@ -1,0 +1,10 @@
+| Concept        | **Lazy Evaluation**                                               | **Eager Evaluation**                                               |
+| -------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Definition** | Operations are not executed until a terminal operation is called. | Operations are executed immediately.                               |
+| **Applies to** | **Intermediate operations** (like `map()`, `filter()`)            | **Terminal operations** (like `forEach()`, `collect()`, `count()`) |
+| **Efficiency** | Efficient because unnecessary computations are avoided.           | Can be less efficient because it processes immediately.            |
+| **Execution**  | Deferred until terminal operation.                                | Runs as soon as it’s encountered.
+                                |
+"In Java Streams, intermediate operations like filter() and map() are lazy, meaning they’re not evaluated until
+ a terminal operation like collect() or forEach() is called. This makes streams efficient by avoiding unnecessary
+ computation."

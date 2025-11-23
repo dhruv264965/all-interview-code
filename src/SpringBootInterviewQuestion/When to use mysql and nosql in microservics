@@ -1,0 +1,16 @@
+mysql-
+1-> when we want stractural data and complex logic tthen we will go with mysql,complex relationships
+     between entities
+2->It follow ACID properties so that if we want consistency in database we use Mysql
+3->it support complex join
+
+nosql-
+1->Use for unstractural data like list of product all product all different different properties
+   then we use nosql
+2->Horizontal scaling if new Product come so we can add
+3->suitable for handling large volumes of data and scaling out across distributed systems.
+
+
+In summary, choose MySQL for strong consistency and structured data with complex relationships.
+Opt for MongoDB if you need schema flexibility, horizontal scalability, and agile development capabilities
+in your microservices architecture.

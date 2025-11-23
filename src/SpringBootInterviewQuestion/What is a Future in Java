@@ -1,0 +1,97 @@
+Future is an interface in java.util.concurrent that represents the result of an asynchronous computation.
+When you submit a task using an ExecutorService, it returns a Future object that acts as a placeholder for the result,
+which may not be ready immediately.
+
+✅ Real-World Analogy
+Think of ordering food at a restaurant:
+You place the order (submit a task).
+You get a token (Future object).
+You continue doing other things (non-blocking).
+Later, you check if the food is ready (isDone()).
+When it is, you collect your food (get()).
+
+🔧 How It Works Internally
+1. Submit a task
+You submit a Callable (or Runnable) to an ExecutorService.
+Example:
+
+java
+Copy
+Edit
+ExecutorService executor = Executors.newSingleThreadExecutor();
+Future<Integer> future = executor.submit(() -> {
+    Thread.sleep(2000);
+    return 42;
+});
+2. submit() returns a Future object
+The thread pool schedules the task.
+
+The task runs in a separate thread.
+
+3. Use future.get() to block and retrieve result
+java
+Copy
+Edit
+System.out.println("Waiting for result...");
+Integer result = future.get(); // Blocks until result is ready
+System.out.println("Result: " + result);
+4. Optional methods:
+java
+Copy
+Edit
+future.isDone();      // true if task is completed
+future.isCancelled(); // true if cancelled
+future.cancel(true);  // attempts to cancel the task
+📦 Under the Hood
+Internally:
+
+The FutureTask class implements both Runnable and Future.
+
+When you submit a Callable:
+
+The Executor wraps it in a FutureTask.
+
+FutureTask manages the lifecycle: running, completed, cancelled.
+
+When the thread completes the task, FutureTask stores the result (or exception).
+
+get() blocks if the task is still running; otherwise, it returns immediately.
+
+💬 Interview-Safe Summary Answer:
+"Future is a way to represent the result of an asynchronous operation. When I submit a task using ExecutorService,
+ I get a Future object, which acts like a placeholder. I can call get() to retrieve the result, which blocks if the
+ task isn’t done. This allows me to write non-blocking and efficient multi-threaded code. Under the hood,
+ Java wraps tasks in a FutureTask that handles state and result management safely across threads."
+
+🧪 Code Example: Future in Action
+java
+Copy
+Edit
+import java.util.concurrent.*;
+
+public class FutureExample {
+    public static void main(String[] args) throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+
+        Future<String> future = executor.submit(() -> {
+            Thread.sleep(3000); // simulate long task
+            return "Task Completed!";
+        });
+
+        System.out.println("Main thread doing other work...");
+
+        if (!future.isDone()) {
+            System.out.println("Waiting for result...");
+        }
+
+        String result = future.get(); // blocks until done
+        System.out.println("Result: " + result);
+
+        executor.shutdown();
+    }
+}
+🔄 Bonus: Difference Between Runnable and Callable?
+Feature	Runnable	Callable
+Returns value?	❌ No	✅ Yes
+Can throw exception?	❌ No	✅ Yes (throws Exception)
+Used with Future?	❌ No	✅ Yes (always)

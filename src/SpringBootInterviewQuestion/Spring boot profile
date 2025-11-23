@@ -1,0 +1,48 @@
+🔹 1. What is a Spring Profile?
+A Spring profile is a way to segregate configuration so that different beans or properties can be activated
+based on the current environment.
+
+For example:
+Use an H2 database in dev profile.
+Use a MySQL/PostgreSQL database in prod profile.
+Enable verbose logging in dev, but disable in prod.
+
+✅ Step 1: Create Property Files for Each Profile
+Create application-<profile>.properties or .yml files:
+# application-dev.properties
+server.port=8081
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.username=sa
+# application-prod.properties
+server.port=8080
+spring.datasource.url=jdbc:mysql://localhost:3306/proddb
+spring.datasource.username=root
+spring.datasource.password=prodpass
+
+✅ Step 2: Activate the Profile
+
+There are several ways to activate a profile:
+
+In application.properties (default profile):     spring.profiles.active=dev
+Using Command Line:                     java -jar myapp.jar --spring.profiles.active=prod
+
+ 3. Profile-Specific Beans
+
+ You can use @Profile annotation to create beans that are only available in specific profiles:
+
+ @Configuration
+ public class AppConfig {
+
+     @Bean
+     @Profile("dev")
+     public DataSource devDataSource() {
+         // return H2 datasource
+     }
+
+     @Bean
+     @Profile("prod")
+     public DataSource prodDataSource() {
+         // return MySQL/Postgres datasource
+     }
+ }
+

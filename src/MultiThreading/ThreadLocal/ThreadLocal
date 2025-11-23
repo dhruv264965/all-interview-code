@@ -1,0 +1,42 @@
+ThreadLocal is a class  used to create thread-specific variables. Each thread accessing a ThreadLocal
+variable gets its own independent copy, preventing data conflicts between threads.
+Def->Har thread ke independent copy banana jisse data conflicts between thread na ho.
+fatures-Each Thread Has Its Own Copy: Every thread gets a separate, isolated copy of the variable.
+        No Synchronization Required: Since each thread has its own version, no need for locks or synchronization.
+        Useful for Per-Thread State: Commonly used for user sessions, transaction contexts, and request tracing.
+
+When to Use ThreadLocal?
+✅ Thread-Specific Caching (e.g., database connections)
+✅ User Authentication Data (storing user session info)
+✅ Transaction Management (storing per-thread transaction states)
+✅ Date Formatting (avoiding expensive SimpleDateFormat instantiation)
+
+Final Thoughts
+ThreadLocal is not a replacement for synchronized or volatile, but it helps manage per-thread state efficiently.
+It is commonly used in frameworks like Spring (RequestContextHolder), Hibernate (Session management), and
+Log4j (logging context).
+
+---------------------------------------------------------------------------------
+ThreadLocal<T> is a special Java class that provides thread-local variables.
+    Each thread that accesses such a variable has its own, independent copy of the variable, isolated from other threads.
+
+🔹 Where to Use ThreadLocal?
+Use ThreadLocal when:
+✅ 1. You want to avoid sharing data between threads
+Example: Each thread stores a request ID, database connection, or user session.
+✅ 2. Storing user context or transaction info
+In web apps or microservices, where each request is handled by a separate thread.
+✅ 3. Avoiding synchronization for read/write access to shared data
+You want thread safety without locking.
+
+| Feature                | `ThreadLocal`                                | `synchronized`                         |
+| ---------------------- | -------------------------------------------- | -------------------------------------- |
+| **Thread Safety**      | Achieved by keeping local copy per thread    | Achieved by locking (mutex)            |
+| **Performance**        | No locking, better performance               | Slower due to lock contention          |
+| **Data Sharing**       | No data shared — completely isolated         | Shared data with synchronization       |
+| **Use Case**           | Per-thread state like user sessions, db conn | Shared counter, shared data structures |
+| **Garbage Collection** | Automatically cleaned after thread dies      | Not related                            |
+If threads are reused (e.g., in thread pools), and you forget to remove(), it can lead to memory leaks.
+
+Always clean up: threadLocal.remove();
+

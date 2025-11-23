@@ -1,0 +1,28 @@
+class Parent {
+    Parent() {
+        System.out.println("Parent Default Constructor");
+    }
+
+    Parent(String msg) {
+        System.out.println("Parent Parameterized Constructor: " + msg);
+    }
+}
+
+class Main extends Parent {
+    Main() {
+        this("Hello");  // calls Child Parameterized Constructor
+        System.out.println("Child Default Constructor");
+    }
+
+    Main(String msg) {
+        super();  // calls Parent Default Constructor
+        System.out.println("Child Parameterized Constructor: " + msg);
+    }
+
+    public static void main(String[] args) {
+        Main obj = new Main();
+    }
+}
+output- Parent Default Constructor
+        Child Parameterized Constructor: Hello
+        Child Default Constructor

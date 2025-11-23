@@ -1,0 +1,31 @@
+"Even though REST supports OAuth and JWT, banking and financial systems often require more advanced security features
+like WS-Security, reliable messaging, and formal contracts (WSDL) for integration between large systems. SOAP provides
+ built-in support for these via standards like WS-Security and WS-ReliableMessaging, which makes it a better fit for
+  enterprise-grade, compliant environments like banking."
+
+  🔐 1. Security Compliance (WS-Security)
+  SOAP supports WS-Security, which includes:
+  Message-level encryption
+  Signature-based authentication
+  Secure transmission even if the message is forwarded
+  👉 REST relies mainly on HTTPS, JWT, and OAuth, which are not sufficient for deep compliance like PCI-DSS (used in banking).
+
+  🔁 2. Reliable Messaging (WS-ReliableMessaging)
+  SOAP has built-in support for:
+  Retry logic
+  Message acknowledgment
+  Ordered delivery
+  👉 REST has no built-in retry or message order guarantee.
+
+| Feature                   | SOAP (Why Banking Chooses It)       | REST                        |
+| ------------------------- | ----------------------------------- | --------------------------- |
+| Security Standard         | WS-Security (Message-level)         | OAuth/JWT (Transport-level) |
+| Reliable Messaging        | WS-ReliableMessaging (built-in)     | Not built-in                |
+| Contract Definition       | WSDL (strongly typed)               | OpenAPI/Swagger (optional)  |
+| ACID Transactions Support | WS-AtomicTransaction                | Manual implementation       |
+| Interoperability          | Works with legacy systems (JMS, MQ) | REST is better for new APIs |
+
+"For a public-facing banking app, we can use REST + JWT for performance and ease. But for internal secure systems
+ like interbank transfers, SOAP is better because of WS-Security, reliable messaging, and formal contracts (WSDL)
+ that ensure compliance and auditability."
+

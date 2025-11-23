@@ -1,0 +1,51 @@
+Both save() and saveAll() are methods provided by Spring Data JPA's JpaRepository to persist data in a
+database, but they have key differences in how they handle transactions, performance, and usage.
+
+1️⃣ save() – Saves a Single Entity
+The save() method is used to persist or update a single entity in the database.
+
+Method Signature
+
+<S extends T> S save(S entity);
+Saves a single entity (entity).
+
+If the entity has an ID, it performs an update.
+
+If the entity does not have an ID, it performs an insert.
+
+Example Usage
+
+Employee employee = new Employee(null, "John Doe", "john@example.com", "IT");
+employeeRepository.save(employee);
+Behavior
+If employee.id is null → INSERT new record.
+
+If employee.id is not null and exists → UPDATE existing record.
+
+If employee.id is not null but doesn't exist → Throws EntityNotFoundException in some cases.
+
+2️⃣ saveAll() – Saves Multiple Entities in Bulk
+The saveAll() method is used to persist or update multiple entities in a single call.
+
+Method Signature
+
+<S extends T> List<S> saveAll(Iterable<S> entities);
+Accepts a list of entities.
+
+Performs batch processing, making it more efficient than multiple save() calls.
+
+Still, inserts or updates entities based on their IDs.
+
+Example Usage
+
+List<Employee> employees = List.of(
+    new Employee(null, "Alice", "alice@example.com", "HR"),
+    new Employee(null, "Bob", "bob@example.com", "Finance")
+);
+employeeRepository.saveAll(employees);
+3️⃣ Performance Differences
+Feature	save() (Single Entity)	saveAll() (Multiple Entities)
+Operation	Inserts/Updates 1 entity	Inserts/Updates multiple entities
+Batch Processing	❌ No batch processing	✅ Uses batch processing (if enabled)
+SQL Calls	Multiple calls for multiple entities	Fewer calls due to batching
+Performance	Slower for large data sets	Faster for bulk operations

@@ -1,0 +1,47 @@
+Java Generics allows us to create a single class, interface, and method that can be used with different types of data (objects).
+Before Generics the problem is- 1.type safety 2.manual casting 3. No compile time checking.
+importance-
+1->Type safety-- We can hold only a single type of objects in generics. It does not allow to store other objects.
+                List list = new ArrayList();
+                list.add(10);
+                list.add("10");
+                With Generics, it is required to specify the type of object we need to store.
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(10);
+                list.add("10");// compile-time error
+
+2-> Type casting is not required: There is no need to typecast the object.
+                             List list = new ArrayList();
+                             list.add("hello");
+                             String s = (String) list.get(0);//typecasting
+                             After Generics, we don't need to typecast the object.
+                             List<String> list = new ArrayList<String>();
+                             list.add("hello");
+                             String s = list.get(0);
+
+3->Compile-Time Checking: It is checked at compile time so problem will not occur at runtime. The good programming strategy says it
+                          is far better to handle the problem at compile time than runtime.
+                          List<String> list = new ArrayList<String>();
+                          list.add("hello");
+                          list.add(32);//Compile Time Error
+
+Generic types-> Generic types allow you to define a class, interface, or method with placeholders (type parameters) for the data types
+               they will work with. This enables code reusability and type safety, as it allows you to create classes, interfaces,
+               or methods that can operate on various types without needing to rewrite the code for each type.
+
+              class ClassName<T> {
+                  // Class body
+              }
+
+              generics allow you to write code that can work with any object type while ensuring type safety at compile time.
+
+Generic interfaces->A generic interface in Java allows you to define an interface with type parameters. This means that the interface
+                can work with any type specified at the time of implementation. Generic interfaces are commonly used when the type of
+                 the objects that the interface deals with is not known until runtime.
+
+
+Bounded Type Parameters
+When you define a generic class or method, you can specify a bound for the type parameter. This means that the type argument passed to
+the generic type must either extend a specific class or implement a specific interface.
+
+<T extends ClassOrInterface>

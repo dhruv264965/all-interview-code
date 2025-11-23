@@ -1,0 +1,62 @@
+A Circuit Breaker in microservices is a fault-tolerance pattern that prevents a service from calling
+a failing or slow remote service repeatedly, thereby avoiding cascading failures across the system.
+
+here we set some thresold if that thresold limit hojayega ..then we willapply resilience
+ @CircuitBreaker(name = "inventoryService", fallbackMethod = "fallbackInventory") if inventory method
+                  fail call fallbackfunction rather than giving error message
+              after thresold the status is changed closed to open onces reach thresold
+Real life - if Service A keeps calling failing Service B, the circuit breaker breaks the connection
+            temporarily to protect Service A.
+
+            ✅ Why Use Circuit Breaker in Microservices?
+            Prevent repeated calls to a failing service
+
+            Improve system stability
+
+            Allow fallback logic (e.g., cached data or default response)
+
+ Tip for Interview
+“Circuit Breaker helps protect microservices from cascading failures. I use Resilience4j with Spring Boot
+to wrap remote calls. If the downstream service fails repeatedly, the circuit opens temporarily, and
+I use a fallback method to respond gracefully.”
+
+Implementation-
+🔧 Implementation using Spring Boot + Resilience4j
+1️⃣ Add Dependencies (Maven)
+<dependency>
+    <groupId>io.github.resilience4j</groupId>
+    <artifactId>resilience4j-spring-boot3</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+2️⃣ Example Service (Calling Remote API)
+@Service
+public class ProductService {
+
+    @Autowired
+    private RestTemplate restTemplate;
+    @CircuitBreaker(name = "inventoryService", fallbackMethod = "fallbackInventory")
+    public String getInventory() {
+        return restTemplate.getForObject("http://inventory-service/inventory", String.class);
+    }
+    public String fallbackInventory(Exception e) {
+        return "Inventory Service is currently unavailable";
+    }
+}
+3️⃣ Configuration (application.yml)
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventoryService:
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        minimumNumberOfCalls: 5
+✅ What Happens Here?
+If 3 of the last 5 calls fail → Circuit opens.
+Next 10 seconds → All requests fail immediately (no remote call).
+After 10 seconds → Moves to half-open, allows 2 test calls.
+If those succeed → Circuit closes. Otherwise → stays open.

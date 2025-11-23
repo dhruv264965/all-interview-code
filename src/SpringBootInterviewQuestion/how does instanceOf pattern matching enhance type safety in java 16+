@@ -1,0 +1,17 @@
+"instanceof is used to test whether a reference points to an object of a specific type. It’s particularly helpful
+ in polymorphic code where you receive a superclass reference and want to perform subclass-specific logic.
+  Since Java 16, instanceof also supports pattern matching, which allows us to combine the type check and cast in
+  one safe step."
+
+
+“Before Java 16, instanceof only told you the type, and you had to cast manually. With pattern matching, Java now lets you
+ check and bind the type in a single, type-safe step, reducing boilerplate and making the code safer and more expressive.
+It helps avoid ClassCastException and makes logic like object filtering, validation, and dispatching much cleaner.”
+
+| Feature                      | Before (Java <16)    | Now (Java 16+)                                   |
+| ---------------------------- | -------------------- | ------------------------------------------------ |
+| Manual casting               | Yes                  | No                                               |
+| Risk of `ClassCastException` | Yes                  | No (checked by compiler)                         |
+| Accidental type mismatch     | Possible             | Impossible (variable bound only if type matches) |
+| Scope of variable            | Global in `if` block | Local and safe                                   |
+

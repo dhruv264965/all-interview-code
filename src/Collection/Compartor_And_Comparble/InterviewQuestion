@@ -1,0 +1,28 @@
+Q-> when we use comparable and when we use comparator
+Answer-> comparable-jab hame single sorting karna hota hai jab hum use karte hai
+         Comparable is used when you want to define a natural order for the objects of a class. The class implements
+         the Comparable interface and overrides the compareTo() method. This allows sorting based on a single, default criterion
+                Natural Ordering:
+
+                Use Comparable when a single, default sorting logic is sufficient.
+                Example: Sorting employees by their ID, or strings alphabetically.
+                When the Class Itself Can Define Its Comparison Logic:
+
+                If the sorting logic is inherent to the class, use Comparable. This ensures all objects of the class are comparable without external logic.
+                Works Well for Single Sorting Criterion:
+
+                If there’s only one natural way to compare the objects (e.g., numerical, lexicographical).
+
+    compartor->Comparator is used when you want to define multiple or external sorting criteria. Unlike Comparable, the class
+                   itself
+               does not need to implement the Comparator interface. Instead, you create a separate Comparator implementation.
+               Use Cases for Comparator:
+               Multiple Sorting Criteria:
+
+               Use Comparator when you need to sort the same objects in different ways (e.g., by ID, name, age, etc.).
+               When Sorting Logic Should Be External:
+
+               If the sorting logic isn’t inherently tied to the class or needs to change based on context.
+               Flexibility:
+
+               Use Comparator when sorting logic can vary or when the class cannot be modified to implement Comparable.

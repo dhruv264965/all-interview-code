@@ -1,0 +1,120 @@
+1. Controller Level (Using @RequestMapping)
+In a Spring Boot application, URLs are typically defined in controllers using annotations like @RequestMapping,
+ @GetMapping, @PostMapping, etc.
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")  // Base URL
+public class MyController {
+
+    @GetMapping("/hello")  // Full URL: /api/hello
+    public String sayHello() {
+        return "Hello, Spring Boot!";
+    }
+
+    @PostMapping("/save")
+    public String saveData(@RequestBody String data) {
+        return "Data saved: " + data;
+    }
+}
+2. Application Properties (application.properties or application.yml)
+You can configure URL-related properties here.
+
+Example 1: Change Server Port and Context Path
+In application.properties:
+
+properties
+Copy
+Edit
+server.port=8081
+server.servlet.context-path=/myapp
+Now, the URLs will be prefixed with /myapp, e.g., http://localhost:8081/myapp/api/hello.
+
+In application.yml:
+
+yaml
+Copy
+Edit
+server:
+  port: 8081
+  servlet:
+    context-path: /myapp
+Example 2: CORS Configuration
+properties
+Copy
+Edit
+spring.web.cors.allowed-origins=http://example.com
+spring.web.cors.allowed-methods=GET,POST,PUT,DELETE
+3. Configuration in Security (Spring Security)
+If you are using Spring Security, you need to configure URL access rules.
+
+java
+Copy
+Edit
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/public/**").permitAll()  // Allow public URLs
+                .requestMatchers("/admin/**").hasRole("ADMIN") // Restrict admin URLs
+                .anyRequest().authenticated() // Require authentication for all other URLs
+            )
+            .formLogin()
+            .and()
+            .logout();
+        return http.build();
+    }
+}
+4. Routing with @PathVariable and @RequestParam
+Spring Boot allows dynamic URL configurations.
+
+Example 1: Using @PathVariable
+java
+Copy
+Edit
+@GetMapping("/user/{id}")
+public String getUserById(@PathVariable int id) {
+    return "User ID: " + id;
+}
+Access URL: http://localhost:8080/user/10
+
+Example 2: Using @RequestParam
+java
+Copy
+Edit
+@GetMapping("/search")
+public String searchUser(@RequestParam String name) {
+    return "Searching for: " + name;
+}
+Access URL: http://localhost:8080/search?name=John
+
+5. Configuring External API URLs in application.properties
+If your app communicates with external services, define API URLs in application.properties.
+
+properties
+Copy
+Edit
+external.api.url=https://api.example.com/v1/
+Then, use it in your service class:
+pratiksha.kawade@xcela.co.inpratiksha.kawade@xcela.co.in
+java
+Copy
+Edit
+@Value("${external.api.url}")
+private String apiUrl;
+Summary
+URL Configuration	Where to Define
+REST API Endpoints	In Controllers (@RequestMapping, @GetMapping, etc.)
+Context Path & Port	application.properties or application.yml
+Security URL Rules	SecurityFilterChain in Security Config
+Dynamic URL Parameters	@PathVariable and @RequestParam in Controllers
+External API URLs	application.properties (@Value annotation in Services)

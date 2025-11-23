@@ -1,0 +1,92 @@
+1. @Primary Annotation
+Use Case: When multiple beans of the same type exist, @Primary marks one as the default bean.
+Scope: Applied at the bean definition level.
+Alternative to @Qualifier when no specific bean name is needed.
+Example-import org.springframework.context.annotation.Primary;
+        import org.springframework.stereotype.Component;
+
+        interface PaymentService {
+            void processPayment();
+        }
+
+        @Component
+        @Primary // This bean will be injected by default
+        class CreditCardPaymentService implements PaymentService {
+            public void processPayment() {
+                System.out.println("Processing payment via Credit Card.");
+            }
+        }
+
+        @Component
+        class PayPalPaymentService implements PaymentService {
+            public void processPayment() {
+                System.out.println("Processing payment via PayPal.");
+            }
+        }
+
+        // Injecting the bean
+        @Component
+        class PaymentProcessor {
+            private final PaymentService paymentService;
+
+            public PaymentProcessor(PaymentService paymentService) { // No need for @Qualifier
+                this.paymentService = paymentService;
+            }
+
+            public void makePayment() {
+                paymentService.processPayment();
+            }
+        }
+
+Output-
+                 Processing payment via Credit Card.
+
+
+
+2. @Qualifier Annotation
+Use Case: Used when multiple beans exist and you want to inject a specific bean.
+Scope: Applied at the injection point (constructor, method, or field).
+Overrides @Primary if used.
+Example-Example-import org.springframework.context.annotation.Primary;
+                import org.springframework.stereotype.Component;
+
+                interface PaymentService {
+                    void processPayment();
+                }
+
+                @Component
+                @Primary // This bean will be injected by default
+                class CreditCardPaymentService implements PaymentService {
+                    public void processPayment() {
+                        System.out.println("Processing payment via Credit Card.");
+                    }
+                }
+
+                @Component
+                class PayPalPaymentService implements PaymentService {
+                    public void processPayment() {
+                        System.out.println("Processing payment via PayPal.");
+                    }
+                }
+
+                // Injecting the bean
+                @Component
+                class PaymentProcessorWithQualifier {
+                    private final PaymentService paymentService;
+
+                    public PaymentProcessorWithQualifier(@Qualifier("payPalPaymentService") PaymentService paymentService) {
+                        this.paymentService = paymentService;
+                    }
+
+                    public void makePayment() {
+                        paymentService.processPayment();
+                    }
+                }
+      output- Processing payment via PayPal.
+
+    Even though CreditCardPaymentService is @Primary, @Qualifier("payPalPaymentService") overrides it.
+    The bean name must match the class name in camelCase (payPalPaymentService).
+
+    Best Practice
+    Use @Primary when you have one common bean used most of the time.
+    Use @Qualifier when you need to inject a specific bean in different scenarios.

@@ -1,0 +1,4 @@
+Hibernate get() fetches the entity eagerly and hits the DB immediately, returning null if not found.
+In contrast, load() returns a proxy and delays the DB hit until the entity is accessed — but throws an
+exception if the record doesn't exist. I use get() when I need the actual data right away and load() when
+I'm okay with lazy loading or need a proxy for efficiency."

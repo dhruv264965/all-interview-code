@@ -1,0 +1,40 @@
+String is the type of objects that can store the sequence of characters.
+String is an immutable class which means a constant and cannot be changed once created and if wish to change
+It is thread safe
+There are two ways to create a string in Java:
+String Literal-To make Java more memory efficient (because no new objects are created if it exists already in the
+                string constant pool).
+                string s="hello";
+Using new Keyword-String s = new String(“Welcome”);
+                  In such a case, JVM will create a new string object in normal (non-pool) heap memory and the literal
+                   “Welcome” will be placed in the string constant pool. The variable s will refer to the object in
+                   the heap (non-pool)
+-------------------------------------------------------------------------------------------
+
+StringBuilder it creates a mutable sequence of characters
+It is not thread safe
+it is not synchronised
+it is mainly used for single threaded program.
+It is faster than both string and string buffer
+memory store in heap
+StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World");  // Modifies the original object
+System.out.println(sb.toString()); // Prints: Hello World
+
+--------------------------------------------------------------------------------------------
+StringBuffer it creates a mutable sequence of characters
+It is thread safe
+it is synchronised
+it is mainly used for multi threaded program.
+It is sloer than both stringBiulder but faster than string
+memory store in heap
+StringBuffer sb = new StringBuffer("Hello");
+sb.append(" World");  // Modifies the original object
+System.out.println(sb.toString()); // Prints: Hello World
+-----------------------------------------------------------------------------------
+
+        String s1 = "TAT";
+        String s2 = "TAT";                   stack- s1,s2,s3,s4
+                                             heap -  tat(for s1 and s2) tat(s3) tat(s4)
+        String s3 = new String("TAT");
+        String s4 = new String("TAT");

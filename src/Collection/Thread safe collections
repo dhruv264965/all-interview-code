@@ -1,0 +1,22 @@
+Q-> what are the thread safe collection in java
+answer=
+ConcurrentHashMap: A thread-safe implementation of Map interface. It allows concurrent read and updates
+without blocking.
+
+CopyOnWriteArrayList: A thread-safe variant of ArrayList in which all mutative operations (add, set, etc.)
+are implemented by making a fresh copy of the underlying array.
+
+CopyOnWriteArraySet: Similar to CopyOnWriteArrayList, but implements Set interface.
+
+ConcurrentLinkedQueue: A thread-safe variant of LinkedList where elements are added at the tail and removed
+from the head efficiently in a FIFO manner.
+
+ConcurrentSkipListMap and ConcurrentSkipListSet: Concurrent versions of SortedMap and SortedSet backed by a skip
+list. They allow for concurrent access and are sorted according to natural ordering or a specified comparator.
+
+BlockingQueue implementations like LinkedBlockingQueue and ArrayBlockingQueue: These provide thread-safe
+blocking operations (e.g., put, take) for producer-consumer scenarios.
+
+These collections ensure thread safety either by using locking mechanisms, such as synchronized blocks
+internally (e.g., Hashtable), or using non-blocking algorithms (e.g., ConcurrentHashMap, ConcurrentLinkedQueue).
+The choice of collection depends on specific use cases and performance requirements in concurrent programming.

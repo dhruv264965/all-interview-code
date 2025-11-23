@@ -1,0 +1,60 @@
+Virtual threads are lightweight, scheduled by the JVM, not the OS.
+Can create millions of virtual threads without exhausting memory/CPU.
+Blocking calls like sleep() or socket.read() don’t block the OS thread — the JVM parks the virtual thread and lets
+others run.
+Make synchronous code scale like async code, without the complexity of callbacks or reactive code.
+
+❌ Before: Traditional Threads (Pre-Java 21)
+
+public class PlatformThreadServer {
+    public static void main(String[] args) {
+        ExecutorService executor = Executors.newFixedThreadPool(100); // Limited thread pool
+
+        for (int i = 1; i <= 1000; i++) {
+            int req = i;
+            executor.submit(() -> {
+                System.out.println("Handling request " + req + " in " + Thread.currentThread());
+                try {
+                    Thread.sleep(2000); // Simulate I/O call (e.g., DB or HTTP)
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        executor.shutdown();
+    }
+}
+ Problem:
+Only 100 threads can work in parallel.
+The rest of the 900 requests wait in queue, even though they’re mostly blocked (sleeping).
+Not scalable for web servers or APIs.
+
+After: Virtual Threads (Java 21)
+public class VirtualThreadServer {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 1000; i++) {
+            int req = i;
+            Thread.startVirtualThread(() -> {
+                System.out.println("Handling request " + req + " in " + Thread.currentThread());
+                try {
+                    Thread.sleep(2000); // Still blocking code, but doesn't block OS thread
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+}
+✅ Benefits:
+Launches 1000 virtual threads instantly with very low memory use.
+All threads can sleep or block without blocking real OS threads.
+Same simple coding style (Thread.sleep, etc.) with massive scalability.
+
+-------------------------------------------------------------------------------------------------------------------
+"Before virtual threads, we had to use thread pools with limited capacity to avoid overloading the system. This made
+us rewrite synchronous blocking code using reactive or async styles, which are harder to maintain.
+
+With Java 21 virtual threads, we can scale to tens of thousands of concurrent blocking tasks like DB calls or API
+requests using plain old blocking code. JVM schedules them efficiently without exhausting system threads."
+

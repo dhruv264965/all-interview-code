@@ -1,0 +1,37 @@
+Q->How can you create an instance of an object without using new keyword.
+Answer->1. Using Reflection
+        You can use Class.forName() and newInstance() method from the Class class.
+        class Example {
+            void show() {
+                System.out.println("Instance created using Reflection");
+            }
+        }
+
+        public class Main {
+            public static void main(String[] args) throws Exception {
+                Class<?> clazz = Class.forName("Example");
+                Example obj = (Example) clazz.getDeclaredConstructor().newInstance();
+                obj.show();
+            }
+        }
+
+       2.Using Factory Methods
+         Static factory methods can return instances without using new directly.
+         class Example {
+             private Example() {}  // Private constructor
+
+             public static Example getInstance() {
+                 return new Example();
+             }
+
+             void show() {
+                 System.out.println("Instance created using Factory Method");
+             }
+         }
+
+         public class Main {
+             public static void main(String[] args) {
+                 Example obj = Example.getInstance();
+                 obj.show();
+             }
+         }

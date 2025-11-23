@@ -1,0 +1,50 @@
+✅ 1. IS-A Relationship (Inheritance)
+Means: “This class is a type of that class.”
+Implemented using extends (inheritance) or implements (interfaces).
+Creates a hierarchical relationship.
+class Animal {
+    void eat() {
+        System.out.println("Eating...");
+    }
+}
+class Dog extends Animal {   // Dog IS-A Animal
+    void bark() {
+        System.out.println("Barking...");
+    }
+}
+public class TestIsA {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        d.eat();   // inherited from Animal
+        d.bark();
+    }
+}
+
+
+✅ 2. HAS-A Relationship (Composition / Aggregation) - compostion ka example de dunga
+Means: “This class has that class as a part.”
+Implemented by creating an object reference inside another class.
+Used for code reuse.
+class Engine {
+    void start() {
+        System.out.println("Engine starting...");
+    }
+}
+class Car {  // Car HAS-A Engine
+    private Engine engine = new Engine();
+
+    void drive() {
+        engine.start();   // using engine’s functionality
+        System.out.println("Car is driving...");
+    }
+}
+public class TestHasA {
+    public static void main(String[] args) {
+        Car car = new Car();
+        car.drive();
+    }
+}
+
+Composition: “A Heart cannot live without a Body.”
+
+Aggregation: “A Student can exist without a Department, but may belong to one.”

@@ -1,0 +1,10 @@
+Here i will highlight important feture we are using after java 8
+
+1->starting from Java 12, you can use the Collectors.teeing collector to compute both average
+  and total salary in a single pass and return a custom result.
+teeing allows merging two collectors into one result. It's useful when:
+You want multiple aggregations at once (like summarizing + averaging).
+You want to combine them into a custom object (like SalaryStats).
+
+2-> java record come ..no need to create getter, setter and provide immutable class,
+3.>

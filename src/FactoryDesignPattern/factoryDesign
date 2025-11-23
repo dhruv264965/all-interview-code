@@ -1,0 +1,46 @@
+
+Defination->A factory design pattern says that just define interface or abstract class for creating an object
+            but let the subclasses decide which class to instantiate. In other word subclasses are responsible to
+            create the instance of a class
+-> Agar hamare pass parent class hai and bahut sare child class hai if we want child class object then we use factory design pattern
+When to Use Factory Method Design Pattern?
+Object Creation is Complex – When the process of creating objects is complicated, such as requiring multiple configurations or dependencies.
+Decoupling Object Creation from Client Code – If you want to avoid exposing the instantiation logic and keep the client code independent of specific class implementations.
+Enhancing Code Maintainability and Scalability – When new classes need to be added frequently without modifying existing client code.
+Managing Object Creation Based on Input or Conditions – When the type of object created depends on some condition, such as user input, configuration, or runtime environment.
+Improving Testability – By centralizing object creation, the Factory Pattern makes it easier to replace real objects with mocks or stubs for unit testing.
+When You Have a Superclass with Multiple Subclasses – If a class has multiple subclasses, and the client code needs to work with their instances without knowing their concrete implementation.
+
+
+Advantages of Factory Method Design Pattern-
+✅ Encapsulation of Object Creation
+Hides the complex instantiation logic from the client, making the code cleaner and more maintainable.
+
+✅ Loose Coupling
+The client code depends only on the factory and the common interface, not on concrete implementations, reducing dependencies.
+✅ Easier Maintenance and Scalability
+New classes can be introduced without modifying existing client code.
+✅ Improved Code Reusability
+The same factory method can be reused to create different objects.
+✅ Centralized Control Over Object Creation
+Ensures consistent object creation logic and better management of instance creation.
+✅ Encourages Open/Closed Principle (OCP) from SOLID Principles
+
+New types can be added without modifying existing code, making the system extensible.
+
+-----------------------------------------------------------------------------------------------------
+factory design pattern - It encapsulate the object creation logic within separate class called factory.
+                        When new classes need to be added frequently without modifying existing client code.
+
+Example-Suppose we want to rent a vehicle (the vehicle can be anything like car , bike , bus etc. ) so instead
+        of creating a vehicle we will go to a vehicle rental shop and it will give us our desired vehicle .
+        This is what factory design does . In factory design pattern there is a method which is a factory
+        which gives us desired object . It is one of the best ways to create an object where object creation
+        logic is hidden from the client.
+
+ Client-> Vehical factory(connect to vehical factory) -> Vehicle(interface , abstract class) -> car, bike , bus -> Product class
+
+ Benefit- Loose coupling- The client code depends only on the factory and the common interface, not on concrete implementations, reducing dependencies.
+          Hide complex logic from client
+
+

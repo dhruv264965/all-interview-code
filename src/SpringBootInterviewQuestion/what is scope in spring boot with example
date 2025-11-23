@@ -1,0 +1,162 @@
+| Scope         | Description                                    | Applies To      |
+| ------------- | ---------------------------------------------- | --------------- |
+| `singleton`   | Single instance per Spring container (default) | All components  |
+| `prototype`   | New instance every time it's requested         | All components  |
+| `request`     | One instance per HTTP request (Web only)       | Web controllers |
+| `session`     | One instance per HTTP session (Web only)       | Web controllers |
+| `application` | One instance per ServletContext                | Web apps        |
+| `websocket`   | One instance per WebSocket session             | WebSocket apps  |
+✅ Example: Singleton vs Prototype
+1️⃣ Singleton (Default)
+@Component
+public class MyService {
+    public MyService() {
+        System.out.println("MyService created");
+    }
+}
+
+@RestController
+public class MyController {
+    @Autowired
+    private MyService myService1;
+    @Autowired
+    private MyService myService2;
+    @GetMapping("/test")
+    public String test() {
+        return "Are both same? " + (myService1 == myService2);  // true
+    }
+}
+✅ Output:
+
+MyService created
+Are both same? true
+
+2️⃣ Prototype
+@Component
+@Scope("prototype")
+public class MyPrototypeService {
+    public MyPrototypeService() {
+        System.out.println("MyPrototypeService created");
+    }
+}
+@RestController
+public class MyController {
+    @Autowired
+    private ApplicationContext context;
+    @GetMapping("/proto")
+    public String test() {
+        MyPrototypeService s1 = context.getBean(MyPrototypeService.class);
+        MyPrototypeService s2 = context.getBean(MyPrototypeService.class);
+        return "Are both same? " + (s1 == s2);  // false
+    }
+}
+✅ Output:
+MyPrototypeService created
+MyPrototypeService created
+Are both same? false
+
+
+In Spring Boot, bean scope controls the lifecycle and number of bean instances. By default, all beans are singleton,
+ meaning only one instance is created and shared. If we want a new instance every time, we use prototype scope.
+  For web apps, we can use request or session scope. Scopes help in managing state correctly, especially in
+  multi-threaded or web environments.
+
+
+  ------------------------------------------------------------------------------
+  Custom scope -
+
+  ✅ How to Define a Custom Scope in Spring
+  Step-by-step:
+  🔹 Step 1: Implement org.springframework.beans.factory.config.Scope
+  java
+  Copy
+  Edit
+  import org.springframework.beans.factory.ObjectFactory;
+  import org.springframework.beans.factory.config.Scope;
+
+  import java.util.HashMap;
+  import java.util.Map;
+
+  public class MyCustomScope implements Scope {
+
+      private Map<String, Object> scopedObjects = new HashMap<>();
+
+      @Override
+      public Object get(String name, ObjectFactory<?> objectFactory) {
+          return scopedObjects.computeIfAbsent(name, k -> objectFactory.getObject());
+      }
+
+      @Override
+      public Object remove(String name) {
+          return scopedObjects.remove(name);
+      }
+
+      @Override
+      public void registerDestructionCallback(String name, Runnable callback) {
+          // Optional: clean-up code, not needed for simple use
+      }
+
+      @Override
+      public Object resolveContextualObject(String key) {
+          return null;
+      }
+
+      @Override
+      public String getConversationId() {
+          return "myCustomScope";
+      }
+  }
+  🔹 Step 2: Register the Scope in a Configuration Class
+  java
+  Copy
+  Edit
+  import org.springframework.beans.factory.config.CustomScopeConfigurer;
+  import org.springframework.context.annotation.Bean;
+  import org.springframework.context.annotation.Configuration;
+
+  import java.util.HashMap;
+  import java.util.Map;
+
+  @Configuration
+  public class ScopeConfig {
+
+      @Bean
+      public static CustomScopeConfigurer customScopeConfigurer() {
+          CustomScopeConfigurer configurer = new CustomScopeConfigurer();
+          Map<String, Object> scopes = new HashMap<>();
+          scopes.put("myScope", new MyCustomScope());
+          configurer.setScopes(scopes);
+          return configurer;
+      }
+  }
+  🔹 Step 3: Use the Custom Scope
+  java
+  Copy
+  Edit
+  import org.springframework.context.annotation.Scope;
+  import org.springframework.stereotype.Component;
+
+  @Component
+  @Scope("myScope")
+  public class MyScopedBean {
+      public MyScopedBean() {
+          System.out.println("Creating a new MyScopedBean instance");
+      }
+  }
+  🔹 Step 4: Test It
+  java
+  Copy
+  Edit
+  @Autowired
+  private ApplicationContext context;
+
+  public void testCustomScope() {
+      MyScopedBean bean1 = context.getBean(MyScopedBean.class);
+      MyScopedBean bean2 = context.getBean(MyScopedBean.class);
+      System.out.println(bean1 == bean2);  // true if reused, false if removed in between
+  }
+  💬 How to Explain in Interview:
+  Spring allows defining custom scopes by implementing the Scope interface. This gives full control over bean
+  lifecycle and reuse. I can use this to build scopes like per-tenant or per-thread. After registering the custom scope
+  with CustomScopeConfigurer, I annotate my bean with @Scope("myScope"). It’s useful when default scopes don’t meet
+  app-specific requirements.

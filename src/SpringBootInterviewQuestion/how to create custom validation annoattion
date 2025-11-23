@@ -1,0 +1,117 @@
+✅ Goal: Create a custom annotation @ValidEmail that checks if the given email is valid.
+✅ Step 1: Create the Annotation
+
+@Documented
+@Constraint(validatedBy = EmailValidator.class)
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ValidEmail {
+    String message() default "Invalid email format";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+}
+🔍 Explanation:
+@interface ValidEmail: This defines a custom annotation named ValidEmail.
+
+@Constraint(validatedBy = EmailValidator.class):
+
+Tells Java that EmailValidator will contain the logic to validate this annotation.
+
+@Target(...):
+
+Specifies where this annotation can be used.
+
+FIELD: You can use it on class fields (e.g., private String email).
+
+PARAMETER: You can use it in method parameters.
+
+@Retention(RetentionPolicy.RUNTIME):
+
+Makes the annotation available at runtime (so Spring can use it during validation).
+
+message():
+
+Custom error message if the validation fails.
+
+groups() and payload():
+
+These are required for compatibility with the Bean Validation API (even if you don’t use them now).
+
+✅ Step 2: Create the Validator Class
+java
+Copy
+Edit
+public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
+
+    @Override
+    public boolean isValid(String email, ConstraintValidatorContext context) {
+        if (email == null) return false;
+
+        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
+                       "[a-zA-Z0-9_+&*-]+)*@" +
+                       "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+        return email.matches(regex);
+    }
+}
+🔍 Explanation:
+implements ConstraintValidator<ValidEmail, String>:
+
+This tells Java: "I will validate fields annotated with @ValidEmail, and those fields are of type String."
+
+isValid(...):
+
+This method contains your actual validation logic.
+
+email.matches(regex) checks if the email follows a valid pattern.
+
+Returns true if valid, otherwise false.
+
+✅ Step 3: Use the Annotation in DTO
+java
+Copy
+Edit
+public class UserDTO {
+
+    @ValidEmail
+    private String email;
+
+    // getters and setters
+}
+🔍 Explanation:
+When you use @ValidEmail here, Spring will call your custom validator (EmailValidator) during form submission or API input processing.
+
+If the email is invalid, Spring will return a 400 Bad Request with the message from message() in the annotation.
+
+✅ Step 4: Validate in Controller
+java
+Copy
+Edit
+@PostMapping("/register")
+public ResponseEntity<String> register(@Valid @RequestBody UserDTO userDto) {
+    return ResponseEntity.ok("User registered successfully!");
+}
+🔍 Explanation:
+@Valid tells Spring to trigger all validation annotations inside the UserDTO.
+
+If email is invalid, Spring returns:
+
+{
+  "email": "Invalid email format"
+}
+✅ Summary:
+Part	Purpose
+@ValidEmail	Custom annotation declaration
+EmailValidator	Actual validation logic using regex
+UserDTO	Where the annotation is applied
+@Valid in controller	Enables Spring validation
+
+
+-------------------------------------------------------------------------------
+suppose we have employee class abd fiels are name, address, EmpType. empType will be contract and parmanet . we want
+to make custom annoation @EmpType
+step1- first we  make interface public @interface @EmpType
+      and top of that we will give @Constraint(validatedBy = EmpTypeValidate.class)--here we are writing logic
+      then also give @Retention(RetentionPolicy.RUNTIME) for running runtime
+      and also @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+step2- now Employee entity class the field name EmpType we will give @EmpType annoation to annoate

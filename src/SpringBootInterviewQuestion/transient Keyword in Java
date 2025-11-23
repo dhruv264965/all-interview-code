@@ -1,0 +1,11 @@
+The transient keyword in Java is used to indicate that a field should not be serialized —
+meaning it will be ignored when converting an object into a byte stream (for saving to a file,
+sending over a network, etc.).
+
+Serialization is the process of converting an object into a byte stream, but not all fields should
+be serialized, such as:Passwords Sensitive user info
+That’s where transient comes in — to skip such fields.
+Syntax-
+private transient String password;
+
+

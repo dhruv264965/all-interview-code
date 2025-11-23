@@ -1,0 +1,50 @@
+1. Where does Spring Boot application start?
+
+A Spring Boot application always starts from the main method of the class annotated with:
+@SpringBootApplication (or @SpringBootConfiguration + @EnableAutoConfiguration + @ComponentScan)
+
+Example:
+
+@SpringBootApplication
+public class MyApp {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApp.class, args);
+    }
+}
+
+2. How does it start execution?
+Step 1: JVM Execution
+Like any Java program, execution starts from the main method.
+Here, SpringApplication.run() is the entry point into the Spring world.
+
+Step 2: SpringApplication.run()
+Bootstraps the application:
+Creates an ApplicationContext (IoC container).
+Starts auto-configuration (enabled by @EnableAutoConfiguration).
+Performs component scanning (enabled by @ComponentScan).
+Registers all Spring Beans.
+Starts the embedded server (Tomcat/Jetty/Undertow) if it’s a web app.
+
+Step 3: ApplicationContext Initialization
+
+Beans are created and dependencies are injected.
+@PostConstruct methods and lifecycle callbacks are executed.
+
+Step 4: Run Listeners & CommandLineRunner
+
+Spring triggers ApplicationRunner and CommandLineRunner beans after startup.
+Good place for initialization logic.
+
+Step 5: Application Ready
+
+If it’s a web app:
+Embedded Tomcat server starts.
+Application listens on configured port (e.g., 8080).
+If it’s a console app:
+Runs till main thread ends or task is completed.
+
+3. Summary Answer for Interview
+👉 “A Spring Boot application starts execution from the main method like any normal Java application. The call to
+ SpringApplication.run() bootstraps Spring. It creates the ApplicationContext, performs component scanning, applies
+  auto-configuration, and starts the embedded server (if web). From that point, Spring manages the lifecycle of
+  beans and the application flow.”

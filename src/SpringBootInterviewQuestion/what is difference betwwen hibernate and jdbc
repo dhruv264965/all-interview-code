@@ -1,0 +1,25 @@
+| Feature     | JDBC (Java Database Connectivity)                        | Hibernate (ORM Framework)                     |
+| ----------- | -------------------------------------------------------- | --------------------------------------------- |
+| What is it? | Low-level API for interacting directly with the database | High-level ORM framework built on top of JDBC |
+| Purpose     | Allows sending SQL queries manually from Java            | Maps Java objects to database tables (ORM)    |
+
+| Feature          | JDBC                                          | Hibernate                                 |
+| ---------------- | --------------------------------------------- | ----------------------------------------- |
+| SQL Handling     | You write SQL manually                        | Generates SQL internally                  |
+| Object Mapping   | You handle it manually                        | Automatically maps Java objects to tables |
+| Boilerplate Code | More (connection, statements, resultSet, etc) | Less (uses Session, HQL, etc.)            |
+
+| Feature       | JDBC                          | Hibernate                   |
+| ------------- | ----------------------------- | --------------------------- |
+| Insert/Update | Manual SQL                    | Just save/update the object |
+| Delete        | Manual SQL                    | session.delete(entity)      |
+| Read          | Manual mapping from ResultSet | session.get() / HQL queries |
+
+JDBC can be faster in simple cases (no overhead).
+
+Hibernate optimizes performance in large apps using caching, lazy loading, and batching.
+
+JDBC gives me fine-grained control but requires more boilerplate and manual mapping. Hibernate is an
+ORM that abstracts this and handles persistence automatically. I prefer Hibernate for larger applications
+where maintainability and productivity matter, but I understand JDBC for situations requiring custom
+SQL control.

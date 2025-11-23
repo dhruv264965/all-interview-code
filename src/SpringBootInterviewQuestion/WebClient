@@ -1,0 +1,100 @@
+"WebClient is a non-blocking, reactive HTTP client introduced in Spring WebFlux. It is used to make
+asynchronous API calls and handle responses efficiently."
+
+💡 Why Use WebClient Instead of RestTemplate?
+
+Non-blocking & Asynchronous → Better performance.
+Supports Reactive Streams → Ideal for high-throughput microservices.
+More flexible with custom configurations.
+Preferred for new Spring Boot projects (Spring 5+).
+
+
+:
+🚀 WebClient Implementation in a Spring Boot Project
+Here’s a complete Spring Boot implementation using WebClient to call an external API.
+
+✅ Step 1: Add Dependencies
+Add the required dependencies in pom.xml:
+
+<dependencies>
+    <!-- Spring Boot WebFlux for WebClient -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+</dependencies>
+
+✅ Step 2: Create a WebClient Configuration (Singleton Bean)
+Spring Boot allows you to configure WebClient as a bean for reusability.
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Configuration
+public class WebClientConfig {
+    @Bean
+    public WebClient webClient() {
+        return WebClient.builder()
+                .baseUrl("https://jsonplaceholder.typicode.com") // Set base URL
+                .defaultHeader("Content-Type", "application/json")
+                .build();
+    }
+}
+✅ Step 3: Create a Service to Call External API Using WebClient
+This service will fetch data from an external REST API.
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+public class ApiService {
+    private final WebClient webClient;
+
+    public ApiService(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+    // Fetch Data using GET request
+    public Mono<String> getPostById(int id) {
+        return webClient.get()
+                .uri("/posts/{id}", id) // Dynamic Path Variable
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    // Create Data using POST request
+    public Mono<String> createPost(String title, String body, int userId) {
+        return webClient.post()
+                .uri("/posts")
+                .bodyValue(new PostRequest(title, body, userId))
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+}
+
+
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+public class WebClientExample {
+    public static void main(String[] args) {
+        // Create WebClient instance
+        WebClient webClient = WebClient.create("https://jsonplaceholder.typicode.com");
+
+        // Make API call (GET request)
+        Mono<String> response = webClient.get()
+                .uri("/posts/1")
+                .retrieve()
+                .bodyToMono(String.class);
+
+        // Print response
+        response.subscribe(System.out::println);
+    }
+}
+📝 Explanation:
+1️⃣ Creates a WebClient instance pointing to jsonplaceholder.typicode.com.
+2️⃣ Sends a GET request to /posts/1.
+3️⃣ Retrieves response as Mono<String> (asynchronous).
+4️⃣ subscribe() processes the response when it's available.

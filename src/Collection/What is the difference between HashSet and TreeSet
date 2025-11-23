@@ -1,0 +1,79 @@
+Please pefer code also when revising the notes
+🔶 1. HashSet
+Order: No guaranteed order of elements (neither insertion nor sorted).
+Performance: Faster for basic operations (add, remove, contains) – constant time O(1).
+Nulls: Allows a single null element.
+Underlying structure: Uses a HashMap internally
+
+
+public class HashSetExample {
+    public static void main(String[] args) {
+        HashSet<String> fruits = new HashSet<>();
+        fruits.add("Banana");
+        fruits.add("Apple");
+        fruits.add("Orange");
+        fruits.add("Mango");
+
+        System.out.println("HashSet: " + fruits);
+    }
+}
+output- HashSet: [Mango, Orange, Banana, Apple]
+
+
+
+🔷 2. TreeSet
+Order: Stores elements in sorted (natural) order.
+Performance: Slower than HashSet – operations take O(log n) time.
+Nulls: Does not allow null if using natural ordering (throws NullPointerException).
+Underlying structure: Uses a Red-Black Tree.
+
+
+public class TreeSetExample {
+    public static void main(String[] args) {
+        TreeSet<String> fruits = new TreeSet<>();
+        fruits.add("Banana");
+        fruits.add("Apple");
+        fruits.add("Orange");
+        fruits.add("Mango");
+
+        System.out.println("TreeSet: " + fruits);
+    }
+}
+output-TreeSet: [Apple, Banana, Mango, Orange]
+❌ TreeSet does not allow null (when using natural ordering).
+
+This is because it tries to compare null using compareTo(), which throws an exception.
+
+difference--->>>>>
+
+| Feature        | `HashSet`                 | `TreeSet`                     |
+| -------------- | ------------------------- | ----------------------------- |
+| Order          | Unordered                 | Sorted (natural/custom order) |
+| Performance    | Faster (*O(1)*)           | Slower (*O(log n)*)           |
+| Nulls          | Allows one `null`         | Does **not** allow `null`     |
+| Implementation | Backed by `HashMap`       | Backed by `TreeMap`           |
+| Use Case       | When order doesn’t matter | When you need sorted elements |
+
+
+
+----------------------------------------------------------------------------------------------
+✅ Want to allow null in a TreeSet?
+You can, but only with a custom Comparator that handles null explicitly:
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+public class TreeSetNullWithComparator {
+    public static void main(String[] args) {
+        TreeSet<String> set = new TreeSet<>(Comparator.nullsFirst(String::compareTo));
+        set.add("Apple");
+        set.add(null);  // Allowed now
+        set.add("Banana");
+
+        System.out.println("TreeSet with null: " + set);
+    }
+}
+🧾 Output:
+
+TreeSet with null: [null, Apple, Banana]
+

@@ -1,0 +1,125 @@
+@Component is an annotation that allows Spring to automatically detect the custom beans.
+1. @Component
+Purpose
+Marks a class as a Spring-managed component (bean).
+It is a generic stereotype for any Spring-managed bean.
+@Component
+public class UtilityService {
+    public String getMessage() {
+        return "Hello from UtilityService!";
+    }
+}
+@Component
+public class UtilityService {
+    public String getMessage() {
+        return "Hello from UtilityService!";
+    }
+}
+2. @Service
+Purpose
+A specialization of @Component.
+Indicates that the class provides business logic or service-layer functionality.
+@Service
+public class EmployeeService {
+    public String getEmployeeDetails() {
+        return "Employee details";
+    }
+}
+3. @Repository
+Purpose
+A specialization of @Component.
+Indicates that the class interacts with the database or serves as a data access object (DAO).
+Provides exception translation for database exceptions to Spring-specific exceptions
+(via the @PersistenceExceptionTranslationPostProcessor).
+@Repository
+public class EmployeeRepository {
+    public String findEmployeeById(Long id) {
+        return "Employee data for ID: " + id;
+    }
+}
+4. @Configuration
+Purpose
+Marks a class as a configuration class.
+Used to define Spring beans explicitly using @Bean methods.
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UtilityService utilityService() {
+        return new UtilityService();
+    }
+}
+
+
+
+The annotations @Configuration, @Service, @Repository, and @Component are part of the Spring Framework's stereotype annotations. They have specific purposes, but they all help Spring detect and manage beans in the application context. Here's a detailed explanation of each and their differences:
+
+1. @Component
+Purpose
+Marks a class as a Spring-managed component (bean).
+It is a generic stereotype for any Spring-managed bean.
+Use Case
+Use it for classes that don't fit into other specific stereotypes like @Service, @Repository, or @Controller.
+Example
+java
+Copy code
+@Component
+public class UtilityService {
+    public String getMessage() {
+        return "Hello from UtilityService!";
+    }
+}
+2. @Service
+Purpose
+A specialization of @Component.
+Indicates that the class provides business logic or service-layer functionality.
+Use Case
+Use it for classes in the service layer, which typically contain business logic.
+Example
+java
+Copy code
+@Service
+public class EmployeeService {
+    public String getEmployeeDetails() {
+        return "Employee details";
+    }
+}
+3. @Repository
+Purpose
+A specialization of @Component.
+Indicates that the class interacts with the database or serves as a data access object (DAO).
+Provides exception translation for database exceptions to Spring-specific exceptions (via the @PersistenceExceptionTranslationPostProcessor).
+Use Case
+Use it for classes in the data access layer (e.g., interacting with a database or other persistence mechanisms).
+Example
+java
+Copy code
+@Repository
+public class EmployeeRepository {
+    public String findEmployeeById(Long id) {
+        return "Employee data for ID: " + id;
+    }
+}
+4. @Configuration
+Purpose
+Marks a class as a configuration class.
+Used to define Spring beans explicitly using @Bean methods.
+Use Case
+Use it for classes that define bean configurations programmatically.
+Example
+java
+Copy code
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public UtilityService utilityService() {
+        return new UtilityService();
+    }
+}
+Differences
+Annotation	                        Scope of Use	              Purpose	                      Special Behavior
+@Component	       Generic Spring-managed bean	    Used for general-purpose components.	        No special behavior.
+@Service	       Service layer (business logic)	Used for business logic classes.	            Semantically indicates a service class.
+@Repository	       Data access layer (DAO)	        Used for database interaction classes.	        Exception translation for persistence APIs.
+@Configuration	   Configuration classes	        Defines beans using @Bean methods.	            Special handling for configuration classes.

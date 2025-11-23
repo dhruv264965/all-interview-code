@@ -1,0 +1,212 @@
+1. Find the largest element in an array
+int[] arr = {10, 5, 20, 8};
+OptionalInt max = Arrays.stream(arr).max();
+System.out.println(max.getAsInt()); // Output: 20
+2. Find the smallest element in an array
+int[] arr = {10, 5, 20, 8};
+OptionalInt min = Arrays.stream(arr).min();
+System.out.println(min.getAsInt()); // Output: 5
+3. Find the second largest element
+
+int[] arr = {10, 5, 20, 8};
+int secondLargest = Arrays.stream(arr)
+                          .distinct()
+                          .boxed()
+                          .sorted(Comparator.reverseOrder())
+                          .skip(1)
+                          .findFirst()
+                          .orElse(-1);
+System.out.println(secondLargest); // Output: 10
+4. Check if array is sorted
+int[] arr = {1, 2, 3, 4, 5};
+boolean sorted = IntStream.range(0, arr.length - 1)
+                          .allMatch(i -> arr[i] <= arr[i + 1]);
+System.out.println(sorted); // Output: true
+5. Reverse an array
+int[] arr = {1, 2, 3, 4, 5};
+for (int i = 0, j = arr.length - 1; i < j; i++, j--) {
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+System.out.println(Arrays.toString(arr)); // Output: [5, 4, 3, 2, 1]
+6. Remove duplicates from array
+int[] arr = {1, 2, 2, 3, 4, 4, 5};
+int[] result = Arrays.stream(arr).distinct().toArray();
+System.out.println(Arrays.toString(result)); // Output: [1, 2, 3, 4, 5]
+7. Left rotate array by 1
+int[] arr = {1, 2, 3, 4, 5};
+int first = arr[0];
+System.arraycopy(arr, 1, arr, 0, arr.length - 1);
+arr[arr.length - 1] = first;
+System.out.println(Arrays.toString(arr)); // Output: [2, 3, 4, 5, 1]
+8. Left rotate array by D positions
+int[] arr = {1, 2, 3, 4, 5};
+int d = 2;
+int[] result = IntStream.range(0, arr.length)
+                        .map(i -> arr[(i + d) % arr.length])
+                        .toArray();
+System.out.println(Arrays.toString(result)); // Output: [3, 4, 5, 1, 2]
+9. Move all zeros to end
+int[] arr = {0, 1, 0, 3, 12};
+int index = 0;
+for (int num : arr) {
+    if (num != 0) arr[index++] = num;
+}
+while (index < arr.length) arr[index++] = 0;
+System.out.println(Arrays.toString(arr)); // Output: [1, 3, 12, 0, 0]
+10. Count frequency of each element
+int[] arr = {1, 2, 2, 3, 1, 4};
+Map<Integer, Long> freq = Arrays.stream(arr)
+    .boxed()
+    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+System.out.println(freq); // Output: {1=2, 2=2, 3=1, 4=1}
+11. Find missing number in array (1 to N)
+int[] arr = {1, 2, 4, 5};
+int n = 5;
+int expectedSum = n * (n + 1) / 2;
+int actualSum = Arrays.stream(arr).sum();
+System.out.println(expectedSum - actualSum); // Output: 3
+12. Check if two arrays are equal
+int[] a = {1, 2, 3};
+int[] b = {1, 2, 3};
+boolean equal = Arrays.equals(a, b);
+System.out.println(equal); // Output: true
+13. Merge two sorted arrays
+int[] a = {1, 3, 5};
+int[] b = {2, 4, 6};
+int[] merged = IntStream.concat(Arrays.stream(a), Arrays.stream(b))
+                        .sorted()
+                        .toArray();
+System.out.println(Arrays.toString(merged)); // Output: [1, 2, 3, 4, 5, 6]
+14. Find duplicates in array
+int[] arr = {1, 2, 2, 3, 4, 4, 5};
+Map<Integer, Long> map = Arrays.stream(arr).boxed()
+    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+map.entrySet().stream()
+    .filter(e -> e.getValue() > 1)
+    .forEach(e -> System.out.println(e.getKey())); // Output: 2, 4
+15. Find common elements in two arrays
+int[] a = {1, 2, 3, 4};
+int[] b = {3, 4, 5, 6};
+Set<Integer> setB = Arrays.stream(b).boxed().collect(Collectors.toSet());
+Arrays.stream(a).filter(setB::contains).forEach(System.out::println); // Output: 3, 4
+16. Find intersection of two arrays
+int[] a = {1, 2, 2, 3};
+int[] b = {2, 2, 3, 4};
+List<Integer> listB = Arrays.stream(b).boxed().collect(Collectors.toList());
+Set<Integer> result = new HashSet<>();
+for (int num : a) {
+    if (listB.contains(num)) {
+        result.add(num);
+        listB.remove((Integer) num); // ensure correct frequency
+    }
+}
+System.out.println(result); // Output: [2, 3]
+17. Find union of two arrays
+int[] a = {1, 2, 3};
+int[] b = {3, 4, 5};
+Set<Integer> union = new HashSet<>();
+Arrays.stream(a).forEach(union::add);
+Arrays.stream(b).forEach(union::add);
+System.out.println(union); // Output: [1, 2, 3, 4, 5]
+
+18. Find pairs with given sum
+int[] arr = {1, 3, 2, 2, 4, 0};
+int target = 4;
+Set<Integer> seen = new HashSet<>();
+Set<String> printed = new HashSet<>();
+for (int num : arr) {
+    int comp = target - num;
+    if (seen.contains(comp)) {
+        String pair = Math.min(num, comp) + "," + Math.max(num, comp);
+        if (!printed.contains(pair)) {
+            System.out.println("(" + comp + "," + num + ")");
+            printed.add(pair);
+        }
+    }
+    seen.add(num);
+}
+
+19. Longest consecutive subarray
+int[] arr = {1, 2, 2, 3, 4};
+int len = 1, maxLen = 1;
+int start = 0, maxStart = 0;
+for (int i = 1; i < arr.length; i++) {
+    if (arr[i] > arr[i - 1]) {
+        len++;
+    } else {
+        len = 1;
+        start = i;
+    }
+    if (len > maxLen) {
+        maxLen = len;
+        maxStart = start;
+    }
+}
+System.out.println("Length: " + maxLen);
+for (int i = maxStart; i < maxStart + maxLen; i++) {
+    System.out.print(arr[i] + " ");
+}
+
+20. Find equilibrium index
+int[] arr = {1, 3, 5, 2, 2};
+int totalSum = Arrays.stream(arr).sum();
+int leftSum = 0;
+for (int i = 0; i < arr.length; i++) {
+    totalSum -= arr[i];
+    if (leftSum == totalSum) {
+        System.out.println("Equilibrium index: " + i); // Output: 2
+        break;
+    }
+    leftSum += arr[i];
+}
+
+21. Find majority element (appears > n/2 times)
+int[] arr = {2, 2, 1, 1, 2, 2, 2};
+Map<Integer, Long> count = Arrays.stream(arr).boxed()
+    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+int n = arr.length;
+count.entrySet().stream()
+    .filter(e -> e.getValue() > n / 2)
+    .forEach(e -> System.out.println(e.getKey())); // Output: 2
+
+22. Find leaders in array (greater than elements to right)
+int[] arr = {16, 17, 4, 3, 5, 2};
+int max = Integer.MIN_VALUE;
+List<Integer> leaders = new ArrayList<>();
+for (int i = arr.length - 1; i >= 0; i--) {
+    if (arr[i] > max) {
+        leaders.add(arr[i]);
+        max = arr[i];
+    }
+}
+Collections.reverse(leaders);
+System.out.println(leaders); // Output: [17, 5, 2]
+
+23. Kadane's Algorithm (Maximum subarray sum)
+int[] arr = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+int maxSum = arr[0], currentSum = arr[0];
+for (int i = 1; i < arr.length; i++) {
+    currentSum = Math.max(arr[i], currentSum + arr[i]);
+    maxSum = Math.max(maxSum, currentSum);
+}
+System.out.println("Max Subarray Sum: " + maxSum); // Output: 6
+
+24. Find peak element (greater than neighbors)
+int[] arr = {1, 3, 20, 4, 1, 0};
+for (int i = 1; i < arr.length - 1; i++) {
+    if (arr[i] > arr[i - 1] && arr[i] > arr[i + 1]) {
+        System.out.println("Peak: " + arr[i]); // Output: 20
+        break;
+    }
+}
+
+25. Rotate array by K using Java 8
+int[] arr = {1, 2, 3, 4, 5};
+int k = 2;
+int n = arr.length;
+int[] rotated = IntStream.range(0, n)
+                         .map(i -> arr[(i + (n - k)) % n])
+                         .toArray();
+System.out.println(Arrays.toString(rotated)); // Output: [4, 5, 1, 2, 3]

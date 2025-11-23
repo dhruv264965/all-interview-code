@@ -1,0 +1,137 @@
+Interface- An interface is a contract that defines what a class should do but does not provide any
+implementation.
+Q->If two interfaces have the same default method and a class implements both, how does the JVM know which method to execute?
+Answer-When a class implements two interfaces that have default methods with the same name and signature, the JVM cannot decide which
+      default method to use because of ambiguity. This results in a compilation error. However, you can resolve this ambiguity by
+      overriding the default method in the implementing class.
+      interface InterfaceA {
+          default void show() {
+              System.out.println("InterfaceA");
+          }
+      }
+
+      interface InterfaceB {
+          default void show() {
+              System.out.println("InterfaceB");
+          }
+      }
+
+      public class MyClass implements InterfaceA, InterfaceB {
+          // Compilation error: show() is ambiguous
+      }
+ to resolve->
+ public class MyClass implements InterfaceA, InterfaceB {
+     @Override
+     public void show() {
+         // Explicitly call the default method of one of the interfaces
+         InterfaceA.super.show();
+         // Or, you could choose InterfaceB.super.show(); instead
+     }
+ }
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Q->Why was the private method introduced in Java interfaces?
+Answer->Private methods were introduced in Java interfaces starting with Java 9 to improve code reusability and maintainability.
+      They allow interfaces to encapsulate common logic used by multiple default or static methods, avoiding redundancy and improving
+      code organization.
+ 1. Code Reusability-Before private methods were allowed in interfaces, default and static methods could share logic only through
+            external helper methods or by duplicating code. With private methods, you can define shared logic directly in the interface,
+             reducing redundancy.
+          Example Without Private Methods (Java 8 and Earlier):
+          interface MyInterface {
+              default void methodA() {
+                  System.out.println("Common Logic");
+                  System.out.println("Method A Logic");
+              }
+
+              default void methodB() {
+                  System.out.println("Common Logic");
+                  System.out.println("Method B Logic");
+              }
+          }
+           Here, the "Common Logic" is duplicated in both methodA() and methodB().
+           Example With Private Methods (Java 9+):
+           interface MyInterface {
+               private void commonLogic() {
+                   System.out.println("Common Logic");
+               }
+
+               default void methodA() {
+                   commonLogic();
+                   System.out.println("Method A Logic");
+               }
+
+               default void methodB() {
+                   commonLogic();
+                   System.out.println("Method B Logic");
+               }
+           }
+2.Reduce duplication, improving readability and maintainability.
+-------------------------------------------------------------------------------------------------------------------------
+Q->can you explain how private work  in both in both default and static method in the interface
+Anser-
+      Default Methods: Call private instance methods for shared logic that works at the instance level.
+      Static Methods: Call private static methods for shared logic that works at the interface level.
+      Purpose: Reduce code duplication and keep logic encapsulated within the interface.
+      interface MyInterface {
+          // Private instance method
+          private void commonInstanceLogic() {
+              System.out.println("Common Instance Logic");
+          }
+
+          // Private static method
+          private static void commonStaticLogic() {
+              System.out.println("Common Static Logic");
+          }
+
+          // Default method using private instance method
+          default void methodA() {
+              commonInstanceLogic();
+              System.out.println("Default Method A Logic");
+          }
+
+          // Default method using private instance method
+          default void methodB() {
+              commonInstanceLogic();
+              System.out.println("Default Method B Logic");
+          }
+
+          // Static method using private static method
+          static void methodC() {
+              commonStaticLogic();
+              System.out.println("Static Method C Logic");
+          }
+      }
+
+      public class MyClass implements MyInterface {
+          public static void main(String[] args) {
+              MyClass obj = new MyClass();
+              obj.methodA(); // Default method call
+              obj.methodB(); // Default method call
+              MyInterface.methodC(); // Static method call
+          }
+      }
+-----------------------------------------------------------------------------------------------------------------
+Q-> Can an interface extend a class?
+Answer->No, interfaces can only extend other interfaces, not classes.
+-----------------------------------------------------------------------------------------------------------------
+Q->when we use default method and when we static method in interface
+Answer->static- we can not override so jo hum method diya hai interface ko usko override nh kar sakte
+               class name se call karte hai
+
+
+  default-child mai override kar sakte aur implementing change kar sakte hai
+          object bana ke call krte hai
+
+    When to Choose?
+    Use default methods when:
+
+    The method provides behavior that logically belongs to instances of the implementing class.
+    You want to extend an existing interface without breaking backward compatibility.
+    Implementing classes might need to customize the behavior.
+    Use static methods when:
+
+    The method is a utility or helper that doesn’t depend on instance-specific data.
+    The functionality is general-purpose or applies to all implementing classes in the same way.
+    You don’t want implementing classes to override the method.
+    -----------------------------------------------------------------------------------------------------

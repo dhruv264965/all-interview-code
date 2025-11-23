@@ -1,0 +1,468 @@
+-- Department Table
+CREATE TABLE departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+
+-- Employee Table
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    dept_id INT,
+    manager_id INT,
+    salary DECIMAL(10,2),
+    hire_date DATE,
+    FOREIGN KEY (dept_id) REFERENCES departments(dept_id),
+    FOREIGN KEY (manager_id) REFERENCES employees(emp_id)
+);
+📌 Insert Sample Data
+
+-- Insert Departments
+INSERT INTO departments (dept_id, dept_name) VALUES
+(1, 'IT'),
+(2, 'HR'),
+(3, 'Finance');
+
+-- Insert Employees
+INSERT INTO employees (emp_id, emp_name, dept_id, manager_id, salary, hire_date) VALUES
+(101, 'Alice',   1, NULL, 75000, '2020-01-15'),  -- Manager IT
+(102, 'Bob',     1, 101, 50000, '2021-03-10'),
+(103, 'Charlie', 1, 101, 48000, '2022-06-20'),
+(104, 'David',   2, NULL, 65000, '2019-11-25'),  -- Manager HR
+(105, 'Eva',     2, 104, 40000, '2021-07-01'),
+(106, 'Frank',   2, 104, 42000, '2022-02-17'),
+(107, 'Grace',   3, NULL, 80000, '2018-09-12'),  -- Manager Finance
+(108, 'Helen',   3, 107, 55000, '2020-12-05'),
+(109, 'Ian',     3, 107, 47000, '2021-09-15'),
+(110, 'Jack',    1, 101, 51000, '2023-01-01');
+
+
+
+🔹 Joins (Basics)
+
+
+1. Get employee names with their department names.
+
+SELECT e.emp_name, d.dept_name
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id;
+
+
+2. List all employees even if they don’t belong to a department.
+
+SELECT e.emp_name, d.dept_name
+FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.dept_id;
+
+
+3. Find employees who don’t belong to any department.
+
+SELECT e.emp_name
+FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.dept_id
+WHERE d.dept_id IS NULL;
+
+🔹 Aggregation & GROUP BY
+
+4. Count employees in each department based in id .
+
+SELECT dept_id, COUNT(*) AS emp_count
+FROM employees
+GROUP BY dept_id;
+
+4.1  Count employees in each department based in name means Dept_name and no. of employee each deaprtment
+
+     select  d.dept_name , count(*) as emp_count
+     from employees e
+     join departments d on e.dept_id=d.dept_id
+     group by d.dept_name;
+
+     But note: with the inner join, if a department has 0 employees, it won’t appear in the result.
+     If you want to show departments even with 0 employees, use LEFT JOIN:
+
+     select  d.dept_name  , count(*) as emp_count
+          from employees e
+          left join departments d on e.dept_id=d.dept_id
+          group by d.dept_name;
+
+4.2  Depart name and avg salary of each department
+
+    select d.dept_name , avg(e.salary) as avg_salary
+    from employees e
+    join departments d on e.dept_id=d.dept_id
+    group by d.dept_name;
+
+     Find the department name with the highest average salary.
+    SELECT dept_name, AVG(salary) AS avg_salary
+    FROM employees e
+    join departments d on e.dept_id=d.dept_id
+    GROUP BY dept_name
+    ORDER BY avg_salary DESC
+    LIMIT 1;
+
+4.3  Depart name and sum salary of each department
+
+        select d.dept_name , sum(e.salary) as sum_salary
+        from employees e
+        join departments d on e.dept_id=d.dept_id
+        group by d.dept_name;
+
+
+5. Find average salary per department.
+
+SELECT dept_id, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY dept_id;
+
+
+6. Find departments with more than 5 employees.
+
+SELECT dept_id, COUNT(*) AS emp_count
+FROM employees
+GROUP BY dept_id
+HAVING COUNT(*) > 5;
+
+6.1 find department name having more than 3 employee
+
+SELECT d.dept_name, COUNT(*) AS emp_count
+FROM employees e
+join departments d on e.dept_id=d.dept_id
+GROUP BY dept_name
+HAVING COUNT(*) > 3;
+
+
+7. Find max salary per department.
+
+SELECT dept_id, MAX(salary) AS max_salary
+FROM employees
+GROUP BY dept_id;
+
+🔹 ORDER BY & Top-N
+
+8. Get top 3 highest paid employees.
+
+SELECT emp_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 3;
+
+
+9. Find second highest salary.
+
+SELECT MAX(salary)
+FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);
+
+SELECT emp_name, salary
+FROM employees
+ORDER BY salary DESC
+limit 1 offset 2;
+
+
+10. Find Nth highest salary (example: 3rd).
+
+SELECT DISTINCT salary
+FROM employees e1
+WHERE 3 = (
+  SELECT COUNT(DISTINCT salary)
+  FROM employees e2
+  WHERE e2.salary >= e1.salary
+);
+
+SELECT emp_name, salary
+FROM employees
+ORDER BY salary DESC
+limit n-1, 1;    limit(m,n)-> m-> number of rows to skip and n-> number of rows to fetch
+
+🔹 Subqueries
+
+11. Find employees earning more than the average salary.
+
+SELECT emp_name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
+
+
+12. Find employee(s) with highest salary in each department.
+
+SELECT emp_name, dept_id, salary
+FROM employees e
+WHERE salary = (SELECT MAX(salary) FROM employees WHERE dept_id = e.dept_id);
+
+12.1 Find employee(s) with highest salary in each department.
+
+SELECT d.dept_name, e.emp_name, e.salary AS max_salary
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id
+WHERE e.salary = (
+    SELECT MAX(salary)
+    FROM employees
+    WHERE dept_id = e.dept_id
+);
+
+
+13. Find employees earning more than their department’s average.
+
+SELECT emp_name, dept_id, salary
+FROM employees e
+WHERE salary > (
+  SELECT AVG(salary) FROM employees WHERE dept_id = e.dept_id
+);
+
+🔹 Practical Joins
+
+14. Find employees earning more than their manager.
+
+SELECT e.emp_name, e.salary, m.emp_name AS manager, m.salary AS mgr_salary
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.salary > m.salary;
+
+
+15. Find employees hired before their manager.
+
+SELECT e.emp_name, m.emp_name AS manager
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.hire_date < m.hire_date;
+
+🔹 Real-World Scenarios
+
+16. Find duplicate employee names.
+
+SELECT emp_name, COUNT(*)
+FROM employees
+GROUP BY emp_name
+HAVING COUNT(*) > 1;
+
+
+17. Find employees working in more than one project.
+
+SELECT emp_id, COUNT(project_id)
+FROM project_assignments
+GROUP BY emp_id
+HAVING COUNT(project_id) > 1;
+
+
+18. Find employees who joined in last 30 days.
+
+SELECT emp_name, hire_date
+FROM employees
+WHERE hire_date >= CURRENT_DATE - INTERVAL '30' DAY;
+
+🔹 Filtering with HAVING
+
+19. Find departments where all employees earn above 40,000.
+
+SELECT dept_id
+FROM employees
+GROUP BY dept_id
+HAVING MIN(salary) > 40000;
+
+
+20. Find department with highest total salary.
+
+SELECT dept_id, SUM(salary) AS total_salary
+FROM employees
+GROUP BY dept_id
+ORDER BY total_salary DESC
+LIMIT 1;
+
+1. Count employees in each department
+SELECT dept_id, COUNT(*) AS emp_count
+FROM employees
+GROUP BY dept_id;
+
+2. Show department names with employee counts (including empty departments)
+SELECT d.dept_name, COUNT(e.emp_id) AS emp_count
+FROM departments d
+LEFT JOIN employees e ON e.dept_id = d.dept_id
+GROUP BY d.dept_name;
+
+5. Find employees earning more than their manager
+SELECT e.emp_name, e.salary, m.emp_name AS manager, m.salary AS mgr_salary
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.salary > m.salary;
+
+8. Find employees hired before their manager
+SELECT e.emp_name, m.emp_name AS manager
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.hire_date < m.hire_date;
+
+9. Find duplicate salaries
+SELECT salary, COUNT(*) AS cnt
+FROM employees
+GROUP BY salary
+HAVING COUNT(*) > 1;
+
+10. Find department with the highest total salary
+SELECT dept_id, SUM(salary) AS total_salary
+FROM employees
+GROUP BY dept_id
+ORDER BY total_salary DESC
+LIMIT 1;
+
+
+12. Get employees sorted by department and salary.
+
+SELECT emp_name, dept_id, salary
+FROM employees
+ORDER BY dept_id, salary DESC;
+
+16. Find total, average, max, min salary per department.
+
+SELECT dept_id, SUM(salary), AVG(salary), MAX(salary), MIN(salary)
+FROM employees
+GROUP BY dept_id;
+
+
+1. Retrieve names and salaries of employees working in the Finance department
+SELECT name, salary
+FROM employees
+WHERE department = 'Finance';
+
+2. Increase the salary of all employees in the IT department by 10%
+UPDATE employees
+SET salary = salary * 1.10
+WHERE department = 'IT';
+
+3. Find all duplicate emails in a table named Person
+SELECT email, COUNT(*) AS duplicate_count
+FROM Person
+GROUP BY email
+HAVING COUNT(*) > 1;
+
+4. Get the second highest salary from the Employee table
+
+Method 1: Using LIMIT (MySQL/Postgres)
+
+SELECT DISTINCT salary
+FROM Employee
+ORDER BY salary DESC
+LIMIT 1 OFFSET 1;
+
+
+Method 2: Using MAX + Subquery (works in most SQL databases)
+
+SELECT MAX(salary) AS second_highest_salary
+FROM Employee
+WHERE salary < (SELECT MAX(salary) FROM Employee);
+
+5. Find all numbers that appear at least three times consecutively
+
+(Assume table is Logs(id INT, num INT))
+
+SELECT DISTINCT l1.num
+FROM Logs l1
+JOIN Logs l2 ON l1.id = l2.id - 1
+JOIN Logs l3 ON l1.id = l3.id - 2
+WHERE l1.num = l2.num
+  AND l2.num = l3.num;
+
+6. Find employees who earn more than their managers
+
+(Assume Employee table has id, name, salary, managerId)
+
+SELECT e.name AS Employee, e.salary AS EmployeeSalary,
+       m.name AS Manager, m.salary AS ManagerSalary
+FROM Employee e
+JOIN Employee m ON e.managerId = m.id
+WHERE e.salary > m.salary;
+
+
+
+9. Find the highest-paid employee in each department
+
+Question:
+"Get the employee(s) with the maximum salary per department."
+
+Answer:
+
+SELECT e.*
+FROM employees e
+JOIN (
+    SELECT department, MAX(salary) AS max_salary
+    FROM employees
+    GROUP BY department
+) t
+ON e.department = t.department AND e.salary = t.max_salary;
+
+
+---------------------------------------------------------------------------------------------------------------------
+1. Find the maximum salary in each department(average, total salary , Count employees)
+
+      SELECT department, MAX(salary) AS max_salary
+      FROM employees
+      GROUP BY department;
+
+      if two table is there then same code we can write
+
+
+      select e.dept_id , max (salary) as max_salary
+      from employee e
+      JOIN departments d ON e.dept_id = d.dept_id;
+      group by e.dept_id
+
+2.   Order departments by average salary (descending)
+
+   SELECT department, AVG(salary) AS avg_salary
+   FROM employees
+   GROUP BY department
+   ORDER BY avg_salary DESC;
+
+3 .   Get the department with the most employees
+
+     SELECT department, COUNT(*) AS emp_count
+     FROM employees
+     GROUP BY department
+     ORDER BY emp_count DESC
+     LIMIT 1;
+
+4.    Find employees earning more than their department’s average salary
+
+      SELECT e.name, e.department, e.salary
+      FROM employees e
+      JOIN (
+          SELECT department, AVG(salary) AS avg_salary
+          FROM employees
+          GROUP BY department
+      ) t
+      ON e.department = t.department
+      WHERE e.salary > t.avg_salary;
+
+
+     if two table is there
+
+      SELECT e.name, d.dept_name, e.salary
+      FROM employees e
+      JOIN (
+          SELECT dept_id, AVG(salary) AS avg_salary
+          FROM employees
+          GROUP BY dept_id
+      ) t
+      ON e.dept_id = t.dept_id
+      JOIN departments d
+      ON e.dept_id = d.dept_id
+      WHERE e.salary > t.avg_salary;
+
+
+5.    2. Find employees who don’t belong to any department
+
+      SELECT e.name
+      FROM employees e
+      LEFT JOIN departments d ON e.dept_id = d.dept_id
+      WHERE d.dept_id IS NULL;
+
+
+6.  Find the department name with the highest average salary.
+        SELECT dept_name, AVG(salary) AS avg_salary
+        FROM employees e
+        join departments d on e.dept_id=d.dept_id
+        GROUP BY dept_name
+        ORDER BY avg_salary DESC
+        LIMIT 1;
+
+
+

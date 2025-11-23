@@ -1,0 +1,33 @@
+Use GET if:
+
+You're just retrieving data.
+The parameters (filters, search terms) are simple and not too long.
+GET is NOT secure because it exposing data in url
+The request can be expressed cleanly in the URL.
+GET /products/search?category=books&sort=price&minPrice=100&maxPrice=500
+GET-- idempotent   -- means if we hit get url we will get same response
+Caching- we can achiving caching here
+
+------------------------------------------------------------------------
+Use POST if:
+
+You have complex search criteria (e.g. nested filters, large payload).
+POST is more secure because not exposing data in url
+There are many fields — too long for a URL (browsers and servers typically limit URLs to ~2000 characters).
+You want to send a JSON body.
+You’re doing a search with sensitive data (GET exposes data in URL).
+POST /products/search
+Content-Type: application/json
+{
+  "categories": ["books", "electronics"],
+  "priceRange": { "min": 100, "max": 1000 },
+  "sortBy": "price",
+  "inStock": true,
+  "filters": {
+    "author": "John Doe",
+    "ratingAbove": 4.0
+  }
+}
+POST-- NOT idempotent   -- means if we hit get url we will get same response
+Caching- we can not achiving caching here
+

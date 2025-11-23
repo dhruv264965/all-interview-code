@@ -1,0 +1,7 @@
+A functional interface in Java is an interface that contains only one abstract method. Functional interfaces can
+have multiple default or static methods, but only one abstract method.
+Runnable, ActionListener, and Comparator are common examples of Java functional interfaces.
+From Java 8 onwards, lambda expressions and method references can be used to represent the instance of a functional
+interface.
+
+

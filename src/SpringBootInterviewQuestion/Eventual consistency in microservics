@@ -1,0 +1,51 @@
+Eventual Consistency between microservices refers to the concept that, in a distributed system where data
+is replicated across multiple microservices or databases, eventual consistency is maintained over time.
+This means that while updates to data may not be immediately reflected across all microservices, they will
+eventually converge to a consistent state.
+
+In a microservices architecture, each microservice manages its own data store, and data may be replicated or
+cached across multiple microservices for performance and scalability reasons.
+However, ensuring that all copies of the data remain consistent can be challenging due to the
+distributed nature of the system and the potential for network delays, failures, or conflicts.
+
+To achieve eventual consistency between microservices, various strategies, and techniques can be used, such as:
+
+1. Asynchronous Communication
+Microservices can communicate with each other asynchronously, allowing them to continue processing requests
+without waiting for a response. This can help reduce the impact of network delays on consistency.
+
+2. Eventual Consistency Models
+Microservices can use eventual consistency models, where updates are propagated asynchronously and conflicts
+are resolved over time. This allows each microservice to maintain its own copy of the data and eventually
+ converge to a consistent state
+
+📌 Example in Microservices
+Let’s say you have:
+User Service (handles user info)
+Notification Service (sends welcome emails)
+When a new user signs up:
+User Service stores the user data.
+Sends an event (UserCreated) to Kafka.
+Notification Service consumes the event later and sends the email.
+If Kafka is delayed, the email may not go immediately. But eventually,the email will be sent — this is
+eventual consistency.
+
+🔄 How It Works
+Suppose a user updates their profile picture. In an eventually consistent system:
+That update is sent to multiple services or data stores asynchronously.
+Some services might see the new picture immediately.
+Others might still show the old picture for a short while.
+But eventually, all services will show the updated picture once the update is fully propagated.
+
+
+✅ Ways to Handle Temporary Inconsistencies
+1. Asynchronous Event Handling + TTL (Time-To-Live) Caching
+Services cache the profile picture, but for a short time (e.g., 30 seconds).
+
+If the update happens, the cache eventually expires and fetches the new data.
+🔧 Example:
+@Cacheable(value = "userProfilePic", key = "#userId", unless = "#result == null")
+public String getProfilePicture(String userId) {
+    return userRepository.findPictureByUserId(userId);
+}
+

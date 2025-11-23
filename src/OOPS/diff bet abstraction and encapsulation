@@ -1,0 +1,8 @@
+| Feature                | **Encapsulation**                                                              | **Abstraction**                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| **Definition**         | Wrapping data (variables) and methods into a single unit (class).              | Hiding complex implementation details and showing only the necessary parts.        |
+| **Goal**               | Protect internal data and ensure controlled access.                            | Reduce complexity and focus on what the object does rather than how.               |
+| **Focus**              | **How to access** the data.                                                    | **What to expose** as functionality.                                               |
+| **Achieved using**     | Access modifiers (`private`, `public`, `protected`) and getter/setter methods. | `abstract` classes and `interfaces`.                                               |
+| **Real-world analogy** | Medicine capsule – internal contents are hidden, accessed safely.              | Driving a car – you use the wheel and pedals, but don’t know how the engine works. |
+| **Example in Java**    | Using private fields with public getters/setters.                              | Using interfaces or abstract classes to hide implementation.                       |

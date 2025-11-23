@@ -1,0 +1,45 @@
+| Feature                        | **Fail-Fast Iterator**                                      | **Fail-Safe Iterator**                                        |
+| ------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------- |
+| **Definition**                 | Throws exception if collection is modified during iteration | Does **not** throw exception on modification during iteration |
+| **Exception Thrown**           | `ConcurrentModificationException`                           | ❌ No exception                                                |
+| **Works On**                   | `ArrayList`, `HashMap`, `HashSet`, etc.                     | `ConcurrentHashMap`, `CopyOnWriteArrayList`, etc.             |
+| **Underlying Collection**      | Iterates directly over the collection                       | Iterates over a **copy** or **snapshot**                      |
+| **Thread Safety**              | ❌ Not thread-safe                                           | ✅ Thread-safe                                                 |
+| **Performance**                | ✅ Fast (direct iteration)                                   | ❌ Slower (due to copying or snapshot overhead)                |
+| **Modification Detected How?** | Uses a **modCount** and checks it during iteration          | No such check – uses separate copy                            |
+import java.util.*;
+
+public class FailFastExample {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>(List.of("A", "B", "C"));
+        for (String s : list) {
+            if (s.equals("B")) {
+                list.remove(s);  // ❌ Throws ConcurrentModificationException
+            }
+        }
+    }
+}
+Exception in thread "main" java.util.ConcurrentModificationException
+
+
+import java.util.concurrent.*;
+
+public class FailSafeExample {
+    public static void main(String[] args) {
+        ConcurrentMap<String, String> map = new ConcurrentHashMap<>();
+        map.put("A", "Apple");
+        map.put("B", "Banana");
+
+        for (String key : map.keySet()) {
+            if (key.equals("B")) {
+                map.remove(key);  // ✅ Safe — no exception
+            }
+        }
+
+        System.out.println(map);  // Output: {A=Apple}
+    }
+}
+| Use When...                           | Use This Iterator Type               |
+| ------------------------------------- | ------------------------------------ |
+| You need speed, single-threaded logic | ✅ Fail-Fast (e.g. ArrayList)         |
+| You need safety in concurrent envs    | ✅ Fail-Safe (e.g. ConcurrentHashMap) |

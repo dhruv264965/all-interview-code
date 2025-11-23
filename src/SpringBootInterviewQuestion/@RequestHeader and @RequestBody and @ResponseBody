@@ -1,0 +1,85 @@
+@RequestHeader->In Spring Boot, the @RequestHeader annotation is used to bind
+a value from the HTTP request headers to a method parameter in your controller.
+This allows you to easily access and utilize the values of incoming HTTP headers within your Spring applications.
+Use Cases
+Extracting metadata (like tokens, user-agent, locale):
+
+@GetMapping("/secure")
+public ResponseEntity<?> secureEndpoint(@RequestHeader("Authorization") String token) {
+    // validate token
+}
+Reading all headers as a Map:
+
+@GetMapping("/headers")
+public ResponseEntity<String> readAllHeaders(@RequestHeader Map<String, String> headers) {
+    headers.forEach((k, v) -> System.out.println(k + " = " + v));
+    return ResponseEntity.ok("Headers printed");
+}
+
+
+
+-----------------------------------------------------------
+@RequestBody-> In Spring Boot, the @RequestBody annotation is used to bind the body of an HTTP request
+(typically in JSON format) to a Java object.
+@RequestBody: Annotation is used to get the request body in the incoming request.
+✅ Use Case: Reading JSON data from POST/PUT requests
+🧠 Concept:
+Maps incoming JSON/XML request body to a Java object.
+
+Spring uses Jackson (by default) to deserialize JSON into your Java object.
+example- public class Employee {
+             private String name;
+             private String department;
+             private int salary;
+
+             // Getters and setters
+         }
+@RestController
+@RequestMapping("/api")
+public class EmployeeController {
+
+    @PostMapping("/employee")
+    public String saveEmployee(@RequestBody Employee employee) {
+        return "Saved: " + employee.getName();
+    }
+}
+POST /api/employee
+Content-Type: application/json
+
+{
+  "name": "Dhruv",
+  "department": "CSE",
+  "salary": 12000
+}
+
+
+
+-------------------------------------------------------------------------------
+@ResponseBody is used to tell Spring that the return value of a method should be written directly
+ to the HTTP response body, rather than being interpreted as a view name (like in JSP or Thymeleaf).
+ Converts the return value (Java object) to JSON (or XML) using Jackson or another message converter.
+
+ Automatically sets the response Content-Type to application/json.
+ @RestController // this includes @ResponseBody automatically
+ @RequestMapping("/api")
+ public class MyController {
+
+     @GetMapping("/message")
+     @ResponseBody
+     public String getMessage() {
+         return "Hello from @ResponseBody!";
+     }
+ }
+-------------------------------------------------------------
+| Feature              | `@RequestBody`                                                       | `@ResponseBody`                                      |
+| -------------------- | -------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Direction**        | Reads data **from** the request body (incoming)                      | Writes data **to** the response body (outgoing)      |
+| **Use Case**         | To bind the **incoming JSON/XML** to a Java object                   | To return a Java object as **JSON/XML response**     |
+| **Used In**          | Controller method parameters                                         | Controller method return type                        |
+| **Converter**        | Uses **HttpMessageConverter** (e.g., Jackson) to convert JSON → Java | Uses **HttpMessageConverter** to convert Java → JSON |
+| **Default Behavior** | Optional unless you need full request body mapped                    | Included automatically with `@RestController`        |
+
+
+
+
+

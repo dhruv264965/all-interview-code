@@ -1,0 +1,21 @@
+Dependencies Included in spring-boot-starter-web
+Here’s a breakdown of the main dependencies bundled with spring-boot-starter-web:
+
+spring-web
+
+Provides foundational web functionalities (e.g., RestTemplate, web client).
+spring-webmvc
+
+Implements the Model-View-Controller (MVC) architecture.
+spring-boot-starter-json
+
+Adds support for JSON serialization/deserialization using Jackson.
+spring-boot-starter-tomcat
+
+Includes Tomcat as the default embedded web server.
+spring-boot-starter-validation
+
+Adds support for bean validation.
+spring-boot-starter
+
+A parent starter that provides essential dependencies like logging (SLF4J, Logback).

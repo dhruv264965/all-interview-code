@@ -1,0 +1,13 @@
+In Java, Lock is an interface available in the Java.util.concurrent.locks package. Java lock acts as thread synchronization mechanisms
+that are similar to the synchronized blocks. After some time, a new locking mechanism was introduced. It is very flexible and provides
+more options in comparison to the Synchronized block.
+The synchronized limitations:
+it locks the entire method or block, leading to potential performance issues.
+It lacks a try-lock mechanism, causing threads to block indefinitely, increasing the risk of deadlocks.
+Additionally, synchronized doesn't support multiple condition variables, offering only a single monitor per object with basic wait/notify
+mechanisms.
+In contrast, explicit locks (Lock interface) offer finer-grained control, try-lock capabilities to avoid blocking, and more
+sophisticated thread coordination through multiple condition variables, making them more flexible and powerful for complex concurrency scenarios.
+
+lock.lock() ensures that only one thread can execute the critical section at a time.
+lock.unlock() releases the lock after the operation is complete, ensuring other threads can proceed.

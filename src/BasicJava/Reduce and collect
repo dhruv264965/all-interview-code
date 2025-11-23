@@ -1,0 +1,31 @@
+1. reduce()
+Purpose:
+Used to perform a reduction (aggregation) on stream elements to produce a single result.
+Type of result:
+Returns a single value (like int, double, String, or even an object).
+
+import java.util.Arrays;
+import java.util.List;
+
+public class ReduceExample {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+
+        int sum = numbers.stream()
+                         .reduce(0, (a, b) -> a + b);  // accumulator
+
+        System.out.println("Sum = " + sum);
+    }
+}
+Reduces elements to a single immutable result
+
+
+2. collect()
+
+Purpose:
+Used for mutable reduction — collects elements into a mutable container like List, Set, or Map.
+
+Type of result:
+Returns a Collection (or other container) instead of a single value.
+Use reduce() when you want one final result (sum, product, max, concatenation).
+Use collect() when you want to gather results into a collection or map.

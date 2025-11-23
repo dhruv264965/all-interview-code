@@ -1,0 +1,26 @@
+The Builder Design Pattern is a creational pattern used to construct complex objects step by step. Instead
+of using a constructor with many parameters, the builder pattern provides a more readable and flexible way to
+create objects.
+
+When to Use the Builder Pattern?
+1->jab class mai many attribute ho so making constractor become messy and optional parameter bhi ho.
+2->When we want to create immutable object
+
+
+Imagine a User class with multiple attributes:
+
+class User {
+    private String name;
+    private int age;
+    private String email;
+    private String address;
+
+    // Constructor with many parameters (hard to read & maintain)
+    public User(String name, int age, String email, String address) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+        this.address = address;
+    }
+}
+The problem? If you need to add more optional fields, you'll end up with multiple constructors (telescoping problem).

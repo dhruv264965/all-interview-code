@@ -1,0 +1,32 @@
+"In my Spring Boot project, I used Hibernate’s second-level caching with Ehcache to avoid repeated DB hits
+ for entities like Product. I enabled second-level cache in application.properties, added @Cacheable and
+ Hibernate cache annotations on the entity, and defined expiry and size policies in ehcache.xml. This
+ improved our read performance significantly under load."
+
+ <config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+         xmlns='http://www.ehcache.org/v3'>
+     <cache alias="com.example.cache.Product">
+         <expiry>
+             <ttl unit="minutes">5</ttl>
+         </expiry>
+         <heap unit="entries">100</heap>
+     </cache>
+ </config>
+
+
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+
+# Enable Hibernate second-level cache
+spring.jpa.properties.hibernate.cache.use_second_level_cache=true
+spring.jpa.properties.hibernate.cache.region.factory_class=org.hibernate.cache.jcache.JCacheRegionFactory
+spring.cache.jcache.config=classpath:ehcache.xml
+
+# Logging SQL
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+
+

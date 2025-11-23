@@ -1,0 +1,29 @@
+| Feature           | `peek()`                                        | `forEach()`                     |
+| ----------------- | ----------------------------------------------- | ------------------------------- |
+| Purpose           | To **inspect elements** (for debugging/logging) | To **consume/process** elements |
+| Stream Type       | **Intermediate** operation                      | **Terminal** operation          |
+| Return Value      | Returns a new **stream**                        | Returns `void`                  |
+| Chainable?        | ✅ Yes                                           | ❌ No                            |
+| Execution Trigger | Not executed until terminal operation           | Triggers full stream execution  |
+| Side Effects      | Should avoid (for debugging only)               | Safe to have side effects       |
+
+1. peek() – Intermediate Operation
+List<String> names = List.of("Dhruv", "Ridhika", "Rohan");
+names.stream()
+     .filter(name -> name.startsWith("R"))
+     .peek(System.out::println) // used for debugging/logging
+     .map(String::toUpperCase)
+     .collect(Collectors.toList());
+
+ 2. forEach() – Terminal Operation
+ names.stream()
+      .filter(name -> name.startsWith("R"))
+      .forEach(System.out::println); // processes and consumes the stream
+
+
+"peek() is used for inspecting elements in the middle of a stream pipeline, mostly for debugging or logging.
+ It's an intermediate operation and doesn't trigger execution on its own.
+
+forEach() is a terminal operation used to perform an action on each element and triggers the stream processing.
+ If I want to log items in a chain, I use peek(); if I want to perform actions like inserting into DB or printing,
+  I use forEach()."

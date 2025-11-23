@@ -1,0 +1,22 @@
+The Comparable interface is used to define a natural order for a class. It contains a single method,
+compareTo, which compares the current object with another object of the same type.
+
+Objects that implement Comparable can be sorted using the Arrays.sort() method or by collections that
+internally use sorting (like TreeSet or TreeMap).
+Example- public class Person implements Comparable<Person> {
+             private String name;
+             private int age;
+
+             @Override
+             public int compareTo(Person otherPerson) {
+                 return Integer.compare(this.age, otherPerson.age);
+             }
+         }
+In Java, Comparable is used when a class has a natural/default way to compare its objects — like sorting
+Employees by id or Students by rollNo. But if we need to sort the same objects in multiple different
+ ways — for example, by name, salary, or age, then we use Comparator.
+
+ So, we cannot use Comparable in place of Comparator when:
+ We want multiple sorting criteria.
+ We don’t want to or cannot modify the class to implement Comparable (e.g., sorting String, Date, or third-party objects).
+ Comparable is inside the class, Comparator is outside the class and more flexible.

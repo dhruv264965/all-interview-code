@@ -1,0 +1,109 @@
+Q->what is object level and class level synchronization
+
+1. Object-Level Synchronization:
+Object-level synchronization involves synchronizing methods or blocks of code at the instance level
+(i.e., the specific object of a class). This means only one thread can access the synchronized method or
+block for a specific object.
+
+Example of Object-Level Synchronization:
+class Counter {
+    private int count = 0;
+
+    // Synchronized method at object level
+    public synchronized void increment() {
+        count++;
+    }
+
+    public synchronized int getCount() {
+        return count;
+    }
+}
+
+public class Test {
+    public static void main(String[] args) throws InterruptedException {
+        Counter counter = new Counter();
+
+        // Create two threads to increment the counter
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) {
+                counter.increment();
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) {
+                counter.increment();
+            }
+        });
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+
+        // Both threads access the same object
+        System.out.println("Final Count: " + counter.getCount());  // Should print 2000
+    }
+}
+n this example, the increment() and getCount() methods are synchronized at the object level. Only one
+thread can access these methods at any given time for the same object.
+
+2. Class-Level Synchronization:
+only single thread can excute that method and other should wait
+Class-level synchronization involves synchronizing static methods. It is done at the class level
+ (for the entire class), meaning only one thread can access the static synchronized method across all
+  instances of that class.
+
+Example of Class-Level Synchronization:class Counter {
+                                           private static int count = 0;
+
+                                           // Synchronized method at class level
+                                           public synchronized static void increment() {
+                                               count++;
+                                           }
+
+                                           public synchronized static int getCount() {
+                                               return count;
+                                           }
+                                       }
+
+                                       public class Test {
+                                           public static void main(String[] args) throws InterruptedException {
+                                               // Create two threads to increment the static counter
+                                               Thread t1 = new Thread(() -> {
+                                                   for (int i = 0; i < 1000; i++) {
+                                                       Counter.increment();
+                                                   }
+                                               });
+
+                                               Thread t2 = new Thread(() -> {
+                                                   for (int i = 0; i < 1000; i++) {
+                                                       Counter.increment();
+                                                   }
+                                               });
+
+                                               t1.start();
+                                               t2.start();
+                                               t1.join();
+                                               t2.join();
+
+                             // Both threads access the static method, synchronized at the class level
+                            System.out.println("Final Count: " + Counter.getCount());  // Should print 2000
+                                           }
+                                       }
+In this example, the increment() and getCount() methods are synchronized at the class level.
+Only one thread can access these methods at any given time, even across multiple instances of the Counter
+class.
+
+Summary:
+Object-Level Synchronization: Synchronizes methods/blocks for an instance of a class (an object).
+Class-Level Synchronization: Synchronizes static methods/blocks, meaning only one thread can access them
+across all instances of the class.
+
+
+
+
+
+
+
+

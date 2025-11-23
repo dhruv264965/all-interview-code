@@ -1,0 +1,28 @@
+In Java, a NullPointerException happens when you try to use an object reference that points to null.
+Some common cases:
+
+String str = null;
+System.out.println(str.length()); // ❌ NPE
+String[] arr = new String[3];
+System.out.println(arr[0].length()); // ❌ arr[0] is null
+
+🟢 How to handle NullPointerException
+
+1-> if (str != null) {
+    System.out.println(str.length());
+   } else {
+    System.out.println("String is null");
+   }
+
+2. Use Objects.nonNull or Objects.isNull
+import java.util.Objects;
+if (Objects.nonNull(str)) {
+    System.out.println(str.length());
+}
+
+3. Use Optional (Java 8+)
+Instead of returning null, return an Optional.
+Optional<String> maybeStr = Optional.ofNullable(str);
+System.out.println(maybeStr.orElse("default").length());
+
+

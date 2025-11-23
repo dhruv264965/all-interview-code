@@ -1,0 +1,176 @@
+One Line Dif-Intercept HTTP request and response before reaching to controller
+Interceptor-Allows you to intercept incoming requests or outgoing responses before or after they are handled by
+a controller.
+  You can use the Interceptor in Spring Boot to perform operations under the following situations −
+               1.  Before sending the request to the controller
+               2.  Before sending the response to the client
+For example, you can use an interceptor to add the request header before sending the request to the controller and
+add the response header before sending the response to the client.
+
+step1- interceptor mai work karne ke liye in controoler class mai We need to implement HandlerInterceptor interface.
+step2- It consists of 3 method and thses 3 method we need to overrride
+        1.preHandle() method − Used before sending the the request to the controler. It return boolean true and
+        fasle
+        2.postHandle() method-Used before sending the response to the client.
+        3.afterCompletion() method-Used After the completing the request and response
+   example- @Component
+            public class ProductServiceInterceptor implements HandlerInterceptor {
+               @Override
+               public boolean preHandle(
+                  HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+                  return true;
+               }
+               @Override
+               public void postHandle(
+                  HttpServletRequest request, HttpServletResponse response, Object handler,
+                  ModelAndView modelAndView) throws Exception {}
+
+               @Override
+               public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                  Object handler, Exception exception) throws Exception {}
+            }
+
+step3-You will have to register this Interceptor with InterceptorRegistry by using WebMvcConfigurer as shown below −
+example-  @Component
+          public class ProductServiceInterceptorAppConfig implements WebMvcConfigurer {
+             @Autowired
+             ProductServiceInterceptor productServiceInterceptor;
+
+             @Override
+             public void addInterceptors(InterceptorRegistry registry) {
+                registry.addInterceptor(productServiceInterceptor);
+             }
+          }
+
+step 4- Full example i will show where at last i will explain the code
+
+1. Create an Interceptor
+
+import org.springframework.web.servlet.HandlerInterceptor;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class LoggingInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        System.out.println("Before API: " + request.getRequestURI());
+        return true; // Continue to controller
+    }
+}
+
+2. Register It
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+
+@Configuration
+public class AppConfig implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoggingInterceptor())
+                .addPathPatterns("/api/**"); // Intercept only /api/* endpoints
+    }
+}
+
+3. Example Controller
+@RestController
+@RequestMapping("/api")
+public class MyController {
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "Hello World!";
+    }
+}
+🔹 What Happens When You Call /api/hello
+Interceptor preHandle() runs → logs "Before API: /api/hello"
+Controller method executes → returns "Hello World!"
+Interceptor postHandle() and afterCompletion() (if implemented) run
+Response sent to the client
+
+Senario ----if we not add .addPathPatterns("/api/**");  api call only with /hello so can we get output
+for preHandle() method
+
+
+You created an interceptor, but did not use:
+
+.addPathPatterns("/api/**")
+And your API endpoint is just:
+
+@GetMapping("/hello")
+public String sayHello() {
+    return "Hello!";
+}
+✅ What happens?
+If you register your interceptor like this:
+
+registry.addInterceptor(new LoggingInterceptor());
+Then the interceptor will be applied to all endpoints by default — including /hello.
+
+🔸 So yes: preHandle() will run for /hello.
+🔹 Now, if you do this:
+
+registry.addInterceptor(new LoggingInterceptor())
+        .addPathPatterns("/api/**");  // Only apply to paths starting with /api
+And you call /hello, then:
+
+preHandle() will NOT run ❌
+
+Because /hello does not match the pattern /api/**
+
+-----------------------------------------------------------------------
+One line Def-It intercept the HTTP request and response before sending the servlet( Dispacher servlet)
+Filter- A Filter is part of the Servlet API and works at the Servlet container level. It is used to perform
+filtering tasks on incoming requests and outgoing responses before they reach the servlet (including Spring's
+DispatcherServlet).
+   Common uses:
+       Logging requests/responses
+       Authentication/authorization
+       Compression (e.g., GZIP)
+       CORS handling
+       Character encoding
+       Example-->
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+
+@Configuration
+public class FilterConfig {
+    @Bean
+    public FilterRegistrationBean<MyFilter> loggingFilter(){
+        FilterRegistrationBean<MyFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new MyFilter());
+        registrationBean.addUrlPatterns("/api/*"); // Apply to specific URL patterns
+        return registrationBean;
+    }
+}
+example
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.Configuration;
+ import org.springframework.boot.web.servlet.FilterRegistrationBean;
+
+ @Configuration
+ public class FilterConfig {
+     @Bean
+     public FilterRegistrationBean<MyFilter> loggingFilter(){
+         FilterRegistrationBean<MyFilter> registrationBean = new FilterRegistrationBean<>();
+         registrationBean.setFilter(new MyFilter());
+         registrationBean.addUrlPatterns("/api/*"); // Apply to specific URL patterns
+         return registrationBean;
+     }
+ }
+
+
+
+------------------------------------------------------------------------------------
+Difference And when to use -
+filter- http request before servlet(Dispacther servlet)
+interceptor- http request before controller but after the servlet
+Flow diagraeam-
+request->filter->dispacher servlet->interceptor->controller
+When to use filter- when we are putting logic which is common for all the servlet like Spring Security - It use filter
+                    because it applied all http request and response for all the sevlet it is gerneric code
+
+When to use Interceptor- When we are putting the logic to 1(Specfic) sevlet,If anything specfic to application or
+                        particular one servlet then we use interceptor . and also specfic to Rest Api
+

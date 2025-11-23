@@ -1,0 +1,60 @@
+class Parent {
+    String name = "Parent";
+
+    void show() {
+        System.out.println("Parent show()");
+    }
+}
+
+class Child extends Parent {
+    String name = "Child";
+
+    @Override
+    void show() {
+        System.out.println("Child show()");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Parent p = new Child(); // reference = Parent, object = Child
+        p.show(); // Child show() (runtime polymorphism)
+        System.out.println(p.name); // Parent (fields are hidden, not overridden)
+    }
+}
+output - Child show()
+         Parent
+-----------------------------------------------------------------------------------------------
+class A {
+    A() {
+        System.out.println("A constructor");
+    }
+
+    void display() {
+        System.out.println("Display from A");
+    }
+}
+
+class B extends A {
+    B() {
+        super();
+        System.out.println("B constructor");
+    }
+
+    @Override
+    void display() {
+        super.display();
+        System.out.println("Display from B");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        B obj = new B();
+        obj.display();
+    }
+}
+output - A constructor   // Parent constructor runs first
+         B constructor   // Then child constructor
+         Display from A  // super.display()
+         Display from B  // Child method continues

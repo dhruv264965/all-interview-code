@@ -1,0 +1,44 @@
+Runnable Interface:
+Purpose: Represents a task that does not return a result and cannot throw checked exceptions.
+Method: Contains a single method run() that takes no arguments and returns void.
+
+Usage: Typically used when you need to execute a task asynchronously without expecting a return value.
+public class MyRunnable implements Runnable {
+    @Override
+    public void run() {
+        // Task implementation goes here
+        System.out.println("Hello from Runnable!");
+    }
+    public static void main(String[] args) {
+        Runnable myRunnable = new MyRunnable();
+        Thread thread = new Thread(myRunnable);
+        thread.start();
+    }
+}
+
+Callable Interface:
+Purpose: Represents a task that returns a result and can throw checked exceptions.
+
+Method: Contains a single method call() that returns a result of a specified type (V) and can throw Exception.
+
+Usage: Used when you need to execute a task asynchronously and obtain a result or handle exceptions.
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+public class MyCallable implements Callable<String> {
+    @Override
+    public String call() throws Exception {
+        // Task implementation goes here
+        return "Hello from Callable!";
+    }
+
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
+        Callable<String> myCallable = new MyCallable();
+        FutureTask<String> futureTask = new FutureTask<>(myCallable);
+        Thread thread = new Thread(futureTask);
+        thread.start();
+        String result = futureTask.get(); // Blocking call to get the result
+        System.out.println(result);
+    }
+}

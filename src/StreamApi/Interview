@@ -1,0 +1,50 @@
+Q->What is stream and parallel Stream in java 8
+ans->1. stream()
+     Definition: A sequential stream that processes elements one at a time in a single thread.
+     Execution: Processes data in the order it appears (maintains encounter order for ordered collections like lists).
+     Threading: Operates in a single thread (the main thread by default).
+     Use Case: Best suited for small or simple data processing tasks where parallelism is unnecessary.
+     Performance: Lower overhead than parallelStream for smaller datasets since no additional threads are created.
+     List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+     names.stream()
+          .forEach(name -> System.out.println(name + " processed by " + Thread.currentThread().getName()));
+     output-Alice processed by main
+           Bob processed by main
+           Charlie processed by main
+2. parallelStream()
+Definition: A parallel stream that divides the data into multiple chunks and processes them in parallel using
+            the Fork/Join framework.
+Execution: Tasks are distributed across multiple threads (from the common ForkJoinPool).
+Threading: Utilizes multiple threads to process elements concurrently.
+Use Case: Best suited for large datasets or computationally intensive tasks where parallelism can improve performance.
+Performance: Can be faster than stream() for large datasets but involves overhead for thread management.
+              Performance may degrade for small datasets due to parallelization overhead.
+Order: May not maintain encounter order unless explicitly specified.
+List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+names.parallelStream()
+     .forEach(name -> System.out.println(name + " processed by " + Thread.currentThread().getName()));
+output-Charlie processed by ForkJoinPool.commonPool-worker-1
+       Bob processed by ForkJoinPool.commonPool-worker-3
+       Alice processed by main
+
+Key Differences
+Aspect	                     Sequential	                                      Parallel
+Threading	                  Single thread (main thread)	                  Multiple threads (ForkJoinPool)
+Order Preservation	           Maintains encounter order	                   May not maintain order
+Performance	                      Faster for small datasets	                  Faster for large datasets
+Overhead	                       Low	                                             High (thread management)
+
+When to Use Which?
+Use stream():
+
+For small datasets.
+When processing order matters.
+For tasks with low computational complexity.
+Use parallelStream():
+
+For large datasets.
+When order doesn't matter (or when explicitly controlled).
+For computationally intensive tasks that benefit from parallelism.
+
+
+-----------------------------------------------------------------------------------------------------------------------------------

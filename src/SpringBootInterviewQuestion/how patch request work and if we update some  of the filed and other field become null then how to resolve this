@@ -1,0 +1,26 @@
+WE can pass Map as request body to store the the data..below the example
+
+Yes, you can absolutely write a generic @PatchMapping method using Java Reflection to dynamically update
+any field in the entity. This avoids writing if checks for each field manually.
+
+    @PatchMapping("/{id}")
+     public ResponseEntity<Hotel> updateSomeFieldOFHotel(@PathVariable("id") Long hotelId, @RequestBody Map<String,Object>updates){
+             Hotel updateSomeFieldOFHotel=hotelService.updateSomeFieldOFHotel(hotelId,updates);
+             return ResponseEntity.ok(updateSomeFieldOFHotel);
+     }
+
+ @Override
+    public Hotel updateSomeFieldOFHotel(Long hotelId, Map<String, Object> updates) {
+        Optional<Hotel> existingHotel= hotelRepository.findById(hotelId);
+        if(existingHotel.isPresent()){
+             updates.forEach((key,value)->
+            {
+                Field field = ReflectionUtils.findField(Hotel.class, key); //to get the field from key
+                field.setAccessible(true);
+                ReflectionUtils.setField(field,existingHotel.get(),value); // to set the field
+            });
+             return hotelRepository.save(existingHotel.get());
+
+        }
+        return null;
+    }

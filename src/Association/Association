@@ -1,0 +1,6 @@
+1. Association
+Definition: A general relationship between two classes where one object uses or interacts with another.
+Key Features:
+Indicates a "uses" relationship.
+It is the most general form of relationship and can be one-to-one, one-to-many, many-to-one, or many-to-many.
+Association does not imply ownership; both objects can exist independently.

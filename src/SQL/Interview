@@ -1,0 +1,339 @@
+1.Question-SQL query retrieves the second-highest salary from the employee table.
+Answer-SELECT MAX(salary)
+       FROM employee
+       WHERE salary < (SELECT MAX(salary) FROM employee);
+
+       or  select  age as secondMaxAge  from employee
+              order by age DESC
+              limit 1 offset 1;  Skips the top 1, fetches the 2nd(1st we sort the data based on decending after that
+                                                                   skip 1 record so
+or
+select * from employee;
+select distinct salary from employee
+order by salary desc
+limit 1,1;
+
+2. ACID properties with example
+Answer-Atomicity – A transaction is treated as a single unit, meaning it either completes fully or does not happen
+                      at all. If any part of the transaction fails, the entire transaction is rolled back.
+       Example: In a bank transfer, if money is debited from one account but not credited to another due to a failure,
+        the transaction is rolled back.
+
+       Consistency – The database remains in a valid state before and after the transaction. It ensures that a
+       transaction transforms the database from one valid state to another, maintaining constraints and rules.
+         Example:  Banking System
+                  Suppose you have a bank database with an account balance table. The rule (constraint)
+                  is that an account balance cannot be negative.
+
+                  Scenario: Transferring ₹500 from Account A to Account B
+                  The transaction starts.
+                  ₹500 is deducted from Account A.
+                  ₹500 is added to Account B.
+                  If Account A does not have enough balance (e.g., ₹300), the transaction fails.
+                  Since the transaction violates the constraint (balance ≥ 0), the database rolls back to its previous state, ensuring consistency.
+                  💡 Without Consistency, Account A could go negative, leading to incorrect data in the database.
+
+       Isolation – Transactions are executed independently, ensuring that concurrent transactions do not interfere
+       with each other. Different isolation levels (READ COMMITTED, REPEATABLE READ, SERIALIZABLE) control how
+       transactions interact.
+       Example: If two users are booking the last seat on a flight at the same time, isolation ensures that only
+       one transaction succeeds.
+        This prevents race conditions and maintains data integrity.
+
+
+
+       Durability – Once a transaction is committed, it remains permanent in the database, even in case of system
+        failures (e.g., power loss, crashes).
+       Example: If a system crashes after committing a transaction, the data remains safe when the system restarts.
+       Scenario: Fixed Deposit in a Bank
+       You open a Fixed Deposit (FD) account in your bank and deposit ₹1,00,000.
+       The bank's system commits the transaction and updates the database.
+       Right after the transaction, the bank server crashes or power goes off.
+       When the system restarts, your deposit must still exist.
+
+       Where ACID Properties Are Used
+       Relational Databases (RDBMS) like MySQL, PostgreSQL, Oracle, and SQL Server follow ACID to ensure data
+       integrity.
+       Transactional Systems like banking, e-commerce, and financial applications rely on ACID compliance for
+       correctness.
+
+
+3. Write a query to retrieve employees who earn more than the average salary.
+   select * from employee
+   where salary > (select Avg(salary) from employee);
+
+4.   -- Write a query to fetch the duplicate age  from a column in a table. and also count
+       select age  ,count(*)
+       from employee
+       group by age
+       having count(*)>1;
+
+5. Write a query to fetch top 3 earning employees.
+       SELECT *
+       FROM Employee
+       ORDER BY Salary DESC
+       LIMIT 3;
+
+6. sum and avg of each department
+select department, sum(salary) as total_sum, avg(salary) as avg_salary
+from employee
+group by department;
+
+7. highest salary per department:
+    SELECT d.department_name, e.name, e.salary
+    FROM employees e
+    JOIN departments d ON e.department_id = d.id
+    WHERE e.salary = (
+        SELECT MAX(salary)
+        FROM employees
+        WHERE department_id = e.department_id
+    );
+
+
+8.Departments with No Employees
+   SELECT d.department_name
+   FROM departments d
+   LEFT JOIN employees e ON d.id = e.department_id
+   WHERE e.id IS NULL;
+
+9. Employees Earning Above Average Salary
+    SELECT name, salary
+    FROM employees
+    WHERE salary > (SELECT AVG(salary) FROM employees);
+
+10. Get employees whose salary is above department average
+   SELECT e.*
+   FROM employees e
+   JOIN (
+       SELECT department_id, AVG(salary) AS dept_avg
+       FROM employees
+       GROUP BY department_id
+   ) avg_table
+   ON e.department_id = avg_table.department_id
+   WHERE e.salary > avg_table.dept_avg;
+
+    OR
+
+     SELECT d.department_name, e.name, e.salary
+        FROM employees e
+        JOIN departments d ON e.department_id = d.id
+        WHERE e.salary > (
+            SELECT AVG(salary)
+            FROM employees
+            WHERE department_id = e.department_id
+        );
+
+
+1. What is the difference between SQL and NoSQL?
+
+SQL (Structured Query Language)
+Relational database (tables with rows & columns).
+Schema-based (fixed structure).
+Uses JOINs.
+Examples: MySQL, PostgreSQL, Oracle.
+NoSQL (Not Only SQL)
+Non-relational database (document, key-value, column, graph).
+Schema-less (flexible structure).
+Horizontal scaling.
+Examples: MongoDB, Cassandra, Redis.
+
+2. Difference between DELETE, TRUNCATE, and DROP?
+
+DELETE: Removes rows from a table (can use WHERE). Transactional (can rollback).
+TRUNCATE: Removes all rows quickly. Cannot use WHERE. Not logged fully, cannot rollback easily.
+DROP: Deletes the table structure + data permanently.
+
+3. Primary Key vs. Unique Key vs. Foreign Key
+
+Primary Key:
+Uniquely identifies each record.
+Only one per table, cannot be NULL.
+Unique Key:
+Ensures all values are unique.
+Can have multiple per table, allows one NULL.
+Foreign Key:
+Establishes a relationship between two tables.
+References Primary Key of another table.
+
+4. Difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN
+
+INNER JOIN → Returns rows present in both tables.
+LEFT JOIN → All rows from left table + matching rows from right.
+RIGHT JOIN → All rows from right table + matching rows from left.
+FULL JOIN → All rows from both tables (NULL where no match).
+
+5. What is normalization? Explain different normal forms.
+
+Normalization → Process of organizing data to avoid redundancy and improve integrity.
+Normal Forms:
+1NF: No repeating groups, atomic values only.
+2NF: Must be in 1NF + no partial dependency on PK.
+3NF: Must be in 2NF + no transitive dependency.
+BCNF: Stronger version of 3NF (every determinant must be a candidate key).
+
+6. What is denormalization and when to use it?
+
+Denormalization → Adding redundancy to improve query performance.
+Used in reporting systems, OLAP, data warehousing, where read speed is more important than write/update efficiency.
+
+7. What are indexes in SQL? Difference between clustered & non-clustered?
+
+Index → Data structure to speed up queries.
+Clustered Index:
+Defines physical order of data (only 1 per table).
+Example: Primary Key by default.
+Non-Clustered Index:
+Separate structure pointing to data.
+Can have multiple per table.
+
+8. Difference between UNION and UNION ALL
+
+UNION: Combines results of two queries, removes duplicates.
+UNION ALL: Combines results of two queries, keeps duplicates (faster).
+
+9. Difference between HAVING and WHERE clause
+
+WHERE: Filters rows before grouping.
+HAVING: Filters rows after grouping (with aggregates).
+
+10. What are views in SQL? What are materialized views?
+
+View: Virtual table based on query, doesn’t store data physically.
+Materialized View: Stores query result physically (faster for large queries but needs refresh).
+
+11. Stored Procedure vs. Function
+
+Stored Procedure:
+Can return multiple values.
+Supports transactions.
+Used for business logic.
+Function:
+Returns a single value.
+Cannot perform transactions.
+Used for calculations.
+
+12. What is a CTE (Common Table Expression)?
+
+A temporary named result set defined within a query using WITH.
+Improves readability and allows recursion.
+WITH EmployeeCTE AS (
+   SELECT emp_id, salary FROM Employees WHERE salary > 50000
+)
+SELECT * FROM EmployeeCTE;
+
+13. Difference between correlated subquery and non-correlated subquery
+
+Non-Correlated: Independent of outer query. Runs once.
+Correlated: Depends on outer query. Runs for each row.
+
+14. What is a transaction in SQL? Explain ACID properties.
+
+Transaction = Group of operations performed as a single unit.
+
+ACID:
+Atomicity → All or nothing.
+Consistency → Database remains valid.
+Isolation → Transactions don’t affect each other.
+Durability → Once committed, data is permanent.
+
+15. What are SQL constraints?
+
+Rules applied on columns to enforce integrity.
+Examples:
+NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK, DEFAULT.
+
+16. Difference between OLTP and OLAP
+
+OLTP (Online Transaction Processing)
+Handles day-to-day transactions.
+Normalized schema, many small queries.
+Example: Banking system.
+OLAP (Online Analytical Processing)
+Handles analysis/reporting.
+Denormalized schema, few large queries.
+Example: Data warehouse.
+
+17. What is sharding and partitioning in databases?
+
+Partitioning: Splitting data into smaller parts in the same DB (range, list, hash).
+Sharding: Splitting data across multiple servers/databases (horizontal scaling).
+
+18. What is deadlock in SQL and how to resolve it?
+
+Deadlock: When two transactions hold locks and wait for each other.
+Resolution:
+Use consistent locking order.
+Keep transactions short.
+Use WITH (NOLOCK) where safe.
+Database engine often kills one transaction.
+
+19. Difference between CHAR and VARCHAR
+
+CHAR(n): Fixed length. Pads with spaces. Faster but wastes memory.
+VARCHAR(n): Variable length. Stores exact size. Saves space but slightly slower.
+
+20. Difference between EXISTS and IN
+
+IN: Compares a value with a list. Executes once.
+EXISTS: Returns true if subquery returns rows. Stops checking once a match is found (better for large datasets).
+
+
+1. Find the second highest salary from Employee table
+SELECT MAX(salary) AS SecondHighestSalary
+FROM Employees
+WHERE salary < (SELECT MAX(salary) FROM Employees);
+
+2. Retrieve employees who earn more than their manager
+SELECT e.emp_id, e.emp_name, e.salary, m.emp_name AS manager_name
+FROM Employees e
+JOIN Employees m ON e.manager_id = m.emp_id
+WHERE e.salary > m.salary;
+
+3. Find duplicate records in a table
+SELECT emp_name, COUNT(*) AS count
+FROM Employees
+GROUP BY emp_name
+HAVING COUNT(*) > 1;
+
+4. Find Nth highest salary (Example: 3rd highest)
+SELECT DISTINCT salary
+FROM Employees e1
+WHERE 3 = (
+   SELECT COUNT(DISTINCT salary)
+   FROM Employees e2
+   WHERE e2.salary >= e1.salary
+);
+
+5. Retrieve department with maximum employees
+SELECT department_id, COUNT(*) AS total_employees
+FROM Employees
+GROUP BY department_id
+ORDER BY total_employees DESC
+LIMIT 1;
+
+6. Write a query to find all employees who joined in the year 2023
+SELECT *
+FROM Employees
+WHERE YEAR(joining_date) = 2023;
+
+7. Display customers who never placed an order
+SELECT c.customer_id, c.customer_name
+FROM Customers c
+LEFT JOIN Orders o ON c.customer_id = o.customer_id
+WHERE o.customer_id IS NULL;
+
+8. Write a query to fetch top 5 highest-paid employees
+SELECT *
+FROM Employees
+ORDER BY salary DESC
+LIMIT 5;
+
+9. Find the average salary of each department
+SELECT department_id, AVG(salary) AS avg_salary
+FROM Employees
+GROUP BY department_id;
+
+10. Write a query to find employees whose names start with 'A'
+SELECT *
+FROM Employees
+WHERE emp_name LIKE 'A%';

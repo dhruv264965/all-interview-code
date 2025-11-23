@@ -1,0 +1,60 @@
+✅ What is Cache in Spring Boot?
+Cache in Spring Boot is a mechanism to store method results temporarily so that repeated calls with the same
+parameters do not invoke the actual method again. This improves performance and reduces database or service load.
+
+Spring Boot provides caching abstraction over various caching providers like:
+EhCache
+Caffeine
+Redis
+Simple in-memory cache (ConcurrentHashMap-based)
+
+We’ll use a dummy product service where:
+@Cacheable caches product fetch.
+@CachePut updates product and cache.
+@CacheEvict removes from cache.
+@Caching combines multiple behaviors.
+
+@Service
+public class ProductService {
+
+    private Map<Integer, Product> fakeDB = new HashMap<>();
+
+    // Initialize dummy DB
+    public ProductService() {
+        fakeDB.put(1, new Product(1, "Laptop"));
+        fakeDB.put(2, new Product(2, "Phone"));
+    }
+
+    // ✅ @Cacheable: Cache the method result
+    @Cacheable(value = "products", key = "#id")
+    public Product getProductById(int id) {
+        System.out.println("Fetching from DB for ID: " + id);
+        return fakeDB.get(id);
+    }
+
+    // ✅ @CachePut: Always update cache and DB
+    @CachePut(value = "products", key = "#product.id")
+    public Product updateProduct(Product product) {
+        System.out.println("Updating DB and Cache for ID: " + product.getId());
+        fakeDB.put(product.getId(), product);
+        return product;
+    }
+
+    // ✅ @CacheEvict: Remove entry from cache
+    @CacheEvict(value = "products", key = "#id")
+    public void deleteProduct(int id) {
+        System.out.println("Deleting product from DB and cache");
+        fakeDB.remove(id);
+    }
+
+    // ✅ @Caching: Combine multiple annotations
+    @Caching(
+        put = { @CachePut(value = "products", key = "#product.id") },
+        evict = { @CacheEvict(value = "products", key = "'allProducts'") }
+    )
+    public Product createProduct(Product product) {
+        System.out.println("Creating new product and updating caches");
+        fakeDB.put(product.getId(), product);
+        return product;
+    }
+}

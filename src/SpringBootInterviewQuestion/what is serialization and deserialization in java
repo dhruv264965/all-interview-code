@@ -1,0 +1,24 @@
+Serialization in Java is the process of converting an object into a byte stream. This byte stream can
+be stored in a file, database, or transmitted over a network. The primary purpose of serialization is
+to save the state of an object so that it can be recreated later.
+Deserialization, on the other hand, is the reverse process of converting a byte stream back into a Java
+object. This allows the object to be restored to its original state, enabling its use in the application.
+
+Key Points:
+Purpose:
+Serialization enables the persistence of an object's state, while deserialization reconstructs the
+object from its serialized form.
+Use Cases:
+Serialization is used for saving objects to files, sending objects over networks, and storing objects
+in databases.
+Serialization Interface:
+To serialize an object, the class must implement the java.io.Serializable interface.
+serialVersionUID:
+It's good practice to define a serialVersionUID in classes that implement Serializable. This ensures
+compatibility when deserializing objects if the class structure changes.
+Transient Fields:
+Fields marked as transient are not serialized, so they are not saved or restored during deserialization.
+Constructors:
+The constructor of the object is not called during deserialization.
+In summary, serialization and deserialization enable the transportation and storage of Java objects while
+ preserving their state and structure.

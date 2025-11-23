@@ -1,0 +1,6 @@
+2. Aggregation
+Definition: A specialized form of association where one object is part of another, but they have independent lifecycles.
+Key Features:
+Represents a HAS-A relationship.
+The contained object can exist independently of the container.
+The container holds references to the contained objects.

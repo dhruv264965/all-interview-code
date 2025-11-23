@@ -1,0 +1,22 @@
+1. equals Method
+The equals method is used to compare the logical equality of two objects. By default, the implementation of equals in
+the Object class compares object references (i.e., checks if both references point to the same object in memory).
+
+Why override? If you want to compare the actual content of two objects (e.g., two Person objects with the same name
+ and age), you need to override the equals method.
+
+ 2. hashCode Method
+ The hashCode method is used in hash-based collections like HashMap, HashSet, and HashTable to determine the bucket location of the object.
+
+ Why override? If you override equals, you must also override hashCode to maintain the general contract between the two methods:
+
+ The Contract:
+
+ If two objects are equal according to the equals method, they must have the same hashCode.
+ If two objects are not equal according to the equals method, they can have different hashCode values (though it's not mandatory).
+
+ What happens if you don't override both?
+ Only overriding equals without hashCode:
+
+ Objects may not work correctly in hash-based collections. For instance, two logically equal objects may end up in
+ different buckets because their default hashCode values (from the Object class) are different.

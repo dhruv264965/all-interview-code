@@ -1,0 +1,54 @@
+By default, TreeMap is not synchronized, meaning:
+Multiple threads can access and modify it simultaneously.
+This can cause race conditions, data inconsistency, or even exceptions like ConcurrentModificationException.
+
+🔍 Technical Reason:
+TreeMap uses a Red-Black Tree internally.
+
+If one thread modifies the structure while another reads or writes without synchronization, the tree can
+become corrupted.
+
+✅ How to make TreeMap thread-safe?
+✅ 1. Use Collections.synchronizedSortedMap()
+Wrap your TreeMap using the synchronized wrapper:
+import java.util.*;
+
+public class SynchronizedTreeMap {
+    public static void main(String[] args) {
+        SortedMap<Integer, String> treeMap = new TreeMap<>();
+        SortedMap<Integer, String> syncMap = Collections.synchronizedSortedMap(treeMap);
+
+        syncMap.put(1, "A");
+        syncMap.put(2, "B");
+
+        synchronized (syncMap) {
+            for (Map.Entry<Integer, String> entry : syncMap.entrySet()) {
+                System.out.println(entry.getKey() + " => " + entry.getValue());
+            }
+        }
+    }
+}
+
+✅ 2. Use ConcurrentSkipListMap (Preferred Alternative)
+If you want concurrent access without explicit synchronization, use:
+import java.util.concurrent.ConcurrentSkipListMap;
+
+public class ConcurrentMapExample {
+    public static void main(String[] args) {
+        ConcurrentSkipListMap<Integer, String> map = new ConcurrentSkipListMap<>();
+        map.put(1, "Apple");
+        map.put(2, "Banana");
+
+        map.forEach((k, v) -> System.out.println(k + " -> " + v));
+    }
+}
+It is thread-safe.
+Maintains sorted order, just like TreeMap.
+Supports high-performance concurrent operations.
+
+| Approach                      | Thread-Safe | Sorted | Concurrent         |
+| ----------------------------- | ----------- | ------ | ------------------ |
+| `TreeMap`                     | ❌           | ✅      | ❌                  |
+| `Collections.synchronizedMap` | ✅           | ✅      | ❌ (blocks all ops) |
+| `ConcurrentSkipListMap`       | ✅           | ✅      | ✅ (non-blocking)   |
+

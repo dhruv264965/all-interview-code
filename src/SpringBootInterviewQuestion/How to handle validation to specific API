@@ -1,0 +1,95 @@
+Question-supoose in microservics project if we want validation in some of the api for example we want to email verification
+ for get and post api but we dont want for delete api ..how we can do valdation
+
+ ✅ Approach: Use Spring Interceptor or Custom Annotation + AOP
+ ✅ Option 1: Spring HandlerInterceptor
+ Use HandlerInterceptor to conditionally check for email verification.
+
+ 1. Create Interceptor
+
+ @Component
+ public class EmailVerificationInterceptor implements HandlerInterceptor {
+
+     @Override
+     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+         String method = request.getMethod();
+
+         // Only apply for GET and POST
+         if ("GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method)) {
+             String emailVerified = request.getHeader("X-Email-Verified"); // Or from JWT/session/db
+
+             if (!"true".equalsIgnoreCase(emailVerified)) {
+                 response.setStatus(HttpStatus.FORBIDDEN.value());
+                 response.getWriter().write("Email not verified.");
+                 return false;
+             }
+         }
+         return true; // allow the request
+     }
+ }
+ 2. Register the Interceptor
+ java
+ Copy
+ Edit
+ @Configuration
+ public class WebConfig implements WebMvcConfigurer {
+
+     @Autowired
+     private EmailVerificationInterceptor emailVerificationInterceptor;
+
+     @Override
+     public void addInterceptors(InterceptorRegistry registry) {
+         registry.addInterceptor(emailVerificationInterceptor)
+                 .addPathPatterns("/**"); // or specific patterns
+     }
+ }
+ ✅ Option 2: Custom Annotation + AOP (Better control)
+ 1. Create Custom Annotation
+
+ @Target({ElementType.METHOD})
+ @Retention(RetentionPolicy.RUNTIME)
+ public @interface RequireEmailVerified {
+ }
+ 2. Apply it to methods
+ java
+ Copy
+ Edit
+ @GetMapping("/user")
+ @RequireEmailVerified
+ public ResponseEntity<String> getUser() {
+     return ResponseEntity.ok("User details");
+ }
+
+ @PostMapping("/user")
+ @RequireEmailVerified
+ public ResponseEntity<String> createUser() {
+     return ResponseEntity.ok("User created");
+ }
+
+ @DeleteMapping("/user")
+ public ResponseEntity<String> deleteUser() {
+     return ResponseEntity.ok("User deleted"); // No annotation = no validation
+ }
+ 3. Create AOP Aspect for Validation
+ java
+ Copy
+ Edit
+ @Aspect
+ @Component
+ public class EmailVerificationAspect {
+
+     @Before("@annotation(RequireEmailVerified)")
+     public void checkEmailVerified(JoinPoint joinPoint) {
+         // Example: Get email verification info from header, token, DB, etc.
+         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+         String emailVerified = attributes.getRequest().getHeader("X-Email-Verified");
+
+         if (!"true".equalsIgnoreCase(emailVerified)) {
+             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Email not verified.");
+         }
+     }
+ }
+ ✅ Summary
+ Method	Flexibility	Recommended when
+ Interceptor	Basic	Method-based checks (GET/POST)
+ Custom Annotation + AOP	High	Per-method validation logic

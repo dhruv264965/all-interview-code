@@ -1,0 +1,104 @@
+*Multithreading -->is a Java feature that allows concurrent execution of two or more parts of a program for maximum utilization of CPU.
+Each part of such program is called a thread. So, threads are light-weight processes within a process.
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Thread Class vs Runnable Interface -->
+*If we extend the Thread class, our class cannot extend any other class because Java doesn’t support multiple inheritance. But,
+if we implement the Runnable interface, our class can still extend other base classes.
+*We can achieve basic functionality of a thread by extending Thread class because it provides some inbuilt methods like yield(),
+interrupt() etc. that are not available in Runnable interface.
+*Using runnable will give you an object that can be shared amongst multiple threads.
+*            Thread                                  |            Runnable
+->Thread is a class. It is used to create a thread   |->Runnable is a functional interface which is used to create a thread (task/work)
+-> It has multiple methods including start() and     |->It has only abstract method run()
+    run().                                           |
+->Each thread creates a unique object and gets       |-> Multiple threads share the same objects
+  associated with it.                                |
+-> More memory required                              |->Less memory required
+->Multiple Inheritance is not allowed in java        |->  If a class is implementing the runnable
+  hence after a class extends Thread class, it       |     interface then your class can extend another
+  can not extend any other class                     |    class
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Difference between Thread.start() and Thread.run() in Java-->
+*New Thread creation: When a program calls the start() method, a new thread is created and then the run() method is executed. But
+                      if we directly call the run() method then no new thread will be created and run() method will be executed as
+                      a normal method call on the current calling thread itself and no multi-threading will take place.
+*start()-Can’t be invoked more than one time otherwise throws java.lang.IllegalStateException.
+ run()-Multiple invocation is possible
+*start()-Defined in java.lang.Thread class.
+
+ run()-Defined in java.lang.Runnable interface and must be overridden in the implementing class.
+
+ start() is used to start a new thread and call the thread’s run() method in a separate call stack (a new thread).
+
+ run() is just a normal method — if you call it directly, it will execute on the current thread, not on a new one.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Excuator Framework- (Thread Pools)->
+A framework having a bunch of components that are used for managing worker threads efficiently is referred to as Executor Framework.
+The Executor API reduces the execution of the task from the actual task to be executed through the Executors.
+we have to create a thread pool for executing the task by submitting that task to that thread pool.
+* shutdown() - when shutdown() method is called on an executor service, it stops accepting new tasks, waits for previously
+               submitted tasks to execute, and then terminates the executor
+* shutdownNow() - this method interrupts the running task and shuts down the executor immediately.
+*The java.util.concurrent.Executors provide factory methods that are being used to create ThreadPools of worker threads.
+   Thread pools overcome this issue by keeping the threads alive and reusing the threads. Any excess tasks flowing in, that the
+   threads in the pool can’t handle are held in a Queue. Once any of the threads get free, they pick up the next task from this queue.
+   This task queue is essentially unbounded for the out-of-box executors provided by the JDK.
+Some types of Java Executors are listed below:
+1-SingleThreadExecutor-A thread pool of single thread can be obtained by calling the static newSingleThreadExecutor() method of the
+                       Executors class. It is used to execute tasks sequentially.
+                       ExecutorService executor = Executors.newSingleThreadExecutor();
+2-FixedThreadPool(n)-As the name indicates, it is a thread pool of a fixed number of threads. The tasks submitted to the executor
+                 are executed by the n threads and if there is more task they are stored on a LinkedBlockingQueue. It uses Blocking Queue.
+                 ExecutorService fixedPool = Executors.newFixedThreadPool(2);
+3-CachedThreadPool-Creates a thread pool that creates new threads as needed, but will reuse previously constructed threads when
+              they are available. Calls to execute will reuse previously constructed threads if available. If no existing thread is available, a
+               new thread will be created and added to the pool. It uses a SynchronousQueue queue.
+               ExecutorService executorService = Executors.newCachedThreadPool();
+4-ScheduledExecutor-Scheduled executors are based on the interface ScheduledExecutorService which extends the ExecutorService
+        interface. This executor is used when we have a task that needs to be run at regular intervals or if we wish to delay a certain task.
+        ScheduledExecutorService scheduledExecService = Executors.newScheduledThreadPool(1);
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+Volatile-1->Is a field modifier keyword that allows threads to read from the shared memory.
+         2->Is applicable to variables only
+         3->t reads from the shared memory and not the cache memory.
+         4->Performance is relatively higher than synchronised functionality.
+         5->Solves the ‘visibility’ problem. and Any thread cannot be blocked for waiting.
+
+synchronized-1->Is a method that allows only one thread to access a shared resource at a time.
+             2->Is only applicable to block or methods
+             3->It reads from the cache memory.
+             4->Performance is relatively lower than volatile due to ‘one thread at a time accessibility.
+             5->Solves the ‘synchronization’ problem. and Threads can be blocked for waiting.
+When to Use volatile Keyword?
+1-Using the volatile keyword is important in scenarios where multiple threads are accessing shared variables. Without volatile,
+there can be issues with memory visibility and reordering.
+2-In such cases, the values written by one thread may not be immediately visible to other threads, leading to incorrect or unexpected
+results.
+3-By declaring a variable as volatile, we ensure that updates to that variable are immediately visible to other threads. It prevents
+the processor and compiler from reordering instructions involving the volatile variable, maintaining the intended program order.
+------------------------------------------------------------------------------------------------------------------------------------------------
+1. Race Condition
+A race condition happens when two or more processes try to access the same resource at the same time without proper coordination.
+This “race” can lead to incorrect results or unpredictable behavior because the order of execution is not controlled.
+Example: Two people trying to edit the same document at the same time, causing one’s changes to overwrite the other’s.
+2. Deadlock
+A deadlock occurs when two or more processes are waiting for each other to release resources, and none can proceed.
+It’s like a standstill where each process is holding a resource the other needs, leading to a complete freeze.
+Example: Two cars stuck in a narrow road from opposite directions, each refusing to move back and waiting for the other.
+3. Thread Block
+Thread blocking happens when a thread is unable to continue its work because it’s waiting for a resource that’s currently
+ unavailable. It pauses until the resource is free.
+Example: A cashier waiting for the customer ahead to finish paying before attending to the next person in line.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Callable- Java offers two ways for creating a thread, i.e., by extending the Thread class and by creating a thread with a Runnable. There is
+a drawback of creating a thread with the Runnable interface, i.e., we cannot make a thread return result when it terminates, i.e.,
+ when the run() completes. In order to overcome this drawback, Java provides the Callable interface.
+
+These are the two main differences between the Callable and Runnable methods:
+The run() method is used for implementing the Runnable, whereas the call() method is used for implementing the Callable. The run() method doesn't return anything, whereas the call() method returns a result of completion.
+The call() method can throw an exception, whereas the run() method cannot.
+Future-Future is used for storing a result received from a different thread, whereas Callable is the same as Runnable in that it
+encapsulates a task that is meant to be run on another thread.

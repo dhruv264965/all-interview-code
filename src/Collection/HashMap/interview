@@ -1,0 +1,245 @@
+
+Q->suppose we have employee class and we want to use that class as a key in hashmap so what chhanges is requried ?
+answer->To use an Employee class as a key in a HashMap, you need to ensure that the Employee class provides proper
+           implementations of the hashCode() and equals() methods. This is because HashMap uses these methods
+           internally to manage and retrieve key-value pairs efficiently.
+
+           equals():
+
+           Checks if the current object is the same as the passed object (this == obj).
+           Ensures the passed object is not null and belongs to the Employee class.
+           Compares meaningful fields (id and name) for equality.
+           hashCode():
+
+           Uses Objects.hash() to generate a consistent hash code based on the same fields used in equals().
+
+           import java.util.Objects;
+
+           public class Employee {
+               private int id;
+               private String name;
+
+               // Constructor
+               public Employee(int id, String name) {
+                   this.id = id;
+                   this.name = name;
+               }
+
+               // Getters and Setters
+               public int getId() {
+                   return id;
+               }
+
+               public void setId(int id) {
+                   this.id = id;
+               }
+
+               public String getName() {
+                   return name;
+               }
+
+               public void setName(String name) {
+                   this.name = name;
+               }
+
+               // Override equals
+               @Override
+               public boolean equals(Object obj) {
+                   if (this == obj) return true;
+                   if (obj == null || getClass() != obj.getClass()) return false;
+                   Employee employee = (Employee) obj;
+                   return id == employee.id && Objects.equals(name, employee.name);
+               }
+
+               // Override hashCode
+               @Override
+               public int hashCode() {
+                   return Objects.hash(id, name);
+               }
+
+               @Override
+               public String toString() {
+                   return "Employee{id=" + id + ", name='" + name + "'}";
+               }
+           }
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Main {
+    public static void main(String[] args) {
+        Map<Employee, String> employeeMap = new HashMap<>();
+
+        Employee e1 = new Employee(1, "Alice");
+        Employee e2 = new Employee(2, "Bob");
+        Employee e3 = new Employee(1, "Alice"); // Same as e1 based on id and name
+
+        employeeMap.put(e1, "Manager");
+        employeeMap.put(e2, "Developer");
+
+        // Retrieve values
+        System.out.println("e1 Role: " + employeeMap.get(e1)); // Manager
+        System.out.println("e3 Role: " + employeeMap.get(e3)); // Manager
+    }
+}
+
+
+problem- 2. Fields used in equals() and hashCode() are mutable
+         If the fields that determine equality (e.g., id or name) are modified after the object is used as a key in the HashMap, it can break the contract of the HashMap. As a result, the key becomes inaccessible.
+         Example Problem:
+         Employee e1 = new Employee(1, "Alice");
+         employeeMap.put(e1, "Manager");
+
+         // Modify the key fields
+         e1.setName("Alice Changed");
+
+         // Now the key is "lost"
+         System.out.println(employeeMap.get(e1)); // null
+Solution:
+Avoid modifying fields used in equals() and hashCode() after the object is added to the HashMap.
+Alternatively, use immutable fields (e.g., mark them as final).
+
+
+3. Different Employee instances with identical values
+If two Employee objects have the same values but hashCode() and equals() are not overridden, they will be treated
+as different keys because Object's default implementation uses memory addresses for equality and hash code.
+Example Problem:
+Employee e1 = new Employee(1, "Alice");
+Employee e3 = new Employee(1, "Alice"); // Same content, different instances
+
+employeeMap.put(e1, "Manager");
+System.out.println(employeeMap.get(e3)); // null (if hashCode() and equals() are not overridden)
+Solution:
+Override hashCode() and equals() as shown earlier. When overridden, e1.equals(e3) will return true, and employeeMap.get(e3) will work as expected.
+
+
+Interview Questions-
+1. General HashMap Behavior
+Q1: What happens if two keys in a HashMap have the same hashCode() but are not equal?
+
+Answer: The HashMap will store both keys in the same bucket (collision handling), but they will be distinguishable
+by their equals() method. Retrieval will still work correctly.
+Q2: What happens if you override hashCode() but not equals()?
+
+Answer: The HashMap might fail to retrieve an object, as the contract between hashCode() and equals() would be
+violated. Two objects with the same hashCode() might not be considered equal.
+Q3: What happens if the hashCode() of a key changes after it is inserted into the HashMap?
+
+Answer: The HashMap will not be able to find the key, as it uses the original hashCode() to determine the bucket
+where the key is stored.
+2. Practical Scenarios
+Q4: Write a custom Employee class where only the id field determines equality and hash code. How would this impact
+the behavior of HashMap?
+
+Follow-up: Add a name field and ask how it can impact the design.
+Answer: Implementing equals() and hashCode() based on id ensures that two employees with the same id are treated
+as equal, regardless of their name. However, if name changes dynamically and needs to be considered, the
+implementation must account for mutability.
+Q5: How would you prevent users from modifying fields used in equals() and hashCode() once an object is used as
+a key in a HashMap?
+
+Answer: Make those fields final or encapsulate them with immutable types.
+3. Performance Considerations
+Q6: What is the impact of poorly implemented hashCode() methods in a HashMap?
+
+Answer: Poorly implemented hashCode() (e.g., always returning the same value) can lead to frequent collisions,
+causing all entries to go into the same bucket. This degrades HashMap performance from O(1) to O(n) for lookups.
+Q7: What are the advantages of using Objects.hash() for hashCode() implementation?
+
+Answer: Objects.hash() provides a simple and efficient way to compute hash codes for multiple fields while
+ensuring consistency and reducing boilerplate code.
+4. Conceptual Questions
+Q8: Can an object be used as a key in a HashMap if hashCode() and equals() are not overridden?
+
+Answer: Yes, but it will use the default implementations from Object, where hashCode() is based on memory
+ address, and equals() compares references. This may lead to unintended behavior when comparing logically equal objects.
+Q9: Why is it recommended to override both hashCode() and equals() when creating custom keys for HashMap?
+
+Answer: To fulfill the contract that equal objects must have the same hash code, ensuring consistent
+behavior for lookups and storage.
+5. Comparison with Other Collections
+Q10: What is the difference between using an Employee as a key in a HashMap versus in a TreeMap?
+
+Answer:
+HashMap relies on hashCode() and equals() for key comparison.
+TreeMap relies on the natural ordering of keys (via Comparable) or a custom Comparator.
+Q11: Can you use an Employee object as a key in a HashMap and also in a TreeMap simultaneously?
+
+Answer: Yes, but you must implement both Comparable (or provide a Comparator) and correctly override hashCode() and equals() for consistent behavior.
+6. Serialization and HashMaps
+Q12: What happens if you serialize and deserialize a HashMap with custom objects as keys?
+Answer: The Employee class must implement Serializable, and care must be taken that the hashCode() and equals() behavior remains consistent after deserialization.
+7. Advanced Topics
+Q13: Can a HashMap work correctly with a null key?
+
+Answer: Yes, HashMap allows one null key. It always maps the null key to the first bucket.
+Q14: How would you design a HashMap-like data structure where multiple keys can be treated as equal based on specific business logic?
+
+Answer: Implement a custom Key class with a tailored hashCode() and equals() method. Alternatively, consider a MultiKeyMap from libraries like Apache Commons.
+8. Coding Challenge
+Q15: Write a program that counts the number of Employee objects in a List based on unique id.
+Expected Answer: Use a HashMap<Employee, Integer> or a Set<Employee> to track unique employees based on the
+overridden equals() and hashCode() methods.
+import java.util.*;
+
+class Employee {
+    private int id;
+    private String name;
+
+    // Constructor
+    public Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    // Override equals to compare based on id
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Employee employee = (Employee) obj;
+        return id == employee.id;
+    }
+
+    // Override hashCode to generate hash based on id
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{id=" + id + ", name='" + name + "'}";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Create a list of employees
+        List<Employee> employees = Arrays.asList(
+            new Employee(1, "Alice"),
+            new Employee(2, "Bob"),
+            new Employee(3, "Charlie"),
+            new Employee(1, "Alice"), // Duplicate id
+            new Employee(2, "Bob"),   // Duplicate id
+            new Employee(4, "Diana")
+        );
+
+        // Use a HashSet to store unique employees by id
+        Set<Employee> uniqueEmployees = new HashSet<>(employees);
+
+        // Print the unique employees and their count
+        System.out.println("Unique Employees: " + uniqueEmployees);
+        System.out.println("Number of Unique Employees: " + uniqueEmployees.size());
+    }
+}

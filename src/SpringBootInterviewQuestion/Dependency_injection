@@ -1,0 +1,58 @@
+Dependency Injection (DI) is a fundamental concept in Spring Boot and other frameworks of the Spring ecosystem.
+It is a design pattern that allows the developer to achieve loose coupling between components by injecting
+dependencies into a class rather than creating them internally.
+Inversion of Control (IoC): The control of creating and managing dependencies is transferred to the Spring IoC
+container.
+Loose Coupling: Classes are less dependent on each other because dependencies are managed externally.
+Configurable Components: Dependencies can be injected dynamically, making it easier to configure and manage
+components.
+Constructor based DI->
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ServiceA {
+    private final ServiceB serviceB;
+
+    // Constructor-based injection
+    @Autowired
+    public ServiceA(ServiceB serviceB) {
+        this.serviceB = serviceB;
+    }
+
+    public void execute() {
+        serviceB.performTask();
+    }
+}
+
+@Component
+public class ServiceB {
+    public void performTask() {
+        System.out.println("Task executed by ServiceB.");
+    }
+}
+
+setter based-
+@Component
+public class ServiceA {
+    private ServiceB serviceB;
+
+    @Autowired
+    public void setServiceB(ServiceB serviceB) {
+        this.serviceB = serviceB;
+    }
+
+    public void doSomething() {
+        serviceB.performTask();
+    }
+}
+field based-
+@Component
+public class ServiceA {
+    @Autowired
+    private ServiceB serviceB;
+
+    public void doSomething() {
+        serviceB.performTask();
+    }
+}

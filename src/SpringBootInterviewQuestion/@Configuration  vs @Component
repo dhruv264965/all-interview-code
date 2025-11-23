@@ -1,0 +1,33 @@
+“Both @Configuration and @Component mark a class as a Spring bean, but they serve different purposes.
+@Configuration is specifically for defining beans using @Bean methods. Internally, Spring enhances it using CGLIB proxies
+ so that method calls return Spring-managed singletons.
+ @Component, on the other hand, simply registers the class as a bean without proxying. If you define methods that
+  create objects inside a @Component, they won’t be managed by Spring unless explicitly annotated with
+   @Bean inside a @Configuration.”
+
+   🔹 4. Example Difference
+
+   👉 Using @Configuration:
+
+   @Configuration
+   public class AppConfig {
+       @Bean
+       public B b() { return new B(); }
+
+       @Bean
+       public A a() { return new A(b()); } // returns same B bean
+   }
+
+
+   👉 Using @Component:
+
+   @Component
+   public class AppConfig {
+       public B b() { return new B(); }
+       public A a() { return new A(b()); } // creates new B each time
+   }
+
+
+   With @Configuration, singleton B is reused.
+
+   With @Component, new B() will be created every time a() calls b() (not managed by container).

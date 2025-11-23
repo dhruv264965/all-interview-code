@@ -1,0 +1,28 @@
+*One object is used as a key (index) to another object (value). If you try to insert the duplicate key in HashMap,
+ it will
+replace the element of the corresponding key.
+*Java HashMap is similar to HashTable, but it is unsynchronized. It allows to store the null keys as well, but
+ there should be only one
+ null key object and there can be any number of null values. This class makes no guarantees as to the order of
+ the map. To use this
+ class and its methods, you need to import java.util.HashMap package or its superclass.
+* Allows duplicates: HashMaps allow for duplicate values, but not duplicate keys. If a duplicate key is added, the previous value
+ associated with the key is overwritten.
+*Not ordered: HashMaps are not ordered, which means that the order in which elements are added to the map is not preserved.
+ However, "LinkedHashMap" is a variation of HashMap that preserves the insertion order.
+*Thread-unsafe: HashMaps are not thread-safe, which means that if multiple threads access the same hashmap simultaneously, it can lead
+to data inconsistencies. If thread safety is required, "ConcurrentHashMap" can be used.
+
+Advantages of Java HashMap
+Fast retrieval: HashMaps provide constant time access to elements, which means that retrieval and insertion of elements is very fast.
+Efficient storage: HashMaps use a hashing function to map keys to indices in an array. This allows for quick lookup of values based on keys, and efficient storage of data.
+Flexibility: HashMaps allow for null keys and values, and can store key-value pairs of any data type.
+Easy to use: HashMaps have a simple interface and can be easily implemented in Java.
+Suitable for large data sets: HashMaps can handle large data sets without slowing down.
+
+Disadvantages of Java HashMap
+Unordered: HashMaps are not ordered, which means that the order in which elements are added to the map is not preserved.
+Not thread-safe: HashMaps are not thread-safe, which means that if multiple threads access the same hashmap simultaneously, it can lead to data inconsistencies.
+Performance can degrade: In some cases, if the hashing function is not properly implemented or if the load factor is too high, the performance of a HashMap can degrade.
+More complex than arrays or lists: HashMaps can be more complex to understand and use than simple arrays or lists, especially for beginners.
+Higher memory usage: Since HashMaps use an underlying array, they can use more memory than other data structures like arrays or lists. This can be a disadvantage if memory usage is a concern.

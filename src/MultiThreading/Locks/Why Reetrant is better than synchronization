@@ -1,0 +1,36 @@
+👇 Problem with synchronized:
+
+With synchronized, if a thread tries to enter a synchronized block already locked by another thread,
+it will block indefinitely — it just keeps waiting.
+⚠️ This can lead to:
+Deadlocks
+Starvation
+
+With synchronized:
+Example- public synchronized void bookTicket() {
+             // if another thread is inside, current thread waits forever
+         }
+hame back nh ja skte .. No way to back off, log, or handle gracefully
+
+With tryLock():
+Example-
+
+ReentrantLock lock = new ReentrantLock();
+public void bookTicket() {
+    if (lock.tryLock()) {
+        try {
+            // Lock acquired, proceed
+            System.out.println("Ticket booked by " + Thread.currentThread().getName());
+        } finally {
+            lock.unlock();
+        }
+    } else {
+        // Couldn't acquire lock, skip or log
+        System.out.println("Failed to book. Try again later: " + Thread.currentThread().getName());
+    }
+}
+now yaha hum back ja sakte hai-  Now, your thread won’t block forever — you can recover, skip, or retry later.
+-------------------------------------------------------------------------------
+In synchronized hum time set nh kar sakte if thread aquire lock we have to wait because of this deadlock occur .
+ but in ReentrantLock ham time set kar sakte hai. we can skip the lock
+

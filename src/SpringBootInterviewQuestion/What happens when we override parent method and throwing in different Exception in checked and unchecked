@@ -1,0 +1,131 @@
+For Checked Exception - IO , fileNotFound , SQL
+
+Senario-> if parent have some exception like IO exception here if we override in child and child throwing FileNotFound
+           does program compile - YES
+          reason-becaz parent have IO exception and child have filenotfound . In IO exception is parent it means filenotfound
+          extending Io exception  that by it is not showing error becaz fileNotFound is child of IO.
+          so it will complile . beacause parent- IO  child- fileNotFound
+
+Example-  class Parenttt{
+
+     /*  if parent have some exception like IO exception here if we override in child and child throwing FileNotFound
+       does program compile- yes
+       becaz parent have IO exception and child have filenotfound . IO exception is parent it means filenotfound extend
+       IO exception so it will complile but vice verssa is not impossile
+       parent-> FileNotFound  , child-> IOException compile->NO     */
+
+
+              public void start() throws IOException{
+                  System.out.println(" Hi i am parent ");
+              }
+          }
+          class childd extends Parenttt{
+              @Override
+              public void start() throws FileNotFoundException {
+                  System.out.println(" Hi i am child ");
+              }
+          }
+          public class InheritanceDemo {
+              public static void main(String[] args) throws Exception {
+                  childd c=new childd();
+                  c.start();   // output   Hi i am child
+              }
+
+-----------------------------------------------------------------------------------------------------------
+Senario-> if parent have some exception like FileNotFound exception here if we override in child and child throwing IO
+           does program compile - NO
+        reason- becz here in parent class FileNotFound and child class IO . compile time error fileNotFound not extend IO
+           check above example and figure out
+           parent-> FileNotFound  , child-> IOException compile->NO
+
+-----------------------------------------------------------------------------------------------------------------
+Senario-> if parent have some exception like IO exception here if we override in child and child throwing SQL
+                     does program compile- NO
+         if parent have some exception like SQL exception here if we override in child and child throwing IO
+                    does program compile- NO
+           reason- Both are checked exeption and standalone exception not extending anyone . But fileNotFound extending IO
+                   that by it compile
+    Example-import java.io.*;
+            import java.sql.*;
+
+            class Parent {
+                public void read() throws IOException {
+                    System.out.println("Parent read");
+                }
+            }
+
+            class Child extends Parent {
+                @Override
+                public void read() throws SQLException { // ❌ Compile-time error
+                    System.out.println("Child read");
+                }
+            }
+
+
+---------------------------------------------------------------------------------------------------------
+Senario-> If the parent method doesn’t throw any checked exception, and the child method tries to throw a checked exception,
+           it will cause a compiler error.
+          does program compile- NO
+          class Parent {
+              public void readFile() {
+                  System.out.println("Parent");
+              }
+          }
+
+          class Child extends Parent {
+              @Override
+              public void readFile() throws IOException { // ❌ compiler error
+                  System.out.println("Child");
+              }
+          }
+------------------------------------------------------------------------------------------------------
+Senario-> parent-IO    , child - Exception , complile- NO
+class Parent {
+    public void readFile() throws IOException {}
+}
+
+class Child extends Parent {
+    @Override
+    public void readFile() throws Exception {} // ❌ Not allowed: Exception is broader than IOException
+}
+
+----------------------------------------------------------------------------------------------------------------
+For UnChecked Exception - NullPointerException,ArrayIndexOutOfBoundsException,ArithmeticException
+ because unchecked exceptions do not affect method signature compatibility.
+Senario->| Case                                                                    | Allowed? | Explanation |
+         | ----------------------------------------------------------------------- | -------- | ----------- |
+         | Parent throws RuntimeException, child throws same                       | ✅        | Allowed     |
+         | Parent throws no exception, child throws RuntimeException               | ✅        | Allowed     |
+         | Parent throws RuntimeException, child throws different RuntimeException | ✅        | Allowed     |
+
+
+✅ Example 1: Parent throws RuntimeException, Child throws NullPointerException (a subclass)
+class Parent {
+    public void process() throws RuntimeException {
+        System.out.println("Parent process");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    public void process() throws NullPointerException {
+        System.out.println("Child process");
+    }
+}
+✅ Compiles and runs fine.
+
+✅ Example 2: Parent throws nothing, Child throws ArithmeticException
+
+class Parent {
+    public void calculate() {
+        System.out.println("Parent calculate");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    public void calculate() throws ArithmeticException {
+        System.out.println("Child calculate");
+    }
+}
+✅ Also compiles and runs fine, because unchecked exceptions do not affect method signature compatibility.

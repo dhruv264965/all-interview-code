@@ -1,0 +1,42 @@
+✅ What is SOAP (Simple Object Access Protocol)?
+A protocol for accessing web services.
+Uses XML format strictly.
+Operates over HTTP, SMTP, etc.
+Strict standards and built-in error handling (WS-Security, WS-ReliableMessaging, etc.)
+
+✅ What is REST (Representational State Transfer)?
+An architecture style, not a protocol.
+Communicates via HTTP verbs (GET, POST, PUT, DELETE).
+Supports multiple data formats (JSON, XML, YAML), but mostly uses JSON.
+Stateless, lightweight, faster
+
+| Feature         | SOAP                           | REST                               |
+| --------------- | ------------------------------ | ---------------------------------- |
+| **Type**        | Protocol                       | Architectural Style                |
+| **Data format** | XML only                       | JSON (preferred), XML, others      |
+| **Speed**       | Slower due to XML              | Faster, lightweight                |
+| **Transport**   | HTTP, SMTP, TCP                | HTTP only                          |
+| **Security**    | WS-Security                    | HTTPS + custom auth                |
+| **State**       | Can be stateful                | Stateless                          |
+| **Complexity**  | More complex (WSDL, envelopes) | Simple and easy to integrate       |
+| **Best for**    | Enterprise-level transactions  | Mobile, public APIs, microservices |
+
+
+🎯 When to Use Which?
+✅ Use SOAP when:
+You need enterprise-grade security (banking, financial).
+You need ACID-compliant transactions (atomicity).
+The client expects strict contract (WSDL).
+
+✅ Use REST when:
+You're building scalable, fast web or mobile apps.
+You want flexible data formats (mostly JSON).
+You're developing microservices or public APIs.
+
+🧠 How to Explain in Interview
+"SOAP is a protocol with strict rules and XML-based messaging, suitable for enterprise applications where high security
+ and standardized communication are crucial. REST is an architectural style that's simpler and faster, ideal for
+ lightweight, stateless APIs — especially in microservices and mobile apps.
+
+For example, if I'm building a weather app for mobile, I'd prefer REST due to its lightweight nature and JSON support.
+ But if I'm integrating with a payment gateway that requires security standards, I might go for SOAP."

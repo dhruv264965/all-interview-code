@@ -1,0 +1,59 @@
+Q->if hashcode generated unique or constant value . what affect in performacnce,
+Anser->1. Poorly Implemented hashCode()
+       A poor hashCode() implementation typically occurs when:
+
+       It always returns the same value (e.g., hashCode() returns a constant).
+       It does not distribute objects uniformly across buckets.
+       Performance Impact:
+       Excessive Collisions: When all objects are hashed to the same bucket, the HashMap or HashSet degenerates into a linked list (or balanced tree in Java 8+ for large buckets), and the time complexity for operations such as get(), put(), and remove() becomes O(n) instead of O(1).
+
+       Reduced Scalability: As the number of elements grows, performance degrades dramatically since all operations must traverse the bucket's list or tree.
+       @Override
+       public int hashCode() {
+           return 1; // Poor implementation, every object hashes to the same bucket
+       }
+2. hashCode() Inconsistent with equals()
+This occurs when equals() considers two objects as equal, but their hashCode() values differ.
+
+Performance Impact:
+Broken Contract: The HashMap or HashSet relies on the invariant that if two objects are equal (equals() returns true), they must have the same hashCode(). If this is violated:
+
+The data structure may place these objects in different buckets.
+Lookup (get()) and removal (remove()) may fail because the hashCode() points to a different bucket than the one where the object was stored.
+Unpredictable Behavior: Even if the data structure appears to work in some cases, the results are unreliable and can lead to debugging nightmares.
+@Override
+public boolean equals(Object obj) {
+    // Equality based on id
+    return obj instanceof Employee && this.id == ((Employee) obj).id;
+}
+
+@Override
+public int hashCode() {
+    // Incorrect: hashCode doesn't depend on id
+    return Objects.hash(name); // Uses name instead
+}
+In this case, two Employee objects with the same id but different name will be stored in separate buckets, breaking retrieval.
+3. Good hashCode() Implementation
+A well-implemented hashCode():
+
+Distributes objects uniformly across buckets to minimize collisions.
+Is consistent with equals().
+Performance Benefits:
+Optimal Bucket Utilization: With fewer collisions, operations such as get(), put(), and remove() maintain an average time complexity of O(1).
+
+Better Scalability: Performance remains stable even as the number of elements grows, ensuring predictable behavior.
+
+Example:@Override
+        public int hashCode() {
+            return Objects.hash(id, name); // Combines meaningful fields
+        }
+This ensures a good distribution of hash values based on both id and name.
+
+Best Practices for hashCode():
+Use the Same Fields as equals(): Ensure hashCode() includes all fields used in equals().
+
+Leverage Objects.hash(): This simplifies the computation of hash codes while maintaining consistency.
+
+Avoid Constant or Simple Hash Codes: E.g., avoid returning a constant or directly returning the id if it leads to a poor distribution.
+
+Immutability: Ensure fields used in equals() and hashCode() are immutable (or do not change after the object is added to a hash-based collection).

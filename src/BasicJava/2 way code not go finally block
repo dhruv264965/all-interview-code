@@ -1,0 +1,26 @@
+1  > 1. JVM is forcibly terminated (e.g., System.exit())
+
+public class Demo {
+    public static void main(String[] args) {
+        try {
+            System.out.println("In try block");
+            System.exit(0); // Forcefully exits JVM->shuts down the JVM instantly — it doesn’t care about your finally block.
+        } finally {
+            System.out.println("In finally block"); // This won't execute
+        }
+    }
+}
+
+2->  2. Thread is killed or JVM crashes due to fatal error (e.g., OutOfMemoryError)
+ public class CrashDemo {
+     public static void main(String[] args) {
+         try {
+             System.out.println("In try block");
+             // Force a fatal error (extremely large array)
+             int[] arr = new int[Integer.MAX_VALUE];
+         } finally {
+             System.out.println("In finally block"); // Might not execute if JVM crashes
+         }
+     }
+ }
+

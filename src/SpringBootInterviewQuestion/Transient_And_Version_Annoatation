@@ -1,0 +1,127 @@
+@Version annotation is used to specify the version number for a specific entity. Version Number provided
+using @Version annotation
+is used to prevent concurrent modification to an entity. When an entity is being updated, the version number
+is also incremented.
+If another transaction tries to update the same entity with the older version number, an exception will be given.
+The version number
+helps to prevent conflicts between concurrent transactions. @Version annotation is used for optimistic locking.
+ Optimistic locking is
+a concurrency control mechanism in which it ensures that concurrent transactions will not conflict with each
+other. If there is a chance
+of conflict during transactions the transaction having an older version number will be aborted
+code- package com.example.java_test_application;
+
+      // on the below line creating an entity
+      // class for the class of Employee.
+      @Entity
+      public class Employee {
+      // on the below line creating an employee id
+      // generated value with the strategy for generation type.
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      private Long empId;
+      private String employeeName;
+      private String employeeQualification;
+
+      // on the below line we are
+      // using version annotation.
+      @Version
+      private int version;
+
+      }
+In the above example, we are considering an Employee entity with a version field annotated with @Version. The version field will be
+used for optimistic locking. Whenever this entity field is being updated sequentially the value of the version is also checked to
+ensure that it matches the current version in the database. If the version has changed, an exception will be thrown, indicating a
+concurrent modification.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+@Transient annotation in Hibernate is used to mark a property or field in an entity class as transient. This means that the field or
+property marked as transient should be excluded when the data persists in the database. Wherever an entity is mapped to a database table,
+ by default all the non-transient fields and properties are persisted. There are certain fields or properties in an entity that should
+ be ignored during the data persistence process such as the data which is being calculated for displaying, temporary variables, and
+ other data which is relevant only within the application logic but is not required in the database. By using the @Transient annotation
+  to that field or a property Hibernate can exclude that field from the persistence process and the corresponding column will not be
+  created in the database table.
+  code-  // on the below line we are creating an entity for the
+         // ProductInfo class.
+         @Entity
+         public class ProductInfo {
+         	// on the below line we are creating a variable for
+         	// product id.
+         	@Id
+         	@GeneratedValue
+         	private Long productID;
+
+         	// on the below line we are creating a string variable
+         	// for product name
+         	private String productName;
+
+         	// on the below line creating a variable for product
+         	// price.
+         	private int productPrice;
+
+         	// on the below line we are creating a variable for
+         	// discounted price and marking it as transient to
+         	// exclude it from data persistence in the database.
+         	@Transient
+         	private int discountPrice = productPrice * 5 / 100;
+         }
+In the above example, we are creating a Product Info entity class which has a field for productID, product name, product price a,d a
+discounted price. We are marking the discounted price property as @Transient because we have to exclude the value of this variable from
+ persisting in the database. We are calculating the value for a discounted price from the product price by using a specific
+ multiplication factor. Marking it with @Transient annotation will exclude this variable from adding it to our database operations.
+
+
+ ---------------------------------------------------------------------------------------------------------------------------------------
+ @OrderBy annotation is used in Hibernate to specify the ordering of the elements in the collection valued property of an entity class.
+  It is used to define the order of the elements which should be displayed. We can order the data within the entity using a specific
+  parameter in ascending or descending order.
+  code- // on the below line we are creating an entity for
+        // department class.
+        @Entity
+        public class Department {
+        	// on the below line we are creating a variable for
+        	// department id.
+        	@Id
+        	@GeneratedValue
+        	private Long departmentID;
+
+        	// on the below line we are creating a string variable
+        	// for department name.
+        	private String departmentName;
+
+        	// on the below line we are creating a variable for
+        	// employees list and ordering it by employee name in
+        	// ascending order.
+        	@OneToMany(mappedBy = "department")
+        	@OrderBy("employeeName ASC")
+        	private List<Employee> employees;
+        }
+
+        // on the below line we are creating an Employee class.
+        @Entity
+        public class Employee {
+        	// on the below line we are creating an employee id
+        	// variable.
+        	@Id
+        	@GeneratedValue
+        	private Long empID;
+
+        	// on the below line we are creating an employee name
+        	// variable.
+        	private String employeeName;
+
+        	// on the below line we are creating a department
+        	// variable and joining it with column using department
+        	// id.
+        	@ManyToOne
+        	@JoinColumn(name = "departmentID")
+        	private Department department;
+        }
+In the above example, the Department entity has a one-to-many relationship with the Employee entity. The @OrderBy annotation is applied
+to the employee’s collection in the Department entity. It specifies that the associated Employee entities should be ordered by the
+employee name field in ascending order. When the Department entity is being loaded from the Database, then the associated employee
+entity will be called and ordered based on the employee names in ascending order. The @OrderBy annotation allows you to control the
+order of elements in the collection-valued property which provides flexibility in how elements are retrieved and displayed in the
+Spring application using Hibernate.

@@ -1,0 +1,59 @@
+Excellent question! Multithreading in Java evolved significantly starting with Java 8 and improved
+even more after Java 8, especially in terms of asynchronous, functional, and scalable concurrency.
+
+Here's a clear comparison to help you understand and answer this confidently in interviews.
+
+✅ Multithreading Changes in Java 8 and After
+🔹 Java 8: Major Enhancements in Multithreading
+Feature	Description	Example
+Lambda Expressions	Concise thread creation with lambdas	new Thread(() -> System.out.println("Running")).start();
+Functional Interfaces	Runnable, Callable used with lambdas	ExecutorService.submit(() -> "Task")
+CompletableFuture	Advanced async programming with chaining	See example below
+Stream Parallelism	Process collections in parallel	list.parallelStream().forEach(...)
+
+✅ Java 8 Example – CompletableFuture
+CompletableFuture.supplyAsync(() -> fetchData())
+    .thenApply(data -> process(data))
+    .thenAccept(result -> System.out.println("Done: " + result));
+Non-blocking
+Chaining tasks
+Exception handling with .exceptionally() or .handle()
+
+🔹 After Java 8: Even More Powerful Features
+Java Version	Feature	Description
+Java 9	Flow API (Reactive Streams)	Back-pressure based Pub/Sub model
+Java 19–21	Virtual Threads (Project Loom)	Lightweight threads for massive scalability
+Java 21	Structured Concurrency (Preview)	Group multiple threads with single cancel/handle point
+
+✅ Java 21 Example – Virtual Thread
+Thread.startVirtualThread(() -> {
+    System.out.println("Handled by virtual thread: " + Thread.currentThread());
+});
+⚡ Virtual threads are super-lightweight, so you can create thousands of concurrent tasks with low memory usage. Perfect for microservices!
+
+✅ Java 21 Example – Structured Concurrency (Preview)
+try (var scope = StructuredTaskScope.shutdownOnFailure()) {
+    Future<String> user  = scope.fork(() -> fetchUser());
+    Future<String> order = scope.fork(() -> fetchOrder());
+
+    scope.join();   // wait for both
+    scope.throwIfFailed();
+
+    return user.result() + order.result();
+}
+Useful for grouping and managing multiple threads as a unit.
+
+🔁 Summary: Evolution of Java Multithreading
+Version	Key Feature	Benefits
+Java 8	Lambdas, CompletableFuture, parallel streams	Simpler async code
+Java 9	Flow API	Reactive programming
+Java 11+	Improvements to executors, HTTP client	Better async REST
+Java 19+	Virtual Threads	Massive scalability
+Java 21	Structured concurrency	Easier concurrent task management
+
+🧠 Interview-Ready Answer:
+“Java 8 introduced major improvements in multithreading with CompletableFuture, lambdas, and parallel
+ streams, making async programming cleaner and non-blocking. After Java 8, Java 21's virtual threads
+ revolutionized concurrency by allowing thousands of lightweight threads, which is perfect for handling
+ high-concurrency workloads like APIs in microservices. Structured concurrency also helps manage thread
+ groups as one unit, improving reliability.”

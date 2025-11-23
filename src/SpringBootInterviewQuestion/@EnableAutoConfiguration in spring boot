@@ -1,0 +1,59 @@
+ @EnableAutoConfiguration->
+1->It automatically configure the bean that are present in the classpath.
+2->So what ever we added in pom.xml like spring-boot-starter-web  then DispatcherServlet,WebMvcConfigurer,
+   Jackson for JSON,Embedded Tomcat or other web servers are requried so no need to configure these thing
+   manually
+3->Reduces boilerplate configuration — so you don’t have to manually define a lot of @Bean or
+   XML configuration.
+
+
+if we want to exclude some of the beans then we use
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+
+@SpringBootApplication-@ComponentScan
+                       @EnableAutoConfiguration
+                       @Configuration
+---------------------------------------------------------------------------------------------------
+@ComponentScan
+1->Tells Spring where to find beans/components whenever it see @Component,@Service, @Repository,@Controller it
+   help to discover the bean before manage by DI
+2->It scan package and sub packages @ComponentScan(basePackages = "com.example.service")
+2->🔁 What Happens at Spring Startup?
+   When a Spring application starts, it goes through several phases:
+
+   A->Configuration Phase (Bean Discovery):
+     Spring scans your code to find all classes annotated with:@Component,@Service, @Repository,@Controller
+      This is where @ComponentScan comes in — it tells Spring which packages to scan.
+
+  B-> Registration Phase (Bean Definition Creation):
+    For each discovered class, Spring creates a "Bean Definition".
+    This is just metadata — Spring hasn’t created actual objects yet, but it knows what needs to be created.
+
+  C-> Instantiation Phase (DI Happens Here):
+      Spring creates actual instances of the beans.
+      Then, it injects dependencies (via @Autowired, constructors, etc.).
+       This is Dependency Injection (DI).
+
+3->Example to explain-
+    @Component
+    public class UserService {
+        @Autowired
+        private UserRepository userRepository;
+    }
+    @Repository
+    public class UserRepository {
+    }
+  Step 1: @ComponentScan finds both UserService and UserRepository.
+  Step 2: Spring registers them as beans.
+  Step 3: Spring creates a UserRepository instance.
+  Step 4: Spring creates a UserService instance and injects the UserRepository into it.
+  If UserRepository was not discovered, UserService would fail during DI with a "No qualifying bean" error.
+
+
+
+
+
+
+
+
+

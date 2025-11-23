@@ -1,0 +1,52 @@
+✅ What is StringJoiner in Java?
+StringJoiner is a utility class introduced in Java 8 that makes it easy to build a single string by
+joining multiple elements with a delimiter, and optionally a prefix and suffix.
+✅ Java Version Introduced
+StringJoiner was introduced in Java 8 (java.util.StringJoiner).
+
+✅ Why Use StringJoiner?
+Before Java 8, to build delimited strings (like CSV, pipe-separated values), you'd typically use:
+
+StringBuilder sb = new StringBuilder();
+for (String s : list) {
+    sb.append(s).append(",");
+}
+But then you’d need to remove the trailing delimiter manually.
+
+✅ StringJoiner solves this neatly.
+
+✅ Basic Syntax
+java
+Copy
+Edit
+StringJoiner joiner = new StringJoiner(","); // delimiter only
+joiner.add("Java");
+joiner.add("Python");
+joiner.add("C++");
+
+System.out.println(joiner.toString());  // Output: Java,Python,C++
+✅ With Prefix and Suffix
+java
+Copy
+Edit
+StringJoiner joiner = new StringJoiner(", ", "[", "]");
+joiner.add("Spring");
+joiner.add("Hibernate");
+
+System.out.println(joiner.toString());  // Output: [Spring, Hibernate]
+✅ Common Use with Streams
+java
+Copy
+Edit
+List<String> langs = Arrays.asList("Java", "Python", "Go");
+
+String result = langs.stream()
+                     .collect(Collectors.joining(", "));
+
+System.out.println(result);  // Output: Java, Python, Go
+✅ Key Methods of StringJoiner
+Method	Description
+add(CharSequence)	Adds a new element
+toString()	Returns the joined string
+setEmptyValue()	Sets the string to return when empty
+merge(StringJoiner)	Merges another StringJoiner

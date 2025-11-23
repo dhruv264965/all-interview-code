@@ -1,0 +1,4 @@
+“Cohesion is about how focused a class or module is on a single task.
+For example, a SalaryCalculator that only deals with salary is highly cohesive. But a Utility class with random methods
+ is low cohesive.
+We always aim for high cohesion because it makes the code more maintainable, testable, and reusable.”

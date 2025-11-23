@@ -1,0 +1,72 @@
+My word- List.of() is immutable and not accept null value throw null point exception
+         Arrays.asList() is mutable and it is accept null value
+"List.of() is a convenient way to create immutable lists in Java 9+, useful for constants and config data.
+
+Arrays.asList() creates a fixed-size list backed by an array — it allows updating existing values but doesn’t allow
+resizing. It’s older and can behave unexpectedly if not used carefully, especially with backing array mutations."
+
+✅ 1. Mutability
+| Feature             | `List.of()`                       | `Arrays.asList()`                    |
+| ------------------- | --------------------------------- | ------------------------------------ |
+| Mutability          | ❌ Immutable (cannot modify)       | ⚠️ Fixed-size (modification limited) |
+| Add/Remove elements | ❌ `UnsupportedOperationException` | ❌ `UnsupportedOperationException`    |
+| Modify elements     | ❌ `UnsupportedOperationException` | ✅ Allowed (but only existing ones)   |
+
+List<String> list1 = List.of("A", "B", "C");
+// list1.add("D"); // ❌ Throws UnsupportedOperationException
+
+List<String> list2 = Arrays.asList("A", "B", "C");
+list2.set(0, "Z"); // ✅ Allowed
+// list2.add("D"); // ❌ Throws UnsupportedOperationException
+
+✅ 2. Null Handling
+| Feature                | `List.of()`                     | `Arrays.asList()`      |
+| ---------------------- | ------------------------------- | ---------------------- |
+| Allows `null` elements | ❌ Throws `NullPointerException` | ✅ Allows `null` values |
+
+// List.of(null);        ❌ Throws NPE
+Arrays.asList(null);     // ✅ Works
+
+✅ 3. Backed by Array
+Arrays.asList() returns a fixed-size list backed by the array.
+Changes in the list reflect in the original array and vice versa.
+String[] arr = {"A", "B", "C"};
+List<String> list = Arrays.asList(arr);
+arr[0] = "Z";
+System.out.println(list); // [Z, B, C]
+
+ List.of() is not backed by any array — it’s a true immutable list.
+
+ | Feature            | `List.of()`   | `Arrays.asList()`            |
+ | ------------------ | ------------- | ---------------------------- |
+ | Mutability         | ❌ Immutable   | ⚠️ Fixed-size but modifiable |
+ | Add/Remove         | ❌ Not Allowed | ❌ Not Allowed                |
+ | Set/Update element | ❌ Not Allowed | ✅ Allowed                    |
+ | Allows `null`      | ❌ No          | ✅ Yes                        |
+ | Backed by array    | ❌ No          | ✅ Yes                        |
+ | Java version       | Java 9+       | Java 1.2+                    |
+
+
+
+------------------------------------------------------------------------------------------------------
+Scenario: A Spring Boot microservice that validates allowed currencies
+
+You want to store a list of currencies like ["USD", "INR", "EUR"] and make sure:
+✅ It cannot be changed at runtime (immutable)
+✅ Used across multiple services
+✅ Safe from accidental modification
+
+✅ Solution using List.of()
+// CurrencyConstants.java
+import java.util.List;
+
+public class CurrencyConstants {
+    public static final List<String> ALLOWED_CURRENCIES = List.of("USD", "INR", "EUR");
+}
+
+
+“In config-driven applications, we often define constants like allowed currencies, roles, or error codes.
+List.of() is perfect because it creates a truly immutable list — preventing accidental changes at runtime.
+In contrast, Arrays.asList() can still be modified, which can lead to hidden bugs when used as shared state.”
+
+

@@ -1,0 +1,187 @@
+1-> What is an Exception in Java?
+An exception is an unexpected event that occurs during program execution and disrupts the normal flow of the program.
+Java handles exceptions using the try-catch mechanism to prevent program crashes.
+--------------------------------------------------------------------------------
+2-> difference bet Exception and Error
+| Feature         | Exception                             | Error                                    |
+| --------------- | ------------------------------------- | ---------------------------------------- |
+| What is it?     | Issues **in the code logic**          | Issues **in the system/JVM**             |
+| Can we handle?  | ✅ Yes, using `try-catch`              | ❌ Generally, no                          |
+| Caused by?      | Programmer mistakes, invalid inputs   | JVM issues, memory problems              |
+| Common Examples | `NullPointerException`, `IOException` | `OutOfMemoryError`, `StackOverflowError` |
+-----------------------------------------------------------------------
+3->Types of Exceptions
+Java divides exceptions into 2 major categories:
+
+1. Checked Exceptions
+These are checked at compile-time. You must either handle them using try-catch or declare using throws.
+Examples:
+IOException
+SQLException
+FileNotFoundException
+
+import java.io.*;
+public class CheckedExample {
+    public static void main(String[] args) throws IOException {
+        FileReader file = new FileReader("abc.txt"); // File may not exist
+        BufferedReader br = new BufferedReader(file);
+    }
+}
+2. Unchecked Exceptions
+These are not checked at compile-time but occur at runtime. It's up to you to handle them or not.
+Examples:
+NullPointerException
+ArrayIndexOutOfBoundsException
+ArithmeticException
+
+public class UncheckedExample {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3};
+        System.out.println(arr[5]); // ❌ ArrayIndexOutOfBoundsException
+    }
+}
+---------------------------------------------------------
+4-> What is error
+ Errors (NOT Exceptions)
+These are serious system-level issues. Java does not expect you to catch them.
+Examples:
+OutOfMemoryError
+StackOverflowError
+VirtualMachineError
+
+public class ErrorExample {
+    public static void recursive() {
+        recursive(); // ❌ StackOverflowError
+    }
+
+    public static void main(String[] args) {
+        recursive();
+    }
+}
+------------------------------------------------------------------
+5-> Code not go to finally block
+1  > 1. JVM is forcibly terminated (e.g., System.exit())
+
+public class Demo {
+    public static void main(String[] args) {
+        try {
+            System.out.println("In try block");
+            System.exit(0); // Forcefully exits JVM->shuts down the JVM instantly — it doesn’t care about your finally
+                                                                       block.
+        } finally {
+            System.out.println("In finally block"); // This won't execute
+        }
+    }
+}
+
+2->  2. Thread is killed or JVM crashes due to fatal error (e.g., OutOfMemoryError)
+ public class CrashDemo {
+     public static void main(String[] args) {
+         try {
+             System.out.println("In try block");
+             // Force a fatal error (extremely large array)
+             int[] arr = new int[Integer.MAX_VALUE];
+         } finally {
+             System.out.println("In finally block"); // Might not execute if JVM crashes
+         }
+     }
+ }
+
+ -------------------------------------------------------------------------------
+ 6-> how to create custom exception
+
+ In core Java, you can define a custom exception by extending either Exception (for checked exceptions)
+ or RuntimeException (for unchecked exceptions).
+
+ 1. Checked Exception (Extends Exception)
+ Checked exceptions must be either handled using try-catch or declared using throws.
+
+
+ // Custom checked exception
+ class CustomCheckedException extends Exception {
+     public CustomCheckedException(String message) {
+         super(message);
+     }
+ }
+
+ public class Main {
+     public static void main(String[] args) {
+         try {
+             validateAge(15);
+         } catch (CustomCheckedException e) {
+             System.out.println("Caught Exception: " + e.getMessage());
+         }
+     }
+
+     static void validateAge(int age) throws CustomCheckedException {
+         if (age < 18) {
+             throw new CustomCheckedException("Age must be 18 or above.");
+         }
+     }
+ }
+ 2. Unchecked Exception (Extends RuntimeException)
+ Unchecked exceptions don't need explicit handling and can propagate automatically.
+
+
+ // Custom unchecked exception
+ class CustomUncheckedException extends RuntimeException {
+     public CustomUncheckedException(String message) {
+         super(message);
+     }
+ }
+
+ public class Main {
+     public static void main(String[] args) {
+         validateNumber(-5);
+     }
+
+     static void validateNumber(int num) {
+         if (num < 0) {
+             throw new CustomUncheckedException("Number must be non-negative.");
+         }
+     }
+ }
+ When to Use Which?
+ Checked Exception → Use for expected recoverable conditions (e.g., file not found, invalid input).
+
+ Unchecked Exception → Use for programming errors (e.g., null references, invalid states).
+ ------------------------------------------------------------------------
+ 7->  What is throw vs throws?
+ | Keyword  | Purpose                                             |
+ | -------- | --------------------------------------------------- |
+ | `throw`  | Used to **explicitly throw** an exception           |
+ | `throws` | Declares that a method **might throw** an exception |
+
+----------------------------------------------------------------------------------
+8->What is the difference between final, finally, and finalize()?
+"final is a keyword to make variables constant, methods non-overridable, and classes non-inheritable.
+finally is a block that always runs after try-catch, usually for cleanup.
+finalize() is a method that the garbage collector calls before destroying the object — but it's deprecated now."
+
+------------------------------------------------------------------------------------------------------------------
+Exception Hierarcy
+
+Object
+ └── Throwable
+      ├── Error
+      │    ├── OutOfMemoryError
+      │    ├── StackOverflowError
+      │    └── VirtualMachineError
+      └── Exception
+           ├── IOException(Checked) - Compile time exception
+           │    ├── FileNotFoundException
+           │    └── EOFException
+           ├── SQLException(Checked) - Compile time exception
+           ├── ClassNotFoundException(Checked) - Compile time exception
+           └── RuntimeException(UnChecked)
+                ├── NullPointerException
+                ├── ArrayIndexOutOfBoundsException
+                ├── ArithmeticException
+                └── IllegalArgumentException
+
+How to Create a Custom Exception-
+// Custom exception (checked)
+class InvalidAgeException extends Exception
+
+// Custom exception (unchecked)
+class NegativeNumberException extends RuntimeException

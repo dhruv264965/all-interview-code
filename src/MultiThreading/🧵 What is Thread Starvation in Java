@@ -1,0 +1,52 @@
+Thread starvation occurs when a thread is permanently or indefinitely blocked from gaining regular access to
+shared resources because other higher-priority threads or greedy threads keep consuming the CPU or lock.
+
+one thread (high priority or faster) keeps acquiring the lock, and another thread (low priority) never gets a chance.
+
+public class ThreadStarvationDemo {
+
+    private static final Object lock = new Object();
+
+    public static void main(String[] args) {
+
+        // Greedy Thread - keeps acquiring the lock
+        Thread greedyThread = new Thread(() -> {
+            while (true) {
+                synchronized (lock) {
+                    System.out.println("Greedy Thread: Acquired lock");
+                    try {
+                        Thread.sleep(100); // Holds the lock longer
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Thread.yield(); // Optional - still greedy
+            }
+        });
+
+        // Starving Thread - rarely gets lock
+        Thread starvingThread = new Thread(() -> {
+            while (true) {
+                synchronized (lock) {
+                    System.out.println("🌟 Starving Thread: Acquired lock");
+                    try {
+                        Thread.sleep(50); // Short task
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    Thread.sleep(100); // Waits a bit longer
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        greedyThread.setName("Greedy-Thread");
+        starvingThread.setName("Starving-Thread");
+
+        greedyThread.start();
+        starvingThread.start();
+    }
+}

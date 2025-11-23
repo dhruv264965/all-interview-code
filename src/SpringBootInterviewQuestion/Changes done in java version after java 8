@@ -1,0 +1,78 @@
+1. ✅ record (Java 16+)
+Perfect for creating DTOs, request/response models in REST APIs.
+public record UserDTO(String name, int age) {}
+Why useful?
+Eliminates boilerplate for immutable objects (used in @RequestBody, @ResponseBody)
+Works seamlessly with Jackson (JSON serialization)
+
+2. ✅ var for Local Type Inference (Java 10)
+Makes code cleaner in services, repos, and utility classes.
+var list = new ArrayList<String>();
+var user = userRepository.findById(1).orElseThrow();
+Why useful?
+Reduces verbosity in data access layers
+Makes stream-based operations more readable
+
+3. ✅ New String Methods (Java 11)
+Improves handling of input/output, config files, etc.
+String config = " \n  ";
+if (config.isBlank()) {
+    System.out.println("Invalid config");
+}
+Why useful?
+Helpful in data validation, config parsing, logging, etc.
+
+4. ✅ HTTP Client API (Java 11)
+Built-in modern HTTP client — no need for RestTemplate or 3rd-party clients in some cases.
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.example.com"))
+    .build();
+HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+Why useful?
+Makes microservice-to-microservice calls without additional dependencies
+Async and reactive supported
+
+5. ✅ Text Blocks (Java 15+)
+For writing large SQL queries, JSON templates, etc.
+String query = """
+    SELECT * FROM users
+    WHERE role = 'ADMIN'
+    ORDER BY created_at DESC
+    """;
+Why useful?
+Cleanly write multi-line SQL/JSON in repositories or configs
+
+6. ✅ Switch Expression (Java 14+)
+Improves business logic in service layer.
+String status = switch(orderStatus) {
+    case PENDING -> "Waiting";
+    case SHIPPED -> "Out for delivery";
+    default -> "Unknown";
+};
+Why useful?
+More concise business rule expressions
+No need for verbose switch-case statements
+
+7. ✅ Pattern Matching (Java 21+)
+Makes instanceof checks cleaner.
+if (obj instanceof User user) {
+    System.out.println(user.getName());
+}
+Why useful?
+Cleaner validation logic in controller or service
+
+8. ✅ Virtual Threads (Java 21 – Loom)
+Lightweight threads for handling concurrent API requests.
+Thread.startVirtualThread(() -> {
+    service.processData();
+});
+Why useful?
+Handle thousands of requests without blocking main threads
+Scales microservices with minimal thread pool tuning
+
+🧠 Ideal Interview Answer:
+“In Spring Boot and microservices, records are excellent for DTOs, virtual threads scale concurrency,
+ and text blocks simplify writing SQL and JSON. The new HttpClient API improves inter-service calls
+  without extra dependencies. Also, var and new string methods make service and utility classes more
+  concise and readable.”

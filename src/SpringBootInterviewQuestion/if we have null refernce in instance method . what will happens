@@ -1,0 +1,31 @@
+Instance block->
+class Test {
+    void display() {
+        System.out.println("Hello");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj = null;
+        obj.display();  // ❌
+    }
+}
+This will throw a NullPointerException at runtime because there is no actual object in memory to execute display() on.
+
+
+Static Block-
+class Test {
+    static void show() {
+        System.out.println("Static method");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj = null;
+        obj.show(); // ✅ Works fine
+    }
+}
+Here it works because static methods are resolved at compile time by class, not by object reference.
+So obj.show(); is internally treated as Test.show();.

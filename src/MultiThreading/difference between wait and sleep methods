@@ -1,0 +1,44 @@
+wait() Method: lock ko release karta hai and wait karta hai usko koi notify kare(using notify notifyAll)
+wait() is a method defined in the Object class and is used for synchronization in multithreaded programming.
+When a thread calls wait() on an object, it releases the lock it holds on that object and enters a waiting state
+until another thread notifies it to wake up.
+synchronized (sharedObject) {
+    while (!condition) {
+        sharedObject.wait(); // Releases the lock and waits
+    }
+    // Perform actions after condition is met
+}
+Here, the thread waits until some condition (condition) is satisfied and another thread notifies
+ it (notify() or notifyAll()).
+
+ ----------------------------------------------------
+ sleep() Method:ye excution ko pause kar deta hai jitena time diya gya hai
+ sleep() is a method defined in the Thread class and is used to pause the execution of the current thread for a
+  specified amount of time.
+ It does not release any locks held by the thread when it is called.
+ try {
+     Thread.sleep(1000); // Sleep for 1 second
+ } catch (InterruptedException e) {
+     e.printStackTrace();
+ }
+This method is often used for introducing delays or waiting for some time before continuing execution.
+
+Unlike wait(), sleep() is not related to synchronization and does not require a synchronized context.
+
+----------------------------------------------------
+| Feature                  | `wait()`                                       | `sleep()`                     |
+| ------------------------ | ---------------------------------------------- | ----------------------------- |
+| Defined In               | `Object` class                                 | `Thread` class                |
+| Lock Handling            | Releases the lock                              | Does **not** release the lock |
+| Requires `synchronized`? | Yes                                            | No                            |
+| Wakes up by              | `notify()` / `notifyAll()`                     | Automatically after timeout   |
+| Use Case                 | Thread communication (e.g., producer-consumer) | Simple delay or throttling    |
+📘 When to Use Each:
+Use wait() when:
+You are implementing thread communication (e.g., producer/consumer problem).
+A thread should pause until another thread notifies it that some condition is met.
+
+Use sleep() when:
+You want to pause execution for a fixed time (e.g., retry logic, animation delays).
+You don't need to release any lock or coordinate with other threads.
+

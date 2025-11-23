@@ -1,0 +1,32 @@
+1. What is volatile?
+volatile is a keyword in Java used with variables.
+It tells the JVM and compiler that:
+The variable’s value will be modified by multiple threads.
+Always read and write directly from main memory, not from a thread’s local CPU cache.
+
+🔹 2. What Problem Does It Solve?
+Normally, threads may keep a local copy of a variable in their CPU cache.
+One thread updates the variable → another thread might not see the change immediately.
+volatile ensures visibility:
+When one thread updates a volatile variable, other threads instantly see the new value.
+
+Real Use Case: Singleton with Double-Checked Locking
+class Singleton {
+    private static volatile Singleton instance;
+
+    private Singleton() {}
+
+    public static Singleton getInstance() {
+        if (instance == null) {  // First check
+            synchronized (Singleton.class) {
+                if (instance == null) { // Second check
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+
+
+volatile ensures the instance reference is always visible correctly to all threads.

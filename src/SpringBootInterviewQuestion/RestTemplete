@@ -1,0 +1,3 @@
+RestTemplate is a synchronous HTTP client in Spring Boot that allows applications to make RESTful API
+calls easily. It simplifies communication between microservices by providing methods to send HTTP requests
+and handle responses.

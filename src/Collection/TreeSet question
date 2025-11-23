@@ -1,0 +1,19 @@
+How does a TreeSet maintain sorting order?
+
+“TreeSet maintains sorted order using a Red-Black Tree. By default, it uses the elements’ natural ordering
+ (via Comparable), or a custom order if a Comparator is provided. It ensures all operations are O(log n) and
+ rejects duplicates based on the comparison result.”
+
+
+🔄 Tree Behavior:
+When a new element is added:
+The tree uses compareTo() or Comparator.compare() to determine position.
+Red-Black tree rebalances itself to maintain O(log n) insert and search time.
+No duplicates are allowed: if compareTo() or compare() returns 0, it’s treated as duplicate.
+
+------------------------------------------------------------------------------------------------
+Can a TreeSet store null values? Why or why not?
+
+No, TreeSet cannot store null values because it needs to compare elements to maintain sorted order using
+compareTo() or Comparator. Comparing null with any non-null value throws a NullPointerException, which is why
+TreeSet disallows it.”

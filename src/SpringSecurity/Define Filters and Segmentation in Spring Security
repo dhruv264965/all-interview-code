@@ -1,0 +1,46 @@
+Filter- intercept the request before reaching controller
+        Used for authentication, authorization, CSRF protection, etc.
+
+        important Spring Security Filters
+        Spring Security includes multiple filters, but the key ones are:
+
+        Filter Name	                                          Description
+        SecurityContextPersistenceFilter	            Manages security context between requests.
+        UsernamePasswordAuthenticationFilter	          Handles username/password-based authentication.
+        BasicAuthenticationFilter	                      Processes HTTP Basic authentication.
+        BearerTokenAuthenticationFilter	                         Handles JWT and OAuth2 token authentication.
+        CsrfFilter	                                        Protects against CSRF attacks.
+        LogoutFilter	                                     Handles user logout.
+        ExceptionTranslationFilter	                  Converts authentication/authorization exceptions into HTTP responses.
+
+
+
+Segmentation in Spring Security refers to dividing security configurations based on different conditions such
+as user roles, API endpoints, authentication mechanisms, etc.
+Types of Segmentation:
+Role-Based Access Control (RBAC)
+
+Different users get different permissions based on their roles.
+Example:
+http.authorizeHttpRequests(auth -> auth
+    .requestMatchers("/admin/**").hasRole("ADMIN")
+    .requestMatchers("/user/**").hasRole("USER")
+    .anyRequest().authenticated()
+);
+URL-Based Segmentation
+
+Restrict access based on URL patterns.
+Example:
+http.authorizeHttpRequests(auth -> auth
+    .requestMatchers("/public/**").permitAll()
+    .requestMatchers("/secure/**").authenticated()
+);
+Method-Level Security (Annotation-Based Segmentation)
+
+Using annotations for securing specific methods.
+Example:
+@PreAuthorize("hasRole('ADMIN')")
+public String secureMethod() {
+    return "Admin Access Only";
+}
+

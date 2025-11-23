@@ -1,0 +1,49 @@
+yield keyword to return a value from a switch block
+Why yield Instead of return?
+return exits the entire method
+yield returns a value from the switch expression
+
+✅ New Features in Java 14+ switch:
+
+Switch as an expression (not just a statement)
+Arrow syntax (->) for cleaner code
+yield keyword to return a value from a switch block
+Pattern matching (Java 17+)
+
+2. Modern switch Expression (Java 14+)
+int day = 2;
+
+String result = switch (day) {
+    case 1 -> "Mon";
+    case 2 -> "Tue";
+    default -> "Other";
+};
+
+System.out.println(result); // Tue
+
+✅ 3. yield in block-form switch (multi-line logic)
+String grade = "A";
+String message = switch (grade) {
+    case "A" -> "Excellent";
+    case "B" -> "Good";
+    case "C" -> {
+        System.out.println("Logging: Grade is C");
+        yield "Average";
+    }
+    default -> "Unknown";
+};
+System.out.println(message);
+
+
+"Java 14 introduced switch expressions, making switch usable as an expression with a return value.
+The -> syntax eliminates fall-through and makes code cleaner.
+When we need multi-line logic inside a case, we use yield to return a value from that block — it improves readability
+ and safety."
+
+| Feature       | Description                                 |
+| ------------- | ------------------------------------------- |
+| `switch ->`   | Arrow-based, concise syntax                 |
+| `yield`       | Returns a value from multi-line block cases |
+| `switch` expr | Assign switch result directly               |
+| Benefit       | Safer, shorter, less boilerplate            |
+

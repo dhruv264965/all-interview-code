@@ -1,0 +1,77 @@
+The @Qualifier annotation in Spring is used to resolve ambiguity when multiple beans of the same type exist in the
+Spring context. By default, Spring injects beans by type. However, if there are multiple beans of the same type, you
+can use @Qualifier to specify which bean to inject.
+
+1.public interface GreetingService {
+    void greet();
+}
+2.@Component("englishGreetingService")
+public class EnglishGreetingService implements GreetingService {
+    @Override
+    public void greet() {
+        System.out.println("Hello!");
+    }
+}
+3.@Component("spanishGreetingService")
+public class SpanishGreetingService implements GreetingService {
+    @Override
+    public void greet() {
+        System.out.println("¡Hola!");
+    }
+}
+4.Now, you want to inject one specific implementation into a class:
+@Component
+public class GreetingController {
+    private final GreetingService greetingService;
+
+    @Autowired
+    public GreetingController(@Qualifier("englishGreetingService") GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
+
+    public void sendGreeting() {
+        greetingService.greet();
+    }
+}
+5.After step 3 we can give step 5 example
+Example 2: Usage with Field Injection
+@Component
+public class GreetingController {
+    @Autowired
+    @Qualifier("spanishGreetingService")
+    private GreetingService greetingService;
+
+    public void sendGreeting() {
+        greetingService.greet();
+    }
+}
+6.Example 3: Usage with @Bean Configuration
+@Configuration
+public class AppConfig {
+
+    @Bean(name = "englishService")
+    public GreetingService englishService() {
+        return new EnglishGreetingService();
+    }
+
+    @Bean(name = "spanishService")
+    public GreetingService spanishService() {
+        return new SpanishGreetingService();
+    }
+}
+7. this is for step 6
+@Component
+public class GreetingController {
+    private final GreetingService greetingService;
+
+    @Autowired
+    public GreetingController(@Qualifier("spanishService") GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
+
+    public void sendGreeting() {
+        greetingService.greet();
+    }
+}
+
+

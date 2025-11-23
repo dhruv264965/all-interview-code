@@ -1,0 +1,5 @@
+polymorphism refers to the ability of a message to be displayed in more than one form.
+it allows objects to behave differently based on their specific class type.
+type-
+1.compileTime-method overloading(Static Polymorphism)
+2-run time-method overriding(Dynamic Polymorphism)

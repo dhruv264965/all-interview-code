@@ -1,0 +1,59 @@
+Q->consider a class person , has data field string name and list<String> degress ..
+how make  class as immutable.and advantage and disadvantage of immutable
+anser->
+To make the Person class immutable in Java, follow these principles:
+
+Declare the class as final: This prevents subclassing, ensuring no overriding of behavior that could compromise immutability.
+Declare fields as private and final: This ensures they are not modified after initialization.
+Initialize all fields via the constructor: Avoid setters or any other methods that allow modifying the fields.
+Ensure defensive copying: When working with mutable fields like List<String>, provide a copy of the collection
+during assignment and when returning it.
+Avoid this leakage: Do not expose the this reference during object construction.
+
+Example: Immutable Person Class
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public final class Person {
+    private final String name;
+    private final List<String> degrees;
+
+    public Person(String name, List<String> degrees) {
+        if (name == null || degrees == null) {
+            throw new IllegalArgumentException("Fields cannot be null");
+        }
+        this.name = name;
+        // Create a defensive copy of the list
+        this.degrees = new ArrayList<>(degrees);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<String> getDegrees() {
+        // Return an unmodifiable view of the list
+        return Collections.unmodifiableList(degrees);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{name='" + name + "', degrees=" + degrees + "}";
+    }
+}
+
+
+
+Advantages of Immutable Classes
+Thread-Safe: Immutable objects are inherently thread-safe as their state cannot be changed after creation, avoiding
+             synchronization issues.
+Predictable Behavior: They are easier to reason about, as their state remains constant.
+HashMap/HashSet Friendly: Can safely be used as keys in collections like HashMap or HashSet without worrying about state
+                          changes affecting their hash code.
+Caching: Immutable objects can be cached or reused, reducing object creation overhead.
+Disadvantages of Immutable Classes
+Memory Overhead: Creating new objects for every change (e.g., adding to the degrees list) can lead to higher memory
+                 usage compared to mutable objects.
+Inflexibility: Requires creating new objects to reflect state changes, which might be cumbersome in some use cases.
+Performance: Defensive copying for collections can introduce performance overhead, especially for large collections.

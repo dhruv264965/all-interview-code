@@ -1,0 +1,74 @@
+Jackson is a popular Java library used for converting Java objects to JSON and vice versa.
+It is widely used in Spring Boot applications for handling JSON serialization and deserialization.
+Key Features of Jackson:
+✅ Converts Java objects to JSON (Serialization).
+✅ Converts JSON to Java objects (Deserialization).
+✅ Handles complex objects, collections, and custom serialization.
+✅ Supports annotations for fine-tuned control.
+✅ Can work with different formats like XML, YAML, and CSV.
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.15.0</version>  <!-- Use latest version -->
+</dependency>
+jackson-databind includes both jackson-core (basic JSON processing) and jackson-annotations (for handling
+JSON mapping
+with annotations).
+
+Convert Java Object to JSON (serialization)
+public class JacksonExample {
+    public static void main(String[] args) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Create a User object
+        User user = new User(1, "John Doe", "john@example.com");
+
+        // Convert Java object to JSON string
+        String jsonString = objectMapper.writeValueAsString(user);
+
+        // Print JSON
+        System.out.println(jsonString);
+    }
+}
+Output (JSON)---{"user_id":1,"name":"John Doe","email":"john@example.com"}
+
+Convert JSON to Java Object (Deserialization)
+public class JacksonDeserializationExample {
+    public static void main(String[] args) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // JSON string
+        String json = "{\"user_id\":1,\"name\":\"John Doe\",\"email\":\"john@example.com\"}";
+
+        // Convert JSON string to Java object
+        User user = objectMapper.readValue(json, User.class);
+
+        // Print Java object
+        System.out.println("ID: " + user.getId());
+        System.out.println("Name: " + user.getName());
+        System.out.println("Email: " + user.getEmail());
+    }
+}
+
+4. Jackson Annotations for Customization
+Jackson provides annotations for more control over JSON serialization and deserialization.
+
+4.1 @JsonIgnore (Ignore a Field in JSON)
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+class User {
+    private int id;
+    private String name;
+
+    @JsonIgnore
+    private String password;  // Will not be included in JSON
+
+    // Constructor & Getters
+}
+Conclusion
+🔹 Jackson Core (com.fasterxml.jackson.core) is used for efficient JSON parsing and processing.
+🔹 It is widely used in Spring Boot, REST APIs, and microservices.
+🔹 Supports annotations (@JsonProperty, @JsonIgnore, @JsonInclude) for customization.
+🔹 Spring Boot uses Jackson by default for handling JSON in APIs.
+

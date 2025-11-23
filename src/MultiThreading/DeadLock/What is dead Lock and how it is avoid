@@ -1,0 +1,123 @@
+A deadlock is a situation in multithreading where two or more threads are blocked forever,
+each waiting for a resource held by the other — and none can proceed.
+
+Example (Simple Analogy):
+Thread A holds Lock 1, and waits for Lock 2
+Thread B holds Lock 2, and waits for Lock 1
+=> Both are stuck, forever.
+
+Example- public class DeadlockExample {
+             private static final Object lockA = new Object();
+             private static final Object lockB = new Object();
+
+             public static void main(String[] args) {
+                 Thread t1 = new Thread(() -> {
+                     synchronized (lockA) {
+                         System.out.println("Thread 1: Holding lockA");
+
+                         try { Thread.sleep(100); } catch (Exception ignored) {}
+
+                         synchronized (lockB) {
+                             System.out.println("Thread 1: Holding lockB");
+                         }
+                     }
+                 });
+
+                 Thread t2 = new Thread(() -> {
+                     synchronized (lockB) {
+                         System.out.println("Thread 2: Holding lockB");
+
+                         try { Thread.sleep(100); } catch (Exception ignored) {}
+
+                         synchronized (lockA) {
+                             System.out.println("Thread 2: Holding lockA");
+                         }
+                     }
+                 });
+
+                 t1.start();
+                 t2.start();
+             }
+         }
+output- Thread 1: Holding lockA
+        Thread 2: Holding lockB
+        // Then it hangs — deadlock!
+-------------------------------------------------------------------------------------------
+⚠️ Why Deadlocks Happen?
+Circular wait on resources
+Holding one lock and trying to get another
+No timeout mechanism in synchronized
+---------------------------------------------------------------------------------
+how to avoid Deadlock--
+| Strategy                          | Explanation                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------------- |
+| 1. **Lock Ordering**              | Always acquire locks in the **same order** across threads                                   |
+| 2. **Timeouts using `tryLock()`** | Use `ReentrantLock.tryLock(timeout)` instead of `synchronized` to **avoid waiting forever** |
+| 3. **Avoid Nested Locks**         | Try not to hold multiple locks at once                                                      |
+| 4. **Use Concurrency Utilities**  | Tools like `ExecutorService`, `Semaphore`, `CountDownLatch` are safer                       |
+| 5. **Thread Dump Analysis**       | Use tools (like VisualVM, jstack) to detect deadlocks in running apps                       |
+
+
+
+-----------------------------------------------------------------------------------------------------
+How to resolve deadlock using ReentrantLock
+
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
+
+class NoDeadlock {
+    static ReentrantLock lock1 = new ReentrantLock();
+    static ReentrantLock lock2 = new ReentrantLock();
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread(() -> {
+            try {
+                if (lock1.tryLock(100, TimeUnit.MILLISECONDS)) {
+                    System.out.println("Thread 1: Acquired lock1");
+                    try {
+                        if (lock2.tryLock(100, TimeUnit.MILLISECONDS)) {
+                            try {
+                                System.out.println("Thread 1: Acquired lock2");
+                            } finally {
+                                lock2.unlock();
+                            }
+                        } else {
+                            System.out.println("Thread 1: Could not acquire lock2, releasing lock1");
+                        }
+                    } finally {
+                        lock1.unlock();
+                    }
+                }
+            } catch (InterruptedException ignored) {}
+        });
+
+        Thread t2 = new Thread(() -> {
+            try {
+                if (lock2.tryLock(100, TimeUnit.MILLISECONDS)) {
+                    System.out.println("Thread 2: Acquired lock2");
+                    try {
+                        if (lock1.tryLock(100, TimeUnit.MILLISECONDS)) {
+                            try {
+                                System.out.println("Thread 2: Acquired lock1");
+                            } finally {
+                                lock1.unlock();
+                            }
+                        } else {
+                            System.out.println("Thread 2: Could not acquire lock1, releasing lock2");
+                        }
+                    } finally {
+                        lock2.unlock();
+                    }
+                }
+            } catch (InterruptedException ignored) {}
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+----------------------------------------------------------------------------------------------------
+“Deadlock happens when multiple threads hold locks and wait for each other in a circular way. I use
+ techniques like lock ordering and tryLock() to avoid indefinite blocking. ReentrantLock gives me more
+ control compared to synchronized.”
+

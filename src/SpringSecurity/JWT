@@ -1,0 +1,49 @@
+A JWT (JSON Web Token) is a compact, URL-safe token used for securely transmitting information between
+parties as a JSON object. It is commonly used for authentication and authorization in web applications and APIs.
+
+Structure of a JWT
+A JWT consists of three parts, separated by dots (.):Header.Payload.Signature
+1. Header
+Contains metadata about the token, including the type (JWT) and signing algorithm (HS256, RS256, etc.).
+Example:
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+2. Payload (Claims)
+Contains user information and claims (data related to the user).
+Example:
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1710842460,
+  "exp": 1710846060
+}
+sub: Subject (user ID)
+iat: Issued at (timestamp)
+exp: Expiration time (timestamp)
+3. Signature
+Ensures the token’s integrity.
+Created by encoding the header and payload, then signing with a secret key or private key.
+Example (HMAC SHA256 signing):
+HMACSHA256(
+  base64UrlEncode(header) + "." + base64UrlEncode(payload),
+  secret-key
+)
+
+How JWT Works in Authentication
+User Login:
+User provides valid credentials (e.g., username & password).
+Server verifies credentials and generates a JWT.
+Token Sent to Client:
+The server sends the JWT to the client (usually in the response body or Authorization header).
+Client Uses JWT for Requests:
+The client includes the JWT in the Authorization: Bearer <JWT> header.
+Server Validates JWT:
+The server verifies the token's signature and expiration time.
+If valid, the request is processed; otherwise, it's rejected.
+
+Advantages of JWT
+✅ Stateless & Scalable – No need to store tokens on the server (unlike session-based auth).
+✅ Compact & URL-Safe – Can be transmitted via HTTP headers, URLs, or cookies.
+✅ Cross-Domain Usage – Used in distributed systems, microservices, and API authentication.

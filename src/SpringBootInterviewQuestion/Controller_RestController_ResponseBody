@@ -1,0 +1,49 @@
+    1. @Controller
+Purpose
+Used to define a controller in a Spring MVC application for handling web requests.
+Typically used for web applications that return HTML views (server-side rendered pages) or other response types
+ like files.
+Key Characteristics
+Relies on ViewResolver (like Thymeleaf, JSP, etc.) to resolve and render the view.
+Methods typically return a view name (a string) that is resolved to a physical view (like an HTML or JSP file).
+@Controller
+public class WebController {
+
+    @GetMapping("/home")
+    public String homePage(Model model) {
+        model.addAttribute("message", "Welcome to the Home Page!");
+        return "home"; // Maps to src/main/resources/templates/home.html (if using Thymeleaf)
+    }
+}
+
+
+
+2. @RestController
+Purpose
+Specialized version of @Controller for building RESTful web services.
+Combines @Controller and @ResponseBody.
+Key Characteristics
+The response is serialized directly to the HTTP response body (e.g., as JSON, XML, or plain text) instead of
+rendering a view.
+Eliminates the need to annotate each method with @ResponseBody.
+@RestController
+public class ApiController {
+
+    @GetMapping("/api/greet")
+    public String greet() {
+        return "Hello, World!";
+    }
+
+    @GetMapping("/api/users")
+    public List<String> getUsers() {
+        return List.of("Alice", "Bob", "Charlie"); // Returns JSON: ["Alice", "Bob", "Charlie"]
+    }
+}
+
+Key Differences
+Feature	                              @Controller	                                @RestController
+Purpose	                              For handling web pages (HTML views).	       For RESTful APIs (JSON, XML, etc.).
+Response Type	                      Returns a view name.	                        Returns the response body (e.g., JSON).
+ViewResolver Dependency	     Works with a ViewResolver (e.g., Thymeleaf, JSP).	     Does not rely on a ViewResolver.
+Annotation	                          Needs @ResponseBody for REST responses.	     Combines @Controller and @ResponseBody.
+Use Case	                        Server-side rendered web pages.	                 REST APIs for JSON/XML responses.

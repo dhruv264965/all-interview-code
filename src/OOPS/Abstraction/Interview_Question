@@ -1,0 +1,62 @@
+
+An abstract class is a class that is declared with an abstract keyword.
+An abstract method is a method that is declared without implementation.
+An abstract class may or may not have all abstract methods. Some of them can be concrete methods
+We can not create object of abstract class.
+By default abstact class has parametrised method
+No, you cannot create abstract variables in an abstract class in Java.
+ Abstract is a concept that applies to methods and classes, not to variables.
+
+
+ 🔹 Definition: Abstraction is the concept of hiding implementation details and only showing relevant
+  functionalities to the user.
+
+ 🔹 Key Idea:
+
+ Focuses on what an object does rather than how it does it.
+ Achieved using abstract classes and interfaces in Java.
+
+
+-----------------------------------------------------------------------------------------------------------
+Abstraction refers to the process of hiding the implementation details and showing only the essential features
+ of the object. In Java, abstraction is achieved using abstract classes and interfaces.
+Important point-1.Abstraction - Only shows 'start' behavior, hides how it works
+                    abstract class Vehicle {
+                        abstract void start();
+                    }
+
+               2. abstraction hides logic and complexity.
+               3.Using interfaces or abstract classes to hide implementation.
+
+ example - // Abstraction: Interface exposes only essential operations
+           interface RemoteControl {
+               void turnOn();
+               void turnOff();
+           }
+           // Implementation details are hidden from the user
+           class Television implements RemoteControl {
+               @Override
+               public void turnOn() {
+                   System.out.println("Television is ON");
+                   // Internally: connect power, enable display, etc.
+               }
+
+               @Override
+               public void turnOff() {
+                   System.out.println("Television is OFF");
+                   // Internally: shut down circuits, stop signal, etc.
+               }
+           }
+      // Main class - using abstraction
+      public class Main {
+          public static void main(String[] args) {
+              RemoteControl remote = new Television();
+              remote.turnOn();   // User only knows what to call, not how it's done
+              remote.turnOff();
+          }
+      }
+RemoteControl is the abstraction — it exposes what can be done: turnOn() and turnOff().
+
+Television provides the hidden implementation — how these actions work internally is not shown to the user.
+
+In Main, the user just interacts with the interface, not the detailed logic.

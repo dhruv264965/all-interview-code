@@ -1,0 +1,55 @@
+In core Java, you can define a custom exception by extending either Exception (for checked exceptions) or
+RuntimeException (for unchecked exceptions).
+
+1. Checked Exception (Extends Exception)
+Checked exceptions must be either handled using try-catch or declared using throws.
+
+
+// Custom checked exception
+class CustomCheckedException extends Exception {
+    public CustomCheckedException(String message) {
+        super(message);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            validateAge(15);
+        } catch (CustomCheckedException e) {
+            System.out.println("Caught Exception: " + e.getMessage());
+        }
+    }
+
+    static void validateAge(int age) throws CustomCheckedException {
+        if (age < 18) {
+            throw new CustomCheckedException("Age must be 18 or above.");
+        }
+    }
+}
+2. Unchecked Exception (Extends RuntimeException)
+Unchecked exceptions don't need explicit handling and can propagate automatically.
+
+
+// Custom unchecked exception
+class CustomUncheckedException extends RuntimeException {
+    public CustomUncheckedException(String message) {
+        super(message);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        validateNumber(-5);
+    }
+
+    static void validateNumber(int num) {
+        if (num < 0) {
+            throw new CustomUncheckedException("Number must be non-negative.");
+        }
+    }
+}
+When to Use Which?
+Checked Exception → Use for expected recoverable conditions (e.g., file not found, invalid input).
+
+Unchecked Exception → Use for programming errors (e.g., null references, invalid states).

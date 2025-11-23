@@ -1,0 +1,68 @@
+Threads themselves are inherently mutable — their state changes as they run (e.g., NEW, RUNNABLE, BLOCKED, etc.).
+But if the interviewer is asking how to make the data used by a thread immutable, then I can achieve thread-safe behavior by
+sharing only immutable objects or by not sharing mutable state at all.
+
+✅ Key Concept:
+You can’t make a Thread object immutable, but you can:
+
+Use immutable data inside the thread.
+
+Avoid sharing mutable objects between threads.
+
+Make sure the Runnable or Callable passed to the thread only uses final or immutable fields.
+
+🔧 Simple Example: Using Immutable Data in a Thread
+
+// Immutable class
+final class UserData {
+    private final String name;
+    private final int age;
+
+    public UserData(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    // No setters
+    public String getName() { return name; }
+    public int getAge() { return age; }
+}
+
+public class ImmutableThreadExample {
+    public static void main(String[] args) {
+        UserData user = new UserData("Alice", 25); // Immutable data
+
+        Runnable task = () -> {
+            System.out.println("Thread running with user: " + user.getName() + ", age: " + user.getAge());
+        };
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+}
+✅ In this example, the thread uses an immutable object (UserData), ensuring thread safety.
+
+🧠 How to Explain in the Interview:
+In Java, I can't make the Thread class immutable because it manages mutable internal state like status and priority.
+But I design my threads to behave immutably by:
+
+Only using immutable objects (like records, final classes).
+
+Making all fields used inside Runnable or Callable final or effectively final.
+
+Avoiding shared mutable state or synchronizing access if needed.
+
+
+--------------------------------------------------------------------
+✅ Bonus: Java Record (Immutable by Design)
+record Product(String name, double price) {}
+
+public class RecordThreadExample {
+    public static void main(String[] args) {
+        Product product = new Product("Laptop", 999.99);
+
+        Runnable task = () -> System.out.println("Using product: " + product.name());
+        new Thread(task).start();
+    }
+}
+Java records are immutable by default and great for thread-safe design.

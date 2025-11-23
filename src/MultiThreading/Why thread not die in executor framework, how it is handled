@@ -1,0 +1,47 @@
+🧵 1. Thread Lifecycle in Executor Framework
+When you submit a task (e.g., via executorService.submit()), the framework uses a thread pool to run that task.
+
+🧠 But what happens after the task is done?
+The thread does NOT die immediately.
+
+Instead, it's kept alive in the pool for reuse.
+
+This avoids the overhead of creating/destroying threads for every task.
+
+Under the hood:
+Executor uses ThreadPoolExecutor, which defines:
+
+corePoolSize: number of threads always kept alive
+
+maximumPoolSize: upper limit of threads
+
+keepAliveTime: time to wait before killing idle threads beyond corePoolSize
+
+Example:ExecutorService executor = new ThreadPoolExecutor(
+            2,                  // corePoolSize
+            5,                  // maxPoolSize
+            60L,                // keepAliveTime
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>()
+        );
+If threads are idle for more than 60 seconds, they can be terminated
+
+But only if they are above corePoolSize
+
+So:
+
+Threads don’t die immediately after a task.
+
+Idle timeout and pool size control when they are killed.
+
+🔚 5. What If You Want Threads to Die?
+Use shutdown() or shutdownNow() to terminate the pool manually
+
+Set corePoolSize = 0 if you want threads to be killed aggressively
+
+Configure keepAliveTime to be small
+
+✅ Summary
+In the Executor framework, threads don't die immediately because the system is optimized to reuse them for future tasks,
+improving performance.
+Their lifecycle is managed by ThreadPoolExecutor, based on corePoolSize, maxPoolSize, and keepAliveTime.

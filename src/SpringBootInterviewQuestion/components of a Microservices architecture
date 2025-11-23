@@ -1,0 +1,86 @@
+API Gateway
+
+Entry point for all clients (mobile, web, etc.)
+
+Handles:
+
+Routing requests to the right microservice
+
+Authentication/authorization
+
+Load balancing
+
+Rate limiting
+
+API versioning
+
+Microservices
+
+Independent, small services that handle a specific business capability.
+
+Each has its own:
+
+Business logic
+
+Database (in most cases)
+
+Communication interface (usually REST, gRPC, or messaging)
+
+Database (per service)
+
+Each microservice owns its data.
+
+Avoids a single “big shared database”.
+
+Could be:
+
+SQL (MySQL, PostgreSQL)
+
+NoSQL (MongoDB, Cassandra, Redis)
+
+Or event stores (Kafka, Event Sourcing)
+
+Service Registry & Discovery
+
+Keeps track of available services and their locations (IP/port).
+
+Useful because services may scale dynamically.
+
+Tools: Eureka, Consul, Zookeeper, Kubernetes DNS
+
+Inter-service Communication
+
+How services talk to each other:
+
+Synchronous: REST, gRPC
+
+Asynchronous: Message brokers (Kafka, RabbitMQ, ActiveMQ)
+
+Configuration Management
+
+Centralized place to manage configs for all services.
+
+Tools: Spring Cloud Config, Consul, etcd
+
+Observability
+
+Logging: Centralized logging (ELK stack: Elasticsearch + Logstash + Kibana, or Splunk)
+
+Monitoring: Metrics & health checks (Prometheus, Grafana, New Relic)
+
+Tracing: Distributed tracing (Jaeger, Zipkin)
+
+Security
+
+Authentication & Authorization (OAuth2, JWT, Keycloak)
+
+API Gateway often enforces security policies.
+
+Containerization & Orchestration
+
+Services are often deployed in containers (Docker).
+
+Managed by Kubernetes, ECS, or Docker Swarm.
+
+Provides scaling, deployment, and resilience.
+

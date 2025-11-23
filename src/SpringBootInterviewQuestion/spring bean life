@@ -1,0 +1,2 @@
+No, race condition and deadlock are not the same. They are both concurrency problems in multithreaded applications,
+but they are very different in cause, behavior, and impact.

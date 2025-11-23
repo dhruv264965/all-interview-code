@@ -1,0 +1,218 @@
+Q->what happen if we override equals method not hashcode method and vice versa
+answer->
+1. Violation of the hashCode() and equals() Contract
+The contract states:
+
+If two objects are equal (equals() returns true), they must have the same hashCode().
+If two objects have the same hashCode(), they are not necessarily equal, but they will likely be placed in the
+same bucket.
+By overriding equals() without overriding hashCode(), you can violate this contract. This leads to inconsistent
+behavior in hash-based collections.
+
+2. Behavior in HashMap and HashSet
+Insertion:
+When adding an object as a key in a HashMap or as an element in a HashSet, the collection uses the hashCode() method to determine the bucket where the object should go.
+If the hashCode() method is not overridden, the default implementation will produce different hash codes for different instances, even if equals() returns true.
+Lookup:
+When retrieving an object (e.g., using get() or contains()), the HashMap or HashSet first checks the bucket using hashCode().
+If the object is not in the expected bucket due to inconsistent hashCode() behavior, the collection will fail to find it.
+Example
+Without Overriding hashCode():
+import java.util.HashMap;
+
+class Employee {
+    private int id;
+    private String name;
+
+    public Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Employee employee = (Employee) obj;
+        return id == employee.id;
+    }
+
+    // Default hashCode() (from Object) is used
+}
+
+public class Main {
+    public static void main(String[] args) {
+        HashMap<Employee, String> employeeMap = new HashMap<>();
+
+        Employee e1 = new Employee(1, "Alice");
+        Employee e2 = new Employee(1, "Alice"); // Same id as e1, but different instance
+
+        employeeMap.put(e1, "Manager");
+
+        // Attempt to retrieve the value using a logically equal object (e2)
+        System.out.println(employeeMap.get(e2)); // Output: null
+    }
+}
+Explanation:
+e1.equals(e2) will return true, but e1.hashCode() and e2.hashCode() (from Object) are different because the hashCode() method is not overridden.
+As a result, e2 is looked up in a different bucket, and employeeMap.get(e2) returns null.
+With Overriding hashCode():
+@Override
+public int hashCode() {
+    return Integer.hashCode(id);
+}
+This ensures that objects with the same id will have the same hashCode(). Now, e2 can be retrieved correctly:
+
+System.out.println(employeeMap.get(e2)); // Output: Manager
+
+
+3. Issues and Debugging Challenges
+If you override equals() but not hashCode():
+
+Insertion and Retrieval Failures: Objects that are logically equal may not behave as expected in collections, leading to difficult-to-debug issues.
+Data Redundancy: Duplicate objects (as per equals()) can exist in a HashSet or as keys in a HashMap.
+4. Best Practices
+Always Override Both Methods: Whenever you override equals(), ensure hashCode() is overridden to maintain consistency.
+
+Use IDE-Generated Methods: Most modern IDEs can generate equals() and hashCode() methods based on selected fields, ensuring correctness.
+
+Use Objects.hash(): Simplifies hash code computation for multiple fields, reducing boilerplate.
+
+Conclusion
+Overriding only equals() without hashCode() breaks the contract between the two methods and leads to unexpected behavior in hash-based collections. To avoid this, always override both methods when creating custom objects for use in such collections.
+
+
+If you override hashCode() but do not override equals(), it also creates problems because the equals() method will still use the default implementation provided by the Object class. The Object.equals() method checks for reference equality, meaning two objects are considered equal only if they are the exact same instance.
+
+This creates inconsistencies and unexpected behavior when working with hash-based collections like HashMap or HashSet.
+
+1. Violation of the Contract
+The contract between equals() and hashCode() requires:
+
+If two objects are equal according to equals(), they must have the same hashCode().
+However, overriding only hashCode() without overriding equals() means hashCode() could suggest two objects are equal (same bucket), but equals() will still compare their references and may return false.
+
+
+2. Behavior in HashMap and HashSet
+Insertion:
+When adding an object to a HashSet or as a key in a HashMap, the hashCode() determines the bucket.
+If two objects have the same hashCode(), they end up in the same bucket.
+Lookup and Equality Check:
+During lookups, the collection first finds the bucket using hashCode(), but within that bucket, it relies on equals() to locate the exact match.
+If equals() is not overridden, even if two objects have the same hashCode(), they will be treated as not equal unless they are the same instance.
+Example
+Without Overriding equals():
+
+import java.util.HashMap;
+
+class Employee {
+    private int id;
+    private String name;
+
+    public Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id); // Hash based on id
+    }
+
+    // Default equals() (from Object) is used
+}
+
+public class Main {
+    public static void main(String[] args) {
+        HashMap<Employee, String> employeeMap = new HashMap<>();
+
+        Employee e1 = new Employee(1, "Alice");
+        Employee e2 = new Employee(1, "Alice"); // Same id as e1, but different instance
+
+        employeeMap.put(e1, "Manager");
+
+        // Attempt to retrieve the value using a logically identical object (e2)
+        System.out.println(employeeMap.get(e2)); // Output: null
+    }
+}
+Explanation:
+e1.hashCode() and e2.hashCode() will return the same value because hashCode() is overridden.
+However, since equals() is not overridden, e1.equals(e2) will return false (reference equality).
+As a result, employeeMap.get(e2) will fail to find the object in the bucket.
+With Overriding equals():
+
+@Override
+public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Employee employee = (Employee) obj;
+    return id == employee.id;
+}
+This ensures e1.equals(e2) returns true for employees with the same id. Now, employeeMap.get(e2) will correctly find the value.
+
+3. Issues and Debugging Challenges
+If you override hashCode() but not equals():
+
+Duplicate Objects in Collections:
+
+Objects that are logically the same may appear multiple times in a HashSet or as keys in a HashMap because equals() does not work as expected.
+Retrieval Failures:
+
+Lookups may fail even when objects appear logically identical, leading to unexpected null results or missing data.
+Inconsistent Behavior:
+
+The hashCode() suggests equality at the bucket level, but equals() fails to confirm it, causing inconsistencies.
+Example of Duplicate Objects in a HashSet
+
+import java.util.HashSet;
+
+class Employee {
+    private int id;
+    private String name;
+
+    public Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
+
+    // Default equals() (from Object) is used
+}
+
+public class Main {
+    public static void main(String[] args) {
+        HashSet<Employee> employeeSet = new HashSet<>();
+
+        Employee e1 = new Employee(1, "Alice");
+        Employee e2 = new Employee(1, "Alice"); // Same id as e1, but different instance
+
+        employeeSet.add(e1);
+        employeeSet.add(e2); // Treated as a different object
+
+        System.out.println("Size of employeeSet: " + employeeSet.size()); // Output: 2
+    }
+}
+Explanation:
+Even though e1 and e2 have the same id and hashCode(), they are treated as distinct because equals() is not overridden.
+The HashSet ends up containing both e1 and e2, leading to duplicate entries.
+
+4. Best Practices
+Always Override Both:
+
+To maintain consistent behavior, override both equals() and hashCode() whenever your object will be used in hash-based collections.
+Contract Enforcement:
+
+Ensure that if equals() considers two objects equal, their hashCode() values are also the same.
+IDE Assistance:
+
+Use your IDE to auto-generate both methods to ensure consistency and correctness.
+Conclusion
+Overriding only hashCode() without equals() leads to:
+
+Duplicate objects in collections.
+Lookup failures.
+Violation of the hashCode() and equals() contract. Always override both methods when you design objects that will be used in hash-based collections to avoid such issues.

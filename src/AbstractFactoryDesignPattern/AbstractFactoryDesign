@@ -1,0 +1,42 @@
+It uses factories of factory
+The Abstract Factory Design Pattern is a creational pattern that provides an interface for creating families of
+ related objects without specifying their concrete classes. It is often referred to as a "factory of factories"
+ because it provides a higher level of abstraction compared to the Factory Method Pattern.
+
+ When to  use-
+ When object creation should be independent of client code – This ensures that new products can be added without
+ modifying existing client code.
+ When enforcing consistency among objects – If you want a set of objects to always be used together, like ensuring UI
+ elements of a specific theme match.
+
+ Why Use Abstract Factory Instead of Factory Method?
+ The Abstract Factory Pattern is used when you need to create families of related objects that must be used together.
+ On the other hand, the Factory Method Pattern is used when you need to create only one type of object.
+
+ If you have multiple related products (e.g., buttons and checkboxes for different OS), Abstract Factory is the
+ right choice.
+ If you only need to create a single object (e.g., only a Vehicle), Factory Method is enough.
+
+ Key Differences Between Factory Method and Abstract Factory
+ Feature	                        Factory Method Pattern	                                                    Abstract Factory Pattern
+ Definition	                           A method in a class that creates a specific type of object.	          A factory of factories that creates families of related objects.
+ Level of OOPS.Abstraction	            Focuses on creating a single product.	                                   Focuses on creating multiple related products.
+ Number of Products Created	Creates      one product at a time.	                                              Creates multiple related products together.
+ Use Case	                            When a single type of object needs to be created, and subclasses decide which class to instantiate.	                     When a group of related objects needs to be created together.
+
+
+----------------------------------------------------------------------------------------------------------
+The Abstract Factory design pattern is a creational design pattern that provides an interface for creating
+families of related or dependent objects without specifying their concrete classes.
+Example- . Suppose you want to buy a phone so what you will do you will go to a phone store and will ask for your
+ desired phone to the seller , now the seller has phones of different companies he will give you your desired
+ phone to you . So here you can see that phone store is a factory of phone that contains phones from different
+  factories . We can say that phone store is a super factory .
+
+  client- phone store(Super factory) -> Iphone , onePlus , SumSung(sub factory) -> iphone(12,12pro) ,oneOlus(2,4),Sumsung(s23,s24)
+
+
+
+  “The Factory Method pattern is focused on a single method used to create an object, often relying on
+  subclassing. In contrast, the Abstract Factory pattern provides an interface or object with multiple factory
+   methods to create a family of related objects.”

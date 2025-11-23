@@ -1,0 +1,14 @@
+BlockingQueue Interface in Java- it is good for when thread is full in queue it will wait for consumer release
+                                 the thread. we can give capacity if it is full then it will not add any thread
+                                 until . consumer remove.
+          BlockingQueue<String>queue=new ArrayBlockingQueue<>(3);
+
+1.BlockingQueue is Thread safe
+2.Support blocking behaviour , allow thread to wait of queue is full or empty
+3. it provide build in synchronzation
+4.BlockingQueue does not support null value . it will throw nullPointerException
+4.Used for Producer consumer problem
+5. put()-to add the data in the queue
+   take()- to remove the data from the queue
+6. Types of BlockingQueue - ArrayBlockingQueue, LinkedBlockingQueue , SynchronusQueue
+

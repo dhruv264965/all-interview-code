@@ -1,0 +1,60 @@
+1. Singleton Scope
+Default Scope: All Spring beans are singleton by default unless specified otherwise.
+Behavior: A single instance of the bean is created and shared across the entire Spring application context.
+Lifecycle:
+Created when the application context is initialized.
+Destroyed when the application context is closed.
+Component
+@Scope("singleton") // Optional, as it is the default
+public class SingletonBean {
+    public SingletonBean() {
+        System.out.println("SingletonBean instance created");
+    }
+}
+test-
+@Component
+public class TestSingleton {
+    private final SingletonBean bean1;
+    private final SingletonBean bean2;
+
+    public TestSingleton(SingletonBean bean1, SingletonBean bean2) {
+        this.bean1 = bean1;
+        this.bean2 = bean2;
+    }
+
+    public void test() {
+        System.out.println(bean1 == bean2); // true
+    }
+}
+2. Prototype Scope
+Behavior: A new instance of the bean is created every time it is requested from the Spring container.
+Lifecycle:
+Created each time it is injected or explicitly retrieved from the application context.
+Managed only at the time of creation. After creation, Spring does not manage its lifecycle.
+@Component
+@Scope("prototype")
+public class PrototypeBean {
+    public PrototypeBean() {
+        System.out.println("PrototypeBean instance created");
+    }
+}
+@Component
+public class TestPrototype {
+    private final PrototypeBean bean1;
+    private final PrototypeBean bean2;
+
+    public TestPrototype(PrototypeBean bean1, PrototypeBean bean2) {
+        this.bean1 = bean1;
+        this.bean2 = bean2;
+    }
+
+    public void test() {
+        System.out.println(bean1 == bean2); // false
+    }
+}
+Key Differences Between Singleton and Prototype Scopes
+Feature	                                  Singleton	                        Prototype
+Number of Instances	     One shared instance per container	          A new instance every time requested
+Lifecycle Management	          Fully managed by Spring	        Managed only during creation
+Default Scope	         Yes	                                                No
+Use Cases	             Stateless beans	                               Stateful or short-lived beans

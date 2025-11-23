@@ -1,0 +1,1015 @@
+1. What are the key differences between Spring and Spring Boot?
+
+Spring and Spring Boot are both part of the larger Spring ecosystem, but they serve different purposes and offer different features
+ Here are the key differences between them:
+1. Purpose and Focus
+Spring Framework: The core Spring Framework provides comprehensive infrastructure support for developing Java applications.
+It focuses on providing a wide range of functionalities, such as dependency injection, aspect-oriented programming, transaction
+management, and more. It is modular, meaning you can use only the parts you need for your application.
+Spring Boot: Spring Boot is built on top of the Spring Framework and is designed to simplify the process of creating stand-alone,
+production-grade Spring applications. It aims to minimize configuration and setup time by offering default configurations and
+embedded servers.
+2. Configuration
+Spring Framework: Requires extensive configuration, usually involving XML or Java-based configuration. Developers need to manually
+define beans and configure application settings.
+Spring Boot: Reduces the need for manual configuration through auto-configuration and convention over configuration. It uses sensible
+ defaults and annotations to automatically configure the application based on the dependencies present in the classpath.
+3. Setup and Initialization
+Spring Framework: Setting up a Spring application involves creating and configuring a lot of boilerplate code and configuration
+files. You need to manually set up the application context and configure dependencies.
+Spring Boot: Simplifies the setup process by providing starter dependencies (starter POMs) and a simplified project structure.
+It also includes embedded servers, so you can run your application as a stand-alone Java application.
+4. Embedded Servers
+Spring Framework: Typically requires an external application server (like Tomcat, Jetty, or JBoss) to run the application.
+Developers need to package and deploy their application to the server.
+Spring Boot: Comes with embedded servers (Tomcat, Jetty, or Undertow), allowing you to run your application directly from the
+command line without needing to deploy it to an external server. This makes development, testing, and deployment easier and faster.
+5. Production-ready Features
+Spring Framework: Does not include built-in production-ready features. Developers need to add and configure additional tools
+and libraries for monitoring, health checks, and metrics.
+Spring Boot: Provides built-in production-ready features, including health checks, metrics, application monitoring, and logging.
+ These features are available out-of-the-box and require minimal configuration.
+In summary, while the core Spring Framework provides the foundational tools and infrastructure for building applications,
+Spring Boot streamlines the process, offering default configurations and embedded servers to create stand-alone, production-ready
+applications quickly and easily.
+
+
+
+2. Explain the concept of convention over configuration in Spring Boot.
+
+The concept of "convention over configuration" in Spring Boot is a design philosophy aimed at reducing the amount of configuration
+that developers need to provide to get their applications up and running. Instead of requiring extensive XML or Java-based
+configuration, Spring Boot uses sensible defaults and conventions to automatically configure most of the components.
+This makes development faster, easier, and less error-prone.
+Here's a detailed breakdown of how convention over configuration is applied in Spring Boot:
+1. Auto-Configuration
+Spring Boot automatically configures your application based on the dependencies that are present on the classpath. For instance:
+If spring-boot-starter-web is on the classpath, Spring Boot will automatically configure a web server (like Tomcat),
+a DispatcherServlet, and other web-related beans.
+If spring-boot-starter-data-jpa is present, it will configure an in-memory database, a DataSource, an EntityManagerFactory,
+and TransactionManager by default.
+
+2. Default Values
+Spring Boot comes with default configurations that work out of the box. For example:
+Embedded servers (Tomcat, Jetty) are configured to run on port 8080 by default.
+Default database properties are provided for H2 in-memory database if no other database configuration is specified.
+
+3. Starter POMs
+Spring Boot provides a set of starter POMs (Project Object Models) to simplify dependency management. For example:
+spring-boot-starter-web includes dependencies for building web applications, such as Spring MVC, Jackson (for JSON processing),
+and an embedded Tomcat server.
+
+4. Spring Boot Application
+A typical Spring Boot application class, annotated with @SpringBootApplication, implicitly defines a lot of configurations:
+
+@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+}
+This single annotation is a combination of three annotations:
+@Configuration: Indicates that the class can be used by the Spring IoC container as a source of bean definitions.
+@EnableAutoConfiguration: Tells Spring Boot to start adding beans based on classpath settings, other beans, and various property
+settings.
+@ComponentScan: Tells Spring to look for other components, configurations, and services in the specified package, allowing it to
+find the controllers.
+
+5. Properties and YAML Files
+Instead of extensive XML configuration files, Spring Boot uses application.properties or application.yml files where developers
+can override the default settings:
+
+# application.properties example
+server.port=9090
+spring.datasource.url=jdbc:mysql://localhost:3306/mydb
+spring.datasource.username=root
+spring.datasource.password=secret
+
+Benefits of Convention Over Configuration
+Reduced Boilerplate Code: Less configuration code means less maintenance and fewer errors.
+Faster Development: Developers can focus on writing business logic instead of configuring the framework.
+Easier Learning Curve: New developers can get started quickly without needing to understand the complexities of the framework
+ configuration.
+Consistency: Using standard conventions ensures a consistent setup across different projects, making it easier for teams to work on
+multiple projects.
+
+
+
+3. What happens inside run() method of Spring Boot?
+
+The run() method in a Spring Boot application is typically part of the SpringApplication class and serves as the main entry
+point for running the application. Here's a breakdown of what happens inside the run() method:
+Argument Parsing: The run() method starts by parsing the command-line arguments passed to the application. These arguments can
+include various configuration options.
+Application Context Creation: The method creates an instance of the ApplicationContext, which is the core container responsible for
+ managing beans in Spring. By default, it uses AnnotationConfigApplicationContext or WebApplicationContext depending on whether
+ it's a web application.
+Environment Preparation: The method prepares the application environment. It sets up ConfigurableEnvironment, which allows access
+to environment properties, including system properties and environment variables. This environment is later used to configure beans.
+Banner Display: If configured, the Spring Boot banner is displayed in the console. This banner can be customized or disabled.
+Application Listener Registration: The method registers various application listeners, which can listen for specific events
+(e.g., context refresh, application start, or stop events).
+Context Refresh: The application context is refreshed, which involves loading all the necessary beans, configuring them,
+and initializing them. This is where all the @Component, @Service, @Repository, and @Controller annotated classes are scanned and
+instantiated.
+Command Line Runner Execution: If the application has any CommandLineRunner or ApplicationRunner beans, their run() methods are
+ executed after the application context is fully initialized. This allows you to execute code after the application has started,
+ which is useful for startup tasks like initializing data.
+Application Start Event: An ApplicationStartedEvent is published, indicating that the application has started. This event can be used
+by other components to react to the application starting.
+Application Running: The application runs until it receives a shutdown signal. During this time, it can handle incoming requests
+(if it's a web application) or perform background tasks.
+Shutdown Hook Registration: Spring Boot registers a shutdown hook with the JVM to ensure a graceful shutdown of the application
+context when the application is terminated. This ensures that resources are cleaned up and beans are properly closed.
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+
+
+
+4. Explain the concept of Relaxed Binding?
+
+Relaxed binding in Spring Boot refers to the framework’s ability to bind properties to fields in a flexible manner. It allows you
+to define configuration properties in different formats and automatically maps them to the corresponding fields in your Java classes.
+This flexibility is particularly useful when dealing with configuration files such as application.properties or application.yml.
+
+Spring Boot's relaxed binding converts property names into a standardized format and matches them to the field names of your
+configuration classes. Here are the different formats that are supported:
+
+kebab-case: my-property-name
+snake_case: my_property_name
+camelCase: myPropertyName
+UpperCamelCase or PascalCase: MyPropertyName
+
+
+Spring Boot automatically normalizes these formats and binds them to the corresponding Java fields.
+
+# application.properties
+# all the below cases are valid (relaxed binding concept)
+​
+# kebab-case
+database.database-name=myDatabase
+database.user-name=myUser
+database.password=myPassword
+​
+# snake_case
+database.database_name=myDatabase
+database.user_name=myUser
+database.password=myPassword
+​
+# camelCase
+database.databaseName=myDatabase
+database.userName=myUser
+database.password=myPassword
+​
+# UpperCamelCase or PascalCase
+database.DatabaseName=myDatabase
+database.UserName=myUser
+database.Password=myPassword
+​
+
+
+
+5. What is the difference between Tomcat vs. Netty?
+
+When working with Spring Boot and Spring WebFlux, you might have noticed that they use different embedded servers by default:
+Tomcat for Spring Boot
+Netty for Spring WebFlux.
+
+But why is that? Let's explore the differences and understand the internal architectures and threading models of Tomcat and Netty.
+Tomcat: The Default for Spring Boot
+Apache Tomcat is a widely-used web server and servlet container. It's the default choice for traditional Spring Boot applications
+due to its robustness and ease of use.
+
+Key Features:
+Servlet-Based: Tomcat is built around the Servlet API, which fits naturally with traditional Spring MVC.
+Blocking I/O: Uses a thread-per-request model, which means each incoming request is handled by a separate thread.
+Ease of Configuration: Simple to set up and configure with Spring Boot, making it ideal for most web applications.
+
+Internal Architecture:
+Connector: Manages the network connections, accepting and processing HTTP requests.
+Container: Responsible for servlet lifecycle management, including loading, initialization, and invocation.
+Threading Model: Tomcat uses a traditional thread pool where each request is processed by a separate thread from the pool.
+ This model is straightforward but can lead to scalability issues under high load due to thread contention and memory overhead.
+
+5 Parallel Requests: Tomcat assigns five threads from the pool to handle these requests. Each thread processes its request
+synchronously, blocking if any I/O operations are required.
+
+Netty: The Default for Spring WebFlux
+Netty is a highly performant, asynchronous event-driven network application framework. It’s the default for Spring WebFlux,
+ which is designed for reactive programming.
+
+Key Features:
+
+Event-Driven: Netty uses an event-driven architecture, making it suitable for handling a large number of simultaneous connections
+efficiently.
+Non-Blocking I/O: Utilizes non-blocking I/O, allowing it to handle many connections with fewer threads.
+Scalability: Designed for high concurrency, low latency, and high throughput applications.
+
+Internal Architecture:
+Event Loop: Netty’s core component is the event loop, which manages I/O operations asynchronously. An event loop group contains one
+or more event loops.
+Channel: Represents a connection, such as an incoming HTTP request, and is associated with an event loop.
+ThreadingModel: Netty uses a small number of threads to handle many connections. Each event loop runs in a single thread and
+handles multiple channels, making it highly scalable.
+
+5 Parallel Requests: Netty assigns these requests to its event loops. Each request is processed asynchronously, with the event
+loop threads managing the I/O operations without blocking.
+
+Thread Management:
+Tomcat: Uses a larger number of threads, with each thread handling a single request synchronously. This can lead to high
+memory consumption and thread contention under heavy load.
+Netty: Uses fewer threads, with each thread capable of handling many requests asynchronously. This leads
+to better resource utilization and scalability.
+
+Choosing the Right Server
+Tomcat: Ideal for traditional web applications with a straightforward request-response model. If you're building standard
+Spring MVC applications, Tomcat’s simplicity and robustness make it a great choice.
+Netty: Best suited for applications that need to handle a large number of concurrent connections with minimal resource usage.
+If you're leveraging reactive programming with Spring WebFlux, Netty’s non-blocking I/O and event-driven architecture provide
+superior performance and scalability.
+
+
+
+
+6. Explain the use of @SpringBootApplication?
+
+The @SpringBootApplication annotation is a cornerstone of Spring Boot applications, and its use greatly simplifies the
+configuration and setup of Spring-based projects. It is typically placed on the main class of a Spring Boot application.
+Here’s a detailed explanation of its use and significance:
+
+What is @SpringBootApplication?
+The @SpringBootApplication annotation is a convenience annotation that combines three other annotations:
+
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
+This combination provides a comprehensive setup for a Spring Boot application with minimal configuration.
+
+Breakdown of Combined Annotations
+
+@Configuration: This annotation indicates that the class can be used by the Spring IoC container as a source of bean definitions.
+ It is a part of the core Spring framework.
+@EnableAutoConfiguration: This annotation enables the auto-configuration feature of Spring Boot. Auto-configuration attempts
+to automatically configure your Spring application based on the jar dependencies you have added. For example, if you have a
+spring-boot-starter-web dependency, it will automatically configure a web server.
+@ComponentScan: This annotation tells Spring to scan the current package and its sub-packages for Spring components.
+It enables component scanning, which allows Spring to discover beans and their dependencies.
+
+Example Usage
+
+Here’s a simple example to demonstrate the use of @SpringBootApplication:
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+​
+@SpringBootApplication
+public class MySpringBootApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MySpringBootApplication.class, args);
+    }
+}
+
+
+
+7. Difference between @Component, @Service, and @Repository?
+
+In Spring, @Component, @Service, and @Repository are all annotations used to define Spring-managed beans. They are used to
+ mark classes as Spring components, but they have different semantics and intended use cases. Here’s a detailed comparison and
+ explanation of their differences:
+
+@Component
+
+Purpose: It is a generic stereotype for any Spring-managed component.
+Usage: It is typically used for classes that do not fit into the other specific stereotypes like @Service or @Repository.
+Example: General-purpose classes such as utility classes, custom validators, etc.
+import org.springframework.stereotype.Component;
+​
+@Component
+public class MyComponent {
+    public void doSomething() {
+        // Implementation here
+    }
+}
+
+@Service
+
+Purpose: It is a specialization of @Component for service layer classes.
+Usage: It is used to mark classes that contain business logic and service-related functionality. It helps in conceptual
+clarity and makes the intent of the class clear.
+Additional Features: While it doesn’t provide additional behavior beyond @Component, it is useful for readability and
+for tools and aspects that are aware of the service layer semantics.
+Example: Business services, typically the classes that contain business logic and call methods from the repository layer.
+import org.springframework.stereotype.Service;
+​
+@Service
+public class MyService {
+    public void performService() {
+        // Business logic here
+    }
+}
+
+@Repository
+
+Purpose: It is a specialization of @Component for DAO (Data Access Object) classes.
+Usage: It is used to mark classes that interact with the database and perform CRUD operations. This annotation helps Spring to
+understand that the class is intended to interact with the database and may contain database-related exceptions.
+Additional Features: It has additional features for exception translation. Spring translates database-related exceptions into
+ Spring’s DataAccessException, making exception handling more consistent and portable across different databases.
+Example: Classes that access the database, typically containing methods for CRUD operations.
+import org.springframework.stereotype.Repository;
+​
+@Repository
+public class MyRepository {
+    public void saveData(Object data) {
+        // Database interaction logic here
+    }
+}
+
+Key Differences
+1. Semantics and Intended Use:
+
+@Component: Generic and can be used for any Spring-managed component.
+@Service: Specifically for service layer classes containing business logic.
+@Repository: Specifically for data access layer, dealing with database operations.
+
+2. Specialized Features:
+
+@Repository: Adds exception translation for database-related errors.
+@Service and @Component: Do not provide additional features beyond bean registration, but they improve code readability and
+organization by clarifying the role of the class.
+
+3. Conceptual Layering:
+
+Using @Service and @Repository helps in separating different layers of the application, making it easier to understand and maintain.
+
+
+
+8. What is difference between Fixed Delay and Fixed Rate in Spring Boot?
+
+Fixed Delay Scheduling
+
+Fixed delay scheduling ensures that there is a fixed amount of time between the end of the last execution and the start of
+the next execution. This means that the next execution will only start after the specified delay period has elapsed following
+the completion of the previous execution.
+
+Key Characteristics of Fixed Delay:
+
+Execution Gaps: There is always a fixed gap between the end of one execution and the start of the next.
+Handles Long Running Tasks: If a task takes longer to execute than the delay period, the next execution will start immediately
+after the previous one finishes.
+Variable Start Times: The start time of each execution can vary based on the duration of the task.
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+​
+@Component
+public class FixedDelayTask {
+​
+    @Scheduled(fixedDelay = 5000)
+    public void executeTask() {
+        System.out.println("Fixed delay task - " + System.currentTimeMillis());
+    }
+}
+In above example, the executeTask method is scheduled with a fixed delay of 5000 milliseconds (5 seconds).
+If the task takes 2 seconds to execute, the next execution will start 5 seconds after the current execution ends,
+resulting in a total cycle of 7 seconds.
+
+Fixed Rate Scheduling
+
+Fixed rate scheduling ensures that tasks are executed at a fixed interval, measured from the start of the last execution to the
+start of the next. This approach tries to maintain a consistent rate of execution regardless of the task duration.
+
+Key Characteristics of Fixed Rate:
+
+Regular Intervals: Tasks are scheduled to run at regular intervals, maintaining a consistent execution rate.
+Overlapping Executions: If a task takes longer to execute than the interval period, subsequent executions may overlap, potentially
+ leading to concurrency issues.
+Consistent Start Times: The start times of each execution are consistent and based on the specified interval.
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+​
+@Component
+public class FixedRateTask {
+​
+    @Scheduled(fixedRate = 5000)
+    public void executeTask() {
+        System.out.println("Fixed rate task - " + System.currentTimeMillis());
+    }
+}
+​
+In above example, the executeTask method is scheduled with a fixed rate of 5000 milliseconds (5 seconds).
+ Regardless of how long the task takes to complete, the method will be invoked every 5 seconds.
+ If the task takes longer than 5 seconds to execute, the next execution will begin immediately after the current one,
+  potentially causing overlapping executions.
+
+Choosing Between Fixed Delay and Fixed Rate
+
+Use Fixed Delay if you need to ensure there is a specific delay between the end of one execution and the start of the next.
+This is suitable for tasks where the execution time can vary, and you want to avoid overlapping executions.
+
+Use Fixed Rate if you need tasks to run at consistent intervals, regardless of how long each execution takes.
+This is suitable for tasks that need to be performed at regular intervals, such as periodic data collection or status updates.
+
+
+
+
+9. What are @Primary and @Qualifier annotations used for?
+
+The @Primary and @Qualifier annotations are used in Spring to resolve bean injection ambiguity and provide more control over
+which beans are injected in a given scenario. Let's explore each annotation:
+
+@Primary Annotation
+
+The @Primary annotation is used to indicate the primary bean to be injected when multiple beans of the same type are
+available in the Spring context. It helps in scenarios where there is ambiguity regarding which bean should be injected by default.
+
+Example:
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+​
+@Component
+@Primary
+public class PrimaryBean implements MyInterface {
+    // Implementation
+}
+​
+@Component
+class SecondaryBean implements MyInterface {
+    // Implementation
+}
+In this example, if MyInterface is autowired into another component and multiple beans implementing MyInterface are available
+in the Spring context, the bean annotated with @Primary will be injected by default.
+
+@Qualifier Annotation
+
+The @Qualifier annotation is used to specify which bean should be injected when multiple beans of the same type are available
+and the primary bean is not desired. It allows you to specify the bean's unique identifier or name.
+
+Example:
+
+@Component
+@Qualifier("first")
+public class FirstBean implements MyInterface {
+    @Override
+    public void performTask() {
+        System.out.println("Task performed by FirstBean");
+    }
+}
+​
+@Component
+@Qualifier("second")
+public class SecondBean implements MyInterface {
+    @Override
+    public void performTask() {
+        System.out.println("Task performed by SecondBean");
+    }
+}
+​
+@Component
+public class ServiceClass {
+​
+    private final MyInterface myInterface;
+​
+    // Use @Qualifier to specify the implementation to inject
+    public ServiceClass(@Qualifier("first") MyInterface myInterface) {
+        this.myInterface = myInterface;
+    }
+​
+    public void executeTask() {
+        myInterface.performTask();
+    }
+}
+​
+Use Cases
+
+Primary Annotation: Use @Primary when there is a clear default bean choice for injection.
+Qualifier Annotation: Use @Qualifier when you need to specify a particular bean to be injected, especially in scenarios with
+multiple beans of the same type.
+
+
+10. What is Spring Boot Actuator and why is it used?
+
+Spring Boot Actuator is a sub-project of Spring Boot that provides a set of tools for monitoring and managing Spring Boot
+applications. It adds several production-ready features to help you monitor and manage your application when it's pushed to
+production.
+
+Key Features of Spring Boot Actuator:
+
+Health Checks: Provides endpoints to check the health of the application, such as /actuator/health, which reports the status
+of various components and dependencies (like databases, message brokers, etc.).
+Metrics: Offers a comprehensive set of metrics for various aspects of the application
+(e.g., memory usage, CPU usage, HTTP request metrics, and custom metrics). This is accessible via the /actuator/metrics endpoint.
+Auditing: Tracks and logs audit events, helping in tracking significant events and changes within the application.
+Environment Information: Provides detailed information about the environment in which the application is running,
+including system properties, environment variables, and configuration properties. This can be accessed through
+the /actuator/env endpoint.
+Application Configuration: Allows access to the configuration properties of the application, offering insights into
+how the application is configured.
+
+Why is Spring Boot Actuator Used?
+
+Monitoring: Actuator helps in monitoring the application's health, performance, and resource consumption, which is
+crucial for maintaining the reliability and availability of the application.
+Diagnostics: Provides tools to diagnose issues within the application, such as memory leaks, thread deadlocks,
+and slow performance, facilitating quicker resolution of problems.
+Management: Actuator endpoints allow for the management of application configurations and runtime behavior without needing
+to restart the application.
+Operational Insight: Offers detailed insights into the running state of the application, which helps operations teams to
+manage and support the application effectively.
+Integration with Monitoring Tools: Actuator metrics can be easily integrated with various monitoring tools like Prometheus,
+Grafana, and other APM (Application Performance Management) tools for comprehensive monitoring and alerting.
+Ease of Use: It is easy to set up and use within a Spring Boot application, making it an accessible choice for
+adding production-ready features to your application.
+
+In summary, Spring Boot Actuator enhances the observability, management, and monitoring capabilities of a Spring Boot
+application, making it a critical component for maintaining and operating applications in production environments.
+
+By default, several actuator endpoints are enabled, but they are only accessible on the local machine for security reasons.
+You can enable and configure these endpoints in your application.properties or application.yml file.
+
+Example using application.yml:
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+Once enabled and configured, you can access the actuator endpoints using a web browser or tools like curl or Postman. For example:
+
+Health endpoint: http://localhost:8080/actuator/health
+
+Metrics endpoint: http://localhost:8080/actuator/metrics
+
+
+
+
+11. How can you validate two specific conditions in a YAML property file when creating a bean in Spring Boot?
+
+This question is to test your knowledge about Conditional annotations as sometimes we need to instantiate a bean
+based on certain conditions or values defined in the application configuration file. This can be accomplished by:
+
+👉 Using the @ConditionalOnExpression annotation as shown below:
+
+@RestController
+@RequestMapping("/order")
+@ConditionalOnExpression("${controller.enabled} and ${some.value} > 10")
+public class OrderController {
+
+}
+👉 However, if you need to apply an "and" condition specifically on boolean values, you should use
+the @ConditionalOnProperty annotation as shown below:
+
+For non-boolean conditions, @ConditionalOnExpression is your go-to annotation.
+
+@RestController
+@RequestMapping("/order")
+@ConditionalOnProperty({"property1","property2"})
+public class OrderController {
+
+}
+
+
+
+
+12. Your Spring Boot application is experiencing performance issues under high load. What steps would you take to diagnose and
+resolve the problem?
+
+This question is to test your knowledge about profiling, monitoring and observability and tool/libraries which needs to be used
+to debug performance issue.
+ In simple words, profiling means recording or analysis and Profiling tools in Spring Boot are essential for identifying
+ bottlenecks and optimizing performance.
+
+Profiling: Focuses on the details of how specific parts of your application perform, helping you find and fix inefficiencies
+
+Monitoring: Continuously checks the overall health and performance of your application in real-time
+
+Observability: Gives a complete picture of your application's behavior by combining data from metrics, logs, and traces,
+helping you understand both what is happening and why.
+
+Profiling can take different forms, each focusing on specific aspects of your application:
+
+CPU Profiling: Analyzes which parts of your code are consuming the most CPU resources, helping you optimize performance.
+Thread and Memory Profiling: Monitors how threads are managed and how memory is used, identifying potential issues like
+ memory leaks or thread contention.
+Database Profiling: Examines the performance of database interactions, pinpointing slow queries or inefficient database usage.
+Log Analysis: Reviews application logs to uncover hidden issues or patterns that might affect performance.
+Real-Time Monitoring: Continuously tracks the application's performance as it runs, alerting you to issues as they occur.
+Transaction Tracing: Follows the flow of individual transactions through the application, helping you understand where
+bottlenecks or failures occur.
+
+You can use below tools for debugging performance issue:
+
+• JProfiler: CPU and memory usage
+
+• VisualVM: Real time monitoring
+
+• Actuator and Micrometer for application metrics
+
+• Zipkin for tracing the requests
+
+
+
+
+
+
+13. How would you scale a Spring Boot application to handle increased traffic, and what Spring Boot features can assist with this?
+
+This scenario tests your understanding of system design principles, particularly Horizontal and Vertical Scaling,
+ as well as how to utilize Asynchronous processing and caching in Spring Boot.
+
+Horizontal Scaling: Involves adding more instances of your application to distribute the load, often achieved using container
+orchestration platforms like Kubernetes.
+
+Vertical Scaling: Involves upgrading your existing server with more resources (CPU, RAM) to handle increased traffic.
+
+Asynchronous Processing: Use Spring Boot's @Async annotation to handle tasks asynchronously, freeing up resources and improving
+response times.
+
+Caching: Implement caching (using @Cacheable and @CacheEvict) to reduce database load and speed up responses by storing
+frequently accessed data in memory. Two key annotations in Spring Boot which are used to implement caching are @Cacheable
+and @CacheEvict
+
+Cacheable: This annotation is used to cache the result of a method so that subsequent calls with the same parameters
+bypass the method execution and fetch the result directly from the cache. It's ideal for methods that fetch data that
+doesn't change frequently.
+
+@Cacheable(value = "orders")
+public List<Order> getOrders()
+
+CacheEvict: This annotation is used to remove an entry from the cache. It’s useful when the cached data becomes outdated,
+ like after updating or deleting an entry.
+
+@CacheEvict(cacheNames = {"order", "orders"},
+allEntries = true, key = "hashtag#id")
+public Order updateOrder(String id, Order updatedOrder)
+
+
+
+
+14. You are developing a Spring Boot application that handles user requests to access a set of APIs.
+You need to implement a logging mechanism that captures the details of incoming requests (like URL, HTTP method, and request body)
+ before the controller processes them. How to achieve that in Spring Boot?
+
+This scenario tests your understanding of Interceptors in Spring boot.
+
+Spring Interceptors allow you to intercept HTTP requests before they reach the controller and after the controller
+processes them. They are ideal for cross-cutting concerns like logging, security, and data processing.
+
+To log incoming request details, we can use a HandlerInterceptor. The preHandle method in HandlerInterceptor can be
+used to capture and log the request information before it reaches the controller.
+
+HandlerInterceptors: Operate within the Spring MVC framework, intercepting requests between the DispatcherServlet
+and controllers. Ideal for handling cross-cutting concerns like detailed logging, authorization checks, and manipulating
+the Spring context or model. Interceptors provide access to Handler and ModelAndView objects, enabling more fine-grained control.
+
+Filters: Intercept requests before they reach the DispatcherServlet, suitable for broad tasks like authentication,
+logging, auditing, and data compression. Filters operate outside the Spring MVC framework, allowing for decoupled functionality.
+
+With Filters, we can manipulate requests before they reach the controllers and outside of Spring MVC. In contrast,
+HandlerInterceptors offer fine-grained control for application-specific cross-cutting concerns within the Spring MVC
+framework, with access to the target Handler and ModelAndView objects.
+
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+​
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+​
+@Component // Register this as a Spring component
+public class LogInterceptor implements HandlerInterceptor {
+​
+    // Initialize the logger
+    private final Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
+​
+    // This method is called before the controller method is invoked
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        logger.info("preHandle - Request URL: " + request.getRequestURI());
+        return true; // Continue the request handling
+    }
+​
+    // This method is called after the controller method is invoked, but before the view is rendered
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
+            throws Exception {
+        logger.info("postHandle - Request URL: " + request.getRequestURI());
+    }
+​
+    // This method is called after the complete request is finished, for any cleanup activities
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+        logger.info("afterCompletion - Request URL: " + request.getRequestURI());
+        if (ex != null) {
+            logger.error("Exception: ", ex); // Log any exceptions that occurred during the request
+        }
+    }
+}
+//Register Interceptor
+​
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+​
+@Configuration // Indicates that this class contains Spring configuration
+public class MyInterceptorConfig implements WebMvcConfigurer {
+​
+    // Register interceptors with the Spring application
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // Register the LogInterceptor
+        registry.addInterceptor(new LogInterceptor())
+                .addPathPatterns("/**"); // Intercept all paths; adjust as needed
+    }
+}
+
+
+
+
+15. You are tasked with securing certain endpoints in a Spring Boot application so that only users with specific roles
+ can access them. Users authenticate via tokens that include their roles as claims. How would you configure your application
+  to ensure that access to these endpoints is restricted based on user roles, and that the role checks are applied to
+  method-level security in your controllers or services?
+
+This scenario tests your understanding of Authentication, Authorization, JWT, PreAuthorize annotation in Spring boot.
+
+Authentication is the process of verifying the identity of a user or system. It checks whether the credentials provided
+(like username and password) are valid.
+
+Spring handles authentication using various methods like in-memory authentication, database authentication, or third-party
+providers (e.g., OAuth2, LDAP). Upon successful authentication, a Authentication object is created, representing the
+authenticated user.
+
+Authorization determines what an authenticated user is allowed to do—i.e., which resources or actions they can access
+based on their roles or permissions.
+
+Authorization is managed using roles or authorities. Spring Security evaluates these roles/authorities to grant or deny
+access to specific endpoints or functionalities.
+
+@RestController
+@RequestMapping("/api")
+public class SomeController {
+​
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/data")
+    public String adminData() {
+        return "This is data only for Admins.";
+    }
+​
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/user/data")
+    public String userData() {
+        return "This is data for Users.";
+    }
+}
+​
+
+
+
+
+16. What are differences between @Secured and @PreAuthorize annotations in Spring Security?
+
+@PreAuthorize is the newer and better choice over @Secured because it supports expression-based access control.
+With @PreAuthorize, you can use expressions like hasRole, hasAnyRole, permitAll, and more, providing greater flexibility
+in defining security rules.
+
+// Common Built-In Expressions
+// hasRole([role])
+// hasAnyRole([role1, role2])
+// permitAll
+// denyAll
+​
+@GetMapping("/user") // Map GET requests to "/api/test/user"
+@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')") // Require USER, MODERATOR, or ADMIN role
+public String userAccess() {
+    return "User Content."; // Return a message accessible by users with the required roles
+}
+​
+/**
+ * Endpoint accessible only to users with the MODERATOR role.
+ *
+ * @return A string message indicating moderator board content.
+ */
+@GetMapping("/mod") // Map GET requests to "/api/test/mod"
+@Secured({"MODERATOR", "ADMIN"}) // Require MODERATOR or ADMIN role
+public String moderatorAccess() {
+    return "Moderator Board."; // Return a message accessible by moderators
+}
+​
+
+
+
+
+17. What is JSON Web Token (JWT) and how is it used in Spring Boot?
+
+JSON Web Token (JWT) is an open standard for securely transmitting information as a JSON object. It's digitally
+signed using HMAC or RSA/ECDSA, ensuring the data's integrity and authenticity.
+
+📌 Why JWT?
+
+Authorization: Post-login, JWTs allow users to access permitted routes, services, and resources without re-authenticating.
+Information Exchange: Securely transmit information, ensuring the sender's identity and data integrity.
+
+🔍 JWT Structure:
+
+1. Header: Specifies the token type and signing algorithm.
+
+{ "alg": "HS256", "typ": "JWT" }
+
+2. Payload: Contains claims (user data and metadata).
+
+{ "sub": "1234567890", "name": "John Doe", "admin": true }
+
+3. Signature: Verifies the token's integrity.
+
+HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)
+
+🔄 How JWT Works in Spring Boot:
+
+1. User Authentication: User logs in, and the server issues a JWT.
+
+2. Token Usage: For subsequent requests, the client sends the JWT in the Authorization header.
+
+Authorization: Bearer <token>
+
+3. Server Validation: The server verifies the token's signature and grants access to protected resources if valid.
+
+Avoid storing sensitive data in JWT payloads and ensure tokens are short-lived to enhance security.
+
+
+
+
+18. What are the best practices to do Fault tolerance in Spring boot microservices?
+
+Implementing fault tolerance in Spring Boot microservices involves several best practices to ensure that your system
+remains resilient in the face of failures. Here are some key practices:
+
+Use Circuit Breaker Pattern: Implement circuit breakers using libraries like Netflix Hystrix or Resilience4j. Circuit breakers
+help in preventing cascading failures by providing a fallback mechanism when a service is not responding.
+Retry Mechanisms: Implement retry mechanisms for remote service calls. Spring Retry provides support for retrying failed
+operations with customizable retry policies.
+Timeouts: Set appropriate timeouts for network requests to prevent threads from being blocked indefinitely. This ensures
+that resources are not tied up waiting for unresponsive services.
+Bulkheads: Isolate different parts of your system using bulkheads to prevent failures in one component from affecting others.
+For example, you can configure thread pools for different types of tasks to prevent one type of task from overwhelming the system.
+Fail Fast: Detect and respond to failures as quickly as possible to minimize their impact. This includes quickly closing
+connections and releasing resources when a failure occurs.
+Health Checks: Implement health checks for your microservices to monitor their status. This allows you to quickly identify
+and respond to failures.
+Fallback Mechanisms: Provide fallback mechanisms for critical operations to maintain functionality even when dependent
+services are unavailable. This could involve returning cached data or providing default values.
+Logging and Monitoring: Implement comprehensive logging and monitoring to track the performance and health of your
+microservices. This enables you to identify issues early and take appropriate action.
+Graceful Degradation: Design your system to gracefully degrade functionality when resources are limited or under
+heavy load. This can involve prioritizing critical operations and disabling non-essential features temporarily.
+Automated Testing: Include fault tolerance testing as part of your automated testing strategy.
+This involves simulating failures and evaluating how your system responds under different failure scenarios.
+
+By following these best practices, you can build fault-tolerant Spring Boot microservices that are resilient
+to failures and provide a reliable user experience.
+
+
+
+
+19. Explain the use of Jenkins for automated builds.
+
+Jenkins is a popular open-source automation server that is widely used for automating various aspects of the software
+development process, including building, testing, and deploying applications. Its primary use case is for
+Continuous Integration (CI) and Continuous Deployment (CD). Here's a breakdown of its key features and
+how it facilitates automated builds:
+
+1. Continuous Integration (CI)
+
+Automated Builds: Jenkins allows developers to automate the process of building their applications from source code.
+This involves compiling the code, resolving dependencies, and packaging the application into executable artifacts
+(e.g., JAR files for Java applications).
+Scheduled Builds: Jenkins can be configured to periodically check the version control system (e.g., Git) for changes.
+ When changes are detected, Jenkins triggers a build process automatically. This ensures that new changes are integrated
+  into the codebase frequently and consistently.
+Parallel Builds: Jenkins supports parallel execution of builds across multiple nodes (machines), enabling faster build
+ times and efficient resource utilization, especially for large projects or teams with multiple developers.
+
+2. Extensive Plugin Ecosystem
+
+Integration with Tools and Technologies: Jenkins boasts a vast ecosystem of plugins that extend its functionality.
+These plugins enable integration with various development tools, version control systems, testing frameworks, deployment
+ platforms, and notification services, making it highly adaptable to different development environments and workflows.
+
+3. Scalability and Flexibility
+
+Distributed Builds: Jenkins supports distributed builds, allowing organizations to scale their CI infrastructure
+horizontally by adding more build nodes. This helps distribute the workload and improve build performance, particularly
+in larger development teams or complex projects.
+Customization: Jenkins provides a high degree of customization through its web-based interface and configuration options.
+ Users can define custom build steps, configure build triggers, set up notifications, and tailor the CI/CD pipeline
+  to suit their specific requirements.
+
+4. Monitoring and Reporting
+
+Build Monitoring: Jenkins provides real-time visibility into the status and progress of builds through its web dashboard.
+ Developers can monitor build logs, view test results, and track build trends over time, facilitating early detection
+ of issues and ensuring the overall health of the codebase.
+Integration with Reporting Tools: Jenkins integrates seamlessly with various reporting and analytics tools,
+allowing teams to generate detailed reports on build metrics, code quality, test coverage, and other key
+ performance indicators (KPIs). This data helps teams identify areas for improvement and make data-driven
+  decisions to optimize their development process.
+
+5. Continuous Deployment (CD)
+
+Automated Deployment Pipelines: Jenkins can be configured to automate the deployment of applications to different
+environments (e.g., staging, production) as part of a CD pipeline. This involves executing deployment scripts,
+provisioning infrastructure, and managing configuration settings automatically, ensuring that changes are deployed
+consistently and reliably.
+Integration with Deployment Tools: Jenkins integrates with popular deployment tools and platforms such as Docker,
+Kubernetes, AWS, and Heroku, allowing teams to deploy applications to cloud environments, containerized environments,
+ or on-premises infrastructure seamlessly.
+
+In summary, Jenkins simplifies the process of automated builds by providing a flexible, extensible, and scalable
+automation platform that streamlines CI/CD workflows. Its rich feature set, extensive plugin ecosystem, and robust
+integration capabilities make it a preferred choice for organizations seeking to automate their software development lifecycle.
+
+
+
+
+20. Explain the use of @RestController? and what is Difference between @Controller vs @RestController?
+
+Understanding @RestController in Spring Boot
+
+@RestController
+
+@RestController is a convenience annotation in Spring Boot that combines @Controller and @ResponseBody. It is used
+to create RESTful web services. The primary function of @RestController is to simplify the creation of web services
+by eliminating the need to annotate each method with @ResponseBody.
+
+Key Points:
+
+It marks the class as a controller where every method returns a domain object instead of a view.
+By default, it applies @ResponseBody to all the methods, meaning that the return values of these methods will
+be converted to JSON or XML (depending on the configuration) and sent directly in the HTTP response.
+
+@Controller vs. @RestController
+
+@Controller
+
+Used to mark a class as a Spring MVC controller.
+Typically used in web applications where the controller’s methods return views (like JSP, Thymeleaf templates).
+Methods in a @Controller class are often used to handle HTTP requests and return model and view objects.
+To return JSON or XML data from a method, you need to annotate the method with @ResponseBody.
+
+Example of @Controller
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+​
+@Controller
+public class MyController {
+​
+    @GetMapping("/greeting")
+    @ResponseBody
+    public String greeting() {
+        return "Hello, World!";
+    }
+​
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "welcome"; // This will return a view named 'welcome'
+    }
+}
+In this example:
+
+
+greeting() method returns a plain string which is automatically converted to JSON due to @ResponseBody.
+welcome() method returns a view named welcome.
+
+@RestController
+
+Specialized version of @Controller used for RESTful web services.
+Combines the functionality of @Controller and @ResponseBody.
+Every method in a @RestController class automatically returns data (usually JSON or XML) directly in the HTTP response.
+
+Example of @RestController
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+​
+@RestController
+@RequestMapping("/api")
+public class MyRestController {
+​
+    @GetMapping("/greeting")
+    public String greeting() {
+        return "Hello, World!";
+    }
+}

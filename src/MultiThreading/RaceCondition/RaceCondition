@@ -1,0 +1,15 @@
+Race condition occurs when multiple threads read and write the same variable i.e. they have access to some shared data and they try
+to change it at the same time. In such a scenario threads are “racing” each other to access/change the data. This is a major
+security vulnerability.
+Example Real world- Imagine Ram and his friend Sham both have access to the same bank account. They both try to withdraw Rs,500 at
+                the same time from different ATMs. The system checks the balance and sees there’s enough money for both withdrawals.
+               Without proper synchronization, the system might allow both transactions to go through, even if the balance is only
+               enough for one, leaving the account overdrawn.
+
+How to prevent-
+1-> Use Atomic Integer class to implement
+2-> Use Synchronized keyword -Synchronization: It is the process of controlling how and when multiple processes or threads access
+                                the shared resources ensuring that only one can enter the critical section at same time.
+3->Use Locks: Implement locks (like mutexes) to ensure that only one process or thread can access a resource at a time, preventing
+               conflicting operations.
+

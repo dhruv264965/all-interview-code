@@ -1,0 +1,74 @@
+In my word->In synchronized block we only synchronized critical part like count++.so performance is good but in synchronized method
+           we are blocking whole method it reduce performacne . we can check end-start time requried .
+
+"In both examples, we use two threads to increment a shared counter. In the synchronized method version, the entire method
+is locked, which reduces concurrency. In the synchronized block version, only the increment line is locked, allowing
+better performance.
+The final count is accurate in both, but the block version is usually faster due to reduced lock scope."
+
+---------------------------------------------------------------------------------------------
+Synchronized Method:
+
+A synchronized method is a method that is marked with the synchronized keyword. When a thread invokes a synchronized method,
+it acquires the intrinsic lock (also known as monitor lock) associated with the method's object (or class for static
+synchronized methods).
+
+This lock ensures that only one thread can execute the synchronized method for that object at any given time. Other
+threads attempting to execute the same synchronized method will be blocked until the lock is released.
+
+Example:
+public synchronized void synchronizedMethod() {
+    // Critical section
+    // Only one thread can execute this method at a time
+}
+Performance: Synchronized methods can impact performance in scenarios where many threads contend for the same lock,
+ potentially leading to contention and waiting times.
+
+Synchronized Block:
+
+A synchronized block is used to synchronize access to a specific block of code rather than an entire method. It allows
+finer-grained control over synchronization.
+
+To create a synchronized block, you specify an object reference or a class literal inside parentheses after the
+synchronized keyword. The block of code within the synchronized block is then synchronized on that object.
+
+Example:
+public void someMethod() {
+    synchronized (this) {
+        // Critical section
+        // Only one thread can execute this block for 'this' object at a time
+    }
+}
+Performance: Synchronized blocks can be more efficient than synchronized methods in scenarios where only a small portion of
+the method needs synchronization. They reduce the scope of locking, potentially reducing contention and improving performance.
+--------------------------------------------------------------------------------------------
+Interviewer Asks: Which is better for performance – synchronized method or block?
+
+You Answer:
+
+Synchronized block is generally better for performance, because it allows us to synchronize only the critical section of code.
+ This minimizes the time a thread holds the lock, which reduces thread contention and improves concurrency.
+
+Synchronized methods lock the entire method, even if only part of it modifies shared data, which can cause unnecessary
+ waiting for other threads.
+ ----------------------------------------------------------------------------------------------------------
+ The difference between synchronized static void increment() and synchronized void increment() lies in what lock
+ is being acquired.
+ ✅ 1. synchronized void increment()
+ This is a non-static synchronized method.
+
+ 🔒 Lock acquired on:
+ The instance of the object (this).
+ Each object of the class has its own lock.
+ 📌 Meaning:
+ If you have multiple instances, they can execute this method in parallel (no synchronization across objects).
+ Only one thread can execute the method per object at a time.
+
+ ✅ 2. synchronized static void increment()
+ This is a static synchronized method.
+ 🔒 Lock acquired on:
+ The Class object itself (i.e., ClassName.class).
+ It is shared across all instances of the class.
+ 📌 Meaning:
+ Only one thread across all instances of the class can execute any static synchronized method at a time.
+ It's useful for protecting static/shared class-level data.

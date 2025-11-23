@@ -1,0 +1,14 @@
+Quest-> What is API-
+An API (Application Programming Interface) is essentially a set of rules and protocols that allow different software
+applications to communicate with each other. It defines the methods and data formats that applications can use to request
+and exchange information.
+
+Quest-> Explain the process of caching in APIs. When would you use caching and what are its benefits?
+Caching in APIs is the process of storing copies of responses so that subsequent requests for the same data can be served
+more quickly without reprocessing the request or hitting the database. This improves performance, reduces latency,
+and optimizes resource usage.
+Types of API Caching
+HTTP Caching (Headers-based): Using Cache-Control, ETag, Expires, etc.
+In-Memory Caching: Storing data in memory using Redis, Memcached, etc.
+Database Query Caching: Storing query results in cache.
+CDN Caching: Using services like Cloudflare or AWS CloudFront to cache API responses.

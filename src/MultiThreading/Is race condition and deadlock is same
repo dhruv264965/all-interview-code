@@ -1,0 +1,194 @@
+No, race condition and deadlock are not the same. They are both concurrency problems in multithreaded applications,
+but they are very different in cause, behavior, and impact.
+
+Race Condition
+Definition: A race condition occurs when two or more threads access shared data at the same time, and the final
+outcome depends on the timing of the threads.
+Cause: Lack of proper synchronization when accessing shared resources (e.g., variables, files).
+Example: Two threads incrementing a shared counter without synchronization can result in missed updates.
+
+class Counter {
+    int count = 0;
+
+    void increment() {
+        count++; // Not thread-safe
+    }
+
+    int getCount() {
+        return count;
+    }
+}
+
+public class RaceConditionDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Counter counter = new Counter();
+
+        Runnable task = () -> {
+            for (int i = 0; i < 1000; i++) {
+                counter.increment();
+            }
+        };
+
+        Thread t1 = new Thread(task);
+        Thread t2 = new Thread(task);
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+
+        System.out.println("Final Count: " + counter.getCount()); // Expected: 2000, but may be less!
+    }
+}
+Solution (Using synchronized)
+class SafeCounter {
+    int count = 0;
+
+    synchronized void increment() {
+        count++;
+    }
+
+    int getCount() {
+        return count;
+    }
+}
+
+public class RaceConditionSolved {
+    public static void main(String[] args) throws InterruptedException {
+        SafeCounter counter = new SafeCounter();
+
+        Runnable task = () -> {
+            for (int i = 0; i < 1000; i++) {
+                counter.increment();
+            }
+        };
+
+        Thread t1 = new Thread(task);
+        Thread t2 = new Thread(task);
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+
+        System.out.println("Final Count: " + counter.getCount()); // Now always 2000
+    }
+}
+--------------------------------------------------------
+DeadLock
+
+Definition: A deadlock occurs when two or more threads are blocked forever, each waiting for the other to release
+a lock.
+Cause: Circular waiting due to improper locking sequence.
+Example:
+class Resource {
+    String name;
+
+    public Resource(String name) {
+        this.name = name;
+    }
+}
+
+public class DeadlockExample {
+    public static void main(String[] args) {
+        Resource r1 = new Resource("Printer");
+        Resource r2 = new Resource("Scanner");
+
+        Thread t1 = new Thread(() -> {
+            synchronized (r1) {
+                System.out.println("Thread-1: Locked " + r1.name);
+
+                try { Thread.sleep(100); } catch (InterruptedException e) {}
+
+                synchronized (r2) {
+                    System.out.println("Thread-1: Locked " + r2.name);
+                }
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            synchronized (r2) {
+                System.out.println("Thread-2: Locked " + r2.name);
+
+                try { Thread.sleep(100); } catch (InterruptedException e) {}
+
+                synchronized (r1) {
+                    System.out.println("Thread-2: Locked " + r1.name);
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+output This can lead to deadlock as:
+       Thread-1 locks r1, waits for r2
+       Thread-2 locks r2, waits for r1
+
+✅ Solution: Use Lock Ordering or TryLock
+    Fix using lock ordering
+    Always lock in a predefined order (e.g., r1 then r2 for all threads).
+    import java.util.concurrent.locks.ReentrantLock;
+    import java.util.concurrent.TimeUnit;
+
+    public class DeadlockPrevention {
+        private static final ReentrantLock lock1 = new ReentrantLock();
+        private static final ReentrantLock lock2 = new ReentrantLock();
+
+        public static void main(String[] args) {
+            Thread t1 = new Thread(() -> {
+                try {
+                    if (lock1.tryLock(100, TimeUnit.MILLISECONDS)) {
+                        System.out.println("Thread-1: Locked lock1");
+
+                        Thread.sleep(100);
+
+                        if (lock2.tryLock(100, TimeUnit.MILLISECONDS)) {
+                            System.out.println("Thread-1: Locked lock2");
+                            lock2.unlock();
+                        } else {
+                            System.out.println("Thread-1: Could not lock lock2");
+                        }
+
+                        lock1.unlock();
+                    } else {
+                        System.out.println("Thread-1: Could not lock lock1");
+                    }
+                } catch (InterruptedException e) {}
+            });
+
+            Thread t2 = new Thread(() -> {
+                try {
+                    if (lock2.tryLock(100, TimeUnit.MILLISECONDS)) {
+                        System.out.println("Thread-2: Locked lock2");
+
+                        Thread.sleep(100);
+
+                        if (lock1.tryLock(100, TimeUnit.MILLISECONDS)) {
+                            System.out.println("Thread-2: Locked lock1");
+                            lock1.unlock();
+                        } else {
+                            System.out.println("Thread-2: Could not lock lock1");
+                        }
+
+                        lock2.unlock();
+                    } else {
+                        System.out.println("Thread-2: Could not lock lock2");
+                    }
+                } catch (InterruptedException e) {}
+            });
+
+            t1.start();
+            t2.start();
+        }
+    }
+--------------------------------------------------------------------------------------------------
+| Aspect    | Race Condition                  | Deadlock                   |
+| --------- | ------------------------------- | -------------------------- |
+| Cause     | No synchronization              | Cyclic lock waiting        |
+| Effect    | Wrong data                      | Thread freeze              |
+| Fix       | `synchronized`, `AtomicInteger` | Lock ordering, `tryLock()` |
+| Detection | Unpredictable results           | Thread dump analysis       |
+
+

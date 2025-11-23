@@ -1,0 +1,47 @@
+Path Variable-->1. The @PathVariable annotation is used to retrieve data from the URL path. By defining placeholders in the request
+             mapping URL, you can bind those placeholders to method parameters annotated with @PathVariable. This allows you to access
+             dynamic values from the URL and use them in your code. For example, you can extract a user ID from a URL like /users/123 and
+             pass it to a method that retrieves the corresponding user’s details.
+             2. Both @PathVariable and @RequestParam annotations simplify the process of extracting data from incoming requests in Spring
+              Boot. They provide a clean and declarative way to access dynamic values from URLs and query parameters, making it easier to
+               handle and process request data in your REST API endpoints.
+             3. code-
+             @RestController
+               @RequestMapping("/users")
+               public class UserController {
+
+                   @GetMapping("/{userId}")
+                   public ResponseEntity<User> getUserDetails(@PathVariable Long userId) {
+                       // Implementation to fetch user details based on the provided userId
+                       // ...
+                       return ResponseEntity.ok(user);
+                   }
+               }
+
+              4.In the above code, the @PathVariable annotation is used to extract the userId from the URL path. The {userId} placeholder is
+                 defined in the @GetMapping annotation’s URL mapping. The value of the {userId} placeholder will be extracted and passed as the
+                 userId method parameter. When a request is made to /users/123, the value 123 will be passed to the getUserDetails method as the
+                 userId parameter. You can then use this ID to fetch the user details from a database or any other data source.
+
+
+  ------------------------------------------------------------------------------------------------------------------------------------------------
+ Request Param--> 1. The @RequestParam annotation is used to extract data from the query parameters in the request URL. Query parameters
+                    are the key-value pairs that appear after the ? in a URL. Let’s consider an example where you have a REST API
+                    endpoint for searching users based on a query parameter:
+                  2. code-
+                     @RestController
+                     @RequestMapping("/users")
+                     public class UserController {
+
+                         @GetMapping("/search")
+                         public ResponseEntity<List<User>> searchUsers(@RequestParam("name") String name) {
+                             // Implementation to search users based on the provided name
+                             // ...
+                             return ResponseEntity.ok(users);
+                         }
+                     }
+                  3. In the above code, the @RequestParam annotation is used to extract the name parameter from the query parameters. The name parameter is
+                     specified as an argument of the @RequestParam annotation. When a request is made to /users/search?name=John, the value John
+                      will be passed to the searchUsers method as the name parameter. You can then use this parameter to perform a search operation
+                      based on the provided name.
+

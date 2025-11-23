@@ -1,0 +1,69 @@
+Q->class A{
+    public void synchronised m1(){
+        Thread.sleep(5000);
+    }
+}   if we created two object of this class lets say a1 and a2 and two different thread accessing these object and
+now i am invoking m1 method.. how it behave
+Answer->Behavior:
+        Two Threads, Different Objects:
+
+        Suppose you have two threads (t1 and t2), and each is calling m1 on a different object (a1 and a2).
+        Thread t1 will call a1.m1() and acquire a lock on the object a1. While it is executing, thread t1 will not allow
+        other threads to access a1.m1() (because m1 is synchronized).
+        Thread t2 will call a2.m1() and acquire a lock on the object a2. Since a1 and a2 are different objects,
+         thread t2 does not block t1. Both threads can run concurrently without blocking each other.
+        Synchronization is Object-Specific:
+
+        The lock is specific to each object. Because a1 and a2 are different objects, the synchronization only applies
+        to threads accessing the same object.
+        Thread 1 will have a lock on a1 and will execute the m1() method, sleeping for 5 seconds.
+        Thread 2 will have a lock on a2 and will execute the m1() method independently of Thread 1, also sleeping for 5 seconds.
+        No Blocking Between Threads:
+
+        Since the two threads are operating on two separate instances (a1 and a2), there is no blocking or mutual exclusion
+        between t1 and t2. Both threads can execute m1() simultaneously on different objects.
+        class A {
+            public synchronized void m1() throws InterruptedException {
+                System.out.println(Thread.currentThread().getName() + " is executing m1.");
+                Thread.sleep(5000);
+                System.out.println(Thread.currentThread().getName() + " finished executing m1.");
+            }
+        }
+
+        public class Main {
+            public static void main(String[] args) throws InterruptedException {
+                A a1 = new A();
+                A a2 = new A();
+
+                Thread t1 = new Thread(() -> {
+                    try {
+                        a1.m1();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }, "Thread 1");
+
+                Thread t2 = new Thread(() -> {
+                    try {
+                        a2.m1();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }, "Thread 2");
+
+                t1.start();
+                t2.start();
+
+                t1.join();
+                t2.join();
+            }
+        }
+Output:Thread 1 is executing m1.
+       Thread 2 is executing m1.
+       Thread 1 finished executing m1.
+       Thread 2 finished executing m1.
+Conclusion:
+If you are using two different objects (a1 and a2) with synchronized methods, threads accessing different objects will not
+block each other. They can run concurrently.
+If the method is synchronized and you're using the same object (e.g., both threads call m1 on a1), then one thread will
+ have to wait for the other to finish because the lock is acquired on the same object instance.

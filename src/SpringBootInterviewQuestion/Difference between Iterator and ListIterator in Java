@@ -1,0 +1,54 @@
+Feature	Iterator	ListIterator
+Applicable for	All Collection types (List, Set, Queue, etc.)	Only for List implementations (ArrayList,
+LinkedList, etc.)
+Traversal Direction	Only forward (next())	Both forward (next()) and backward (previous())
+Modification	Can only remove elements (remove())	Can remove (remove()), add (add()), and update (set())
+elements
+Index Access	No direct access to indices	Provides index access using nextIndex() and previousIndex()
+Usability	Works with any collection	Works only with lists
+Example of Iterator
+
+import java.util.*;
+
+public class IteratorExample {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>(Arrays.asList("A", "B", "C"));
+        Iterator<String> iterator = list.iterator();
+
+        while (iterator.hasNext()) {
+            String element = iterator.next();
+            System.out.println(element);
+            // iterator.add("D"); // Not allowed
+            // iterator.set("X"); // Not allowed
+        }
+    }
+}
+Example of ListIterator
+
+import java.util.*;
+
+public class ListIteratorExample {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>(Arrays.asList("A", "B", "C"));
+        ListIterator<String> listIterator = list.listIterator();
+
+        while (listIterator.hasNext()) {
+            String element = listIterator.next();
+            System.out.println(element);
+
+            if (element.equals("B")) {
+                listIterator.set("X"); // Updates "B" to "X"
+                listIterator.add("Y"); // Adds "Y" after "X"
+            }
+        }
+
+        System.out.println("Modified List: " + list);
+    }
+}
+Output:
+
+
+A
+B
+C
+Modified List: [A, X, Y, C]

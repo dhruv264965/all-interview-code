@@ -1,0 +1,29 @@
+Relaxed binding in Spring Boot allows for flexibility when mapping environment properties to your application's configuration
+properties.
+Here's how it works:
+Case insensitivity:
+Spring Boot ignores the case of property names when matching them to your configuration properties. For example, server.port and
+SERVER_PORT are considered the same.
+Hyphen and underscore interchangeability:
+You can use hyphens or underscores interchangeably in your property names. For example, spring.datasource.url and spring_datasource_url
+ are considered the same.
+Nested properties:
+You can use dot notation to represent nested properties in your configuration. For example, spring.datasource.username can be mapped
+to a property named username within a datasource object in your configuration class.
+@ConfigurationProperties("my-app")
+public class MyAppConfig {
+    private String myProperty;
+
+    // Getter and setter for myProperty
+}
+You can now set this property in your application.properties file using any of the following formats:
+my-app.my-property=value
+MY_APP_MY_PROPERTY=value
+my_app.myProperty=value
+MY_APP_MYPROPERTY=value
+Benefits:
+Easier to work with environment variables:
+Environment variables often use uppercase and underscores, so relaxed binding allows you to map them to your configuration
+properties without any extra effort.
+More flexibility in naming conventions:
+You can choose the naming convention that best suits your project without worrying about exact matches.

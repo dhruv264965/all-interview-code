@@ -1,0 +1,28 @@
+The start() method actually creates a new thread and calls the run() method in that new thread.
+But if you directly call run(), it behaves like a normal method call and runs in the current thread.”
+| Feature         | `start()`                                         | `run()`                                 |
+| --------------- | ------------------------------------------------- | --------------------------------------- |
+| Thread creation | Starts a new thread                               | Does **not** start a new thread         |
+| Executes in     | A separate (new) thread                           | The **current** thread                  |
+| Purpose         | Used to **initiate multithreading**               | Used to define the **task** to run      |
+| Calls `run()`?  | Yes, internally                                   | Yes, but **like a normal method**       |
+| Common mistake  | Calling `run()` directly won't start a new thread | Correct way is always to call `start()` |
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Running in: " + Thread.currentThread().getName());
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+
+        // Correct way - starts a new thread
+        t1.start(); // Output: Running in: Thread-0
+
+        // Wrong way - runs in main thread
+        t1.run();   // Output: Running in: main
+    }
+}
+Q: What happens if you call run() instead of start()?
+A: It will execute the code inside run() like a normal method call — no multithreading happens.

@@ -1,0 +1,102 @@
+Yes, I’ve used CompletableFuture in my Spring Boot project to perform non-blocking parallel execution of external API calls.
+
+Specifically, I needed to call multiple independent 3rd-party services — like pricing, reviews, and inventory — and
+combine their responses to build a complete product response.
+
+Instead of calling APIs sequentially (slow), I used CompletableFuture.supplyAsync() to call them asynchronously
+and in parallel, and then combined the results.
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class ProductAggregatorService {
+
+    public ProductDTO getProductDetails() throws ExecutionException, InterruptedException {
+
+        CompletableFuture<String> priceFuture = CompletableFuture.supplyAsync(() -> priceService.getPrice());
+        CompletableFuture<String> reviewFuture = CompletableFuture.supplyAsync(() -> reviewService.getReviews());
+        CompletableFuture<String> stockFuture = CompletableFuture.supplyAsync(() -> inventoryService.getStock());
+
+        // Combine all results after all complete
+        CompletableFuture<Void> allDone = CompletableFuture.allOf(priceFuture, reviewFuture, stockFuture);
+
+        allDone.join(); // Wait for all to finish
+
+        // Collect results
+        String price = priceFuture.get();
+        String reviews = reviewFuture.get();
+        String stock = stockFuture.get();
+
+        // Merge all into a final product response
+        return new ProductDTO(price, reviews, stock);
+    }
+}
+| Feature            | `ExecutorService`                         | `CompletableFuture`                     |
+| ------------------ | ----------------------------------------- | --------------------------------------- |
+| Thread Management  | Manual (FixedThreadPool, shutdown needed) | Abstracted (managed by ForkJoinPool)    |
+| Async Chaining     | Manual handling of future results         | Fluent `.thenApply()`, `.thenCombine()` |
+| Exception Handling | Needs try-catch everywhere                | Fluent `.exceptionally()`               |
+| Readability        | Boilerplate-heavy                         | Much cleaner and declarative            |
+I used CompletableFuture to call 3rd-party APIs like price, reviews, and inventory in parallel without blocking the main thread.
+I used supplyAsync() to run each call in a separate thread and CompletableFuture.allOf() to wait for all responses.
+This improved my product service's response time by over 60% and made the code much more maintainable compared to using ExecutorService.
+
+
+-------------------------------------------------------------------------------------------
+how three servics and communicate and improve performance
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.concurrent.CompletableFuture;
+
+@Service
+public class ProductAggregatorService {
+
+    @Autowired
+    private WebClient.Builder webClientBuilder;
+
+    public ProductDTO getProductDetails(String productId) throws Exception {
+
+        CompletableFuture<String> priceFuture = CompletableFuture.supplyAsync(() ->
+            webClientBuilder.build()
+                .get()
+                .uri("http://price-service/products/" + productId)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block()
+        );
+
+        CompletableFuture<String> reviewFuture = CompletableFuture.supplyAsync(() ->
+            webClientBuilder.build()
+                .get()
+                .uri("http://review-service/products/" + productId)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block()
+        );
+
+        CompletableFuture<String> stockFuture = CompletableFuture.supplyAsync(() ->
+            webClientBuilder.build()
+                .get()
+                .uri("http://inventory-service/products/" + productId)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block()
+        );
+
+        // Wait for all to complete
+        CompletableFuture.allOf(priceFuture, reviewFuture, stockFuture).join();
+
+        // Get results
+        String price = priceFuture.get();
+        String reviews = reviewFuture.get();
+        String stock = stockFuture.get();
+
+        return new ProductDTO(price, reviews, stock);
+    }
+}
+I used CompletableFuture in combination with WebClient to call three microservices (price, review, inventory) in parallel.
+This allowed me to reduce response time significantly and avoid blocking threads.
+I used CompletableFuture.allOf() to wait for all responses, then assembled the final response object (ProductDTO) from each service's result.
+

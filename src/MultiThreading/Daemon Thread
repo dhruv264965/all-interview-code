@@ -1,0 +1,19 @@
+Daemon Thread:Thread runningin the background and used for logging and clanp operation
+Daemon threads, on the other hand, are background threads that are used to provide services to user threads or to
+perform tasks at the JVM level.
+
+They do not prevent the JVM from exiting when all user threads have finished execution and only daemon threads are
+left running.
+
+Examples of daemon threads include garbage collector threads and threads created by certain libraries and frameworks.
+Daemon threads are typically used for tasks that should not prevent the application from shutting down, such as
+cleaning up resources or performing periodic maintenance tasks.
+
+Use Cases for Daemon Threads:
+
+Garbage Collection: The JVM uses daemon threads for garbage collection to reclaim memory used by objects that are no
+ longer reachable.
+Background Tasks: For tasks like monitoring, logging, or cleanup operations that are not critical to the main application
+flow but need to be performed periodically.
+Service Providers: Threads that provide services to other threads, such as managing connections or handling requests
+in a server application.
