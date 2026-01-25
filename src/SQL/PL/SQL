@@ -1,0 +1,9 @@
+1️⃣ What is PL/SQL?
+
+PL/SQL (Procedural Language / SQL) is Oracle’s programming language.
+
+SQL → works on data (SELECT, INSERT, UPDATE)
+
+PL/SQL → works on logic (conditions, loops, variables)
+
+👉 Used when you need business logic inside the database
