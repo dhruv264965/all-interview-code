@@ -15,6 +15,9 @@ public class BestTimeToBuyAndSellTheStock {
             }
         }
         System.out.println(res);
+ // brute force
+
+
 
         // optimal force TC- n
         int arr1[]={6,7,1,3,5,9};

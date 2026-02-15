@@ -7,3 +7,281 @@ SQL → works on data (SELECT, INSERT, UPDATE)
 PL/SQL → works on logic (conditions, loops, variables)
 
 👉 Used when you need business logic inside the database
+
+DECLARE       -- optional
+BEGIN         -- mandatory
+  -- executable statements
+END;          -- mandatory
+/
+Let’s understand step-by-step
+Example 1️⃣: Value in DECLARE + value in BEGIN
+SET SERVEROUTPUT ON;
+
+DECLARE
+  num NUMBER := 10;   -- initialized here
+BEGIN
+  num := 20;          -- reassigned here
+
+  DBMS_OUTPUT.PUT_LINE(num);
+END;
+/
+
+Output
+20
+
+Why?
+
+DECLARE → only initializes the variable
+
+BEGIN → executes logic
+
+When execution starts, Oracle uses the latest assigned value
+
+
+* null + some value(40)=null only
+
+| Feature         | CONSTANT      | NOT NULL     |
+| --------------- | ------------- | ------------ |
+| Used in         | PL/SQL only   | PL/SQL + SQL |
+| Value change    | ❌ Not allowed | ✅ Allowed    |
+| Allows NULL     | ❌ No          | ❌ No         |
+| Must initialize | ✅ Yes         | ✅ Yes        |
+
+DECLARE
+  tax CONSTANT NUMBER := 18;
+  emp_id NUMBER NOT NULL := 101;
+  salary NUMBER := 50000;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Emp ID: ' || emp_id);
+  DBMS_OUTPUT.PUT_LINE('Tax: ' || tax);
+END;
+/
+ * if we want to select more than 1 record from the base table -> we need to use cursor and bulk collect
+
+ DECLARE
+ v_name employee.name%type;
+ BEGIN
+ select name into v_name from employee where id=1;
+ dbms_output.put_line(v_name);
+ end;
+ ----------------------------------------------------------------------
+ Example: Multiple Columns → Multiple Variables
+ DECLARE
+   v_name   employee.name%TYPE;
+   v_salary employee.salary%TYPE;
+ BEGIN
+   SELECT name, salary
+   INTO v_name, v_salary
+   FROM employee
+   WHERE id = 1;
+
+   DBMS_OUTPUT.PUT_LINE(v_name || ' - ' || v_salary);
+ END;
+
+
+ ❌ Wrong Example (Interview trap)
+ SELECT name, salary
+ INTO v_name
+ FROM employee
+ WHERE id = 1;
+
+
+ ❌ Error:
+
+ ORA-00947: not enough values
+
+ Fetching Multiple Columns Using RECORD (Best Practice)
+
+ Instead of many variables 👇
+
+ DECLARE
+   v_emp employee%ROWTYPE;
+ BEGIN
+   SELECT *
+   INTO v_emp
+   FROM employee
+   WHERE id = 1;
+
+   DBMS_OUTPUT.PUT_LINE(v_emp.name || ' ' || v_emp.salary);
+ END;
+ /
+
+ -----------------------------------------------------------------------------------
+ %TYPE vs %ROWTYPE
+
+    In Oracle PL/SQL, both %TYPE and %ROWTYPE are used to anchor variable types to database objects, but they serve different purposes.
+
+    %TYPE
+
+    Used to declare a variable with the same datatype as a column or another variable.
+
+    Syntax
+    variable_name table_name.column_name%TYPE;
+
+    Example
+    DECLARE
+        v_salary employees.salary%TYPE;
+    BEGIN
+        SELECT salary INTO v_salary
+        FROM employees
+        WHERE employee_id = 101;
+    END;
+
+    Key points
+
+    Refers to one column
+
+    Protects you from datatype changes (e.g., if salary changes from NUMBER(8,2) to NUMBER(10,2))
+
+    Can also reference another variable:
+
+    v_bonus v_salary%TYPE;
+
+    %ROWTYPE
+
+    Used to declare a record that represents an entire row of a table or cursor.
+
+    Syntax
+    record_name table_name%ROWTYPE;
+
+    Example
+    DECLARE
+        v_emp employees%ROWTYPE;
+    BEGIN
+        SELECT * INTO v_emp
+        FROM employees
+        WHERE employee_id = 101;
+
+        DBMS_OUTPUT.PUT_LINE(v_emp.first_name || ' ' || v_emp.last_name);
+    END;
+
+    Key points
+
+    Refers to all columns in a row
+
+    Automatically includes every column in the table (or cursor)
+
+    Field names match column names
+
+    Side-by-side comparison
+    Feature	%TYPE	%ROWTYPE
+    Scope	Single column / variable	Entire row
+    Data stored	One value	Multiple column values
+    Memory usage	Lightweight	Heavier (all columns)
+    Best for	Individual fields	Fetching full records
+    When to use what?
+
+    Use %TYPE when you need one or a few columns
+
+    Use %ROWTYPE when you need most or all columns of a row
+
+    💡 Pro tip: Avoid SELECT * INTO %ROWTYPE on very wide tables unless you really need everything—it can hurt maintainability and performance.
+
+    ------------------------------------------------------------------------
+   * select data in PL/SQL
+
+    DECLARE
+    v_name employee.name%type;
+    BEGIN
+    select name into v_name from employee where id=1;
+    dbms_output.put_line(v_name);
+    end;
+
+    DECLARE
+      v_emp employee%ROWTYPE;
+    BEGIN
+      SELECT *
+      INTO v_emp
+      FROM employee
+      WHERE id = 1;
+
+      DBMS_OUTPUT.PUT_LINE(v_emp.name || ' ' || v_emp.salary || ' ' || v_emp.department);
+    END;
+
+  *  insert data in PL/SQL
+
+    BEGIN
+    insert into employee(id, name ,department, salary)
+    values(110,'shukla','CSE',158745);
+    commit;
+    end;
+    /
+
+
+    DECLARE
+        v_id         employee.id%TYPE := 101;
+        v_name       employee.name%TYPE := 'shukla raj';
+        v_department employee.department%TYPE := 'CSE';
+        v_salary     employee.salary%TYPE := 158745;
+    BEGIN
+        INSERT INTO employee (id, name, department, salary)
+        VALUES (v_id, v_name, v_department, v_salary);
+
+        COMMIT;
+    END;
+
+    can we do we can insert all the from another name and store->
+    Yes
+    Assumption
+
+    Source table: employee
+
+    Target table: employee_backup
+
+    id is PRIMARY KEY / UNIQUE
+
+    You want to copy all rows
+
+    Avoid ORA-00001 error
+
+    Step 1️⃣ Create a sequence (only once)
+    CREATE SEQUENCE emp_bkp_seq
+    START WITH 1
+    INCREMENT BY 1;
+
+    Step 2️⃣ Insert all data from employee into employee_backup
+    BEGIN
+        INSERT INTO employee_backup (id, name, department, salary)
+        SELECT emp_bkp_seq.NEXTVAL,
+               name,
+               department,
+               salary
+        FROM employee;
+
+        COMMIT;
+    END;
+    /
+
+
+    ✔ Copies all rows
+    ✔ Generates new unique IDs
+    ✔ No duplicate key error
+
+    If you want to copy only some records (example: CSE department)
+    BEGIN
+        INSERT INTO employee_backup (id, name, department, salary)
+        SELECT emp_bkp_seq.NEXTVAL,
+               name,
+               department,
+               salary
+        FROM employee
+        WHERE department = 'CSE';
+
+        COMMIT;
+    END;
+    /
+
+    If target table does NOT exist yet (fastest)
+    CREATE TABLE employee_backup AS
+    SELECT * FROM employee;
+
+
+    ⚠️ This copies data + columns, but NOT constraints or PKs.
+
+    Summary
+
+    ✅ Use INSERT INTO … SELECT
+
+    ✅ Use SEQUENCE for unique IDs
+
+    ❌ Don’t use VALUES with SELECT
