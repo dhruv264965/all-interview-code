@@ -1,0 +1,59 @@
+We cover the following:
+1. Introduction to SQL
+        • Why is it important to learn SQL.
+2. What is SQL?
+3. SQL Commands
+        • DDL (Data Definition Language)-> here we are defining the database defination
+                i. CREATE Table
+                ii. ALTER Table- modify rthe structure the table, rename the col, table name, add new column, remove contraist
+                                 change data type .
+                iii. DROP Table- remove database object(such as table , view , function)
+                iv. TRUNCATE Table- remove the data from the table at ones .
+        • DML (Data Manipulation Language)
+                i. INSERT
+                ii. UPDATE- modify data in the table. we can update multiple col at ones .
+                iii. DELETE- delete the data from table
+        • DCL (Data Control Language)
+                i. GRANT
+                ii. REVOKE
+        • TCL (Transaction Control Language)
+                i. COMMIT
+                ii. ROLLBACK
+                iii. SAVEPOINT
+        • DQL (Data Query Language)
+                i. SELECT
+4. Different SELECT Query functionalities:
+        • SQL Operators
+                i. Logical Operators- AND, OR , IN , BETWEEN , NOT, LIKE
+                ii. Comparison Operators- <,>,<=, >=,<>(not equal) , !=
+                iii. Arithmetic Operators- +,- * / %
+        • CASE Statement
+        • Two ways of writing SQL Queries
+                i. Using comma separator
+                ii. Using JOIN
+        • UNION & UNION ALL Operators
+        • GROUP BY Statement
+                i. HAVING Clause
+        • Subquery
+        • Aggregate Functions
+                i. COUNT
+                ii. AVG
+                iii. MIN
+                iv. MAX
+                v. SUM
+
+
+ DataType ->1. varchar-> here we can store the data in alpha , numeric and special character also.
+  2. int - only number 0-9 are allowed
+  3. Date- store date . date can be any format 09/09/1998
+  4. Float- hold decimal number
+  5. Boolean - holds true and false
+
+  Constraints->limitation and restriction applyied to a column in a table.
+             it helps to maintains the data intrgrity so before inserting the data it will the insert wrong data
+  1. Check- help to control the value being inserted into table column. no negative can insert.
+  2. not null- ensure there is no null value inserted for that coulmn.
+  3. Unique- value inserted in col has distianct value . help to eliminate duplicate value
+              in a column.null value are allowed in unique(it can be multiple null value )
+  4. Primary key- combination unique and not null contraint.(unique and no null). only one col can be PK
+  5. Foreign key- help to form relationship between child and parents. child table references to col of parent table

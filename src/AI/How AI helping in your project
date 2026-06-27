@@ -1,0 +1,9 @@
+"In my Java development projects, I use AI as a productivity tool rather than a replacement
+ for development. For coding, I use ChatGPT and GitHub Copilot to generate boilerplate code,
+ REST APIs, SQL queries, and suggest optimized Java code. During debugging, I use AI to analyze
+ stack traces, Spring Boot configuration issues, and Hibernate errors, which helps me identify
+ the root cause much faster. For testing, I use AI to generate JUnit and Mockito test cases,
+ create sample JSON payloads, and validate API responses with Postman. I also use AI to
+ understand new frameworks, generate documentation, and learn best practices. Overall,
+ AI helps me reduce development time, improve code quality, speed up debugging, and increase
+ productivity while I still review and validate all generated code before using it in production."
