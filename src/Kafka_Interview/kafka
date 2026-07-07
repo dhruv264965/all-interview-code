@@ -4,6 +4,7 @@ A Kafka topic is a logical category where messages are published and consumed.
 Topics are similar to tables in a database, but instead of storing rows, they store streaming messages.
 Topics are divided into partitions to distribute data across multiple brokers.
 Producers write data to topics, and consumers subscribe to topics to receive messages.
+
 2. What are Kafka partitions, and why are they important?
 A partition is a subset of a Kafka topic that enables parallel processing and scalability.
 
@@ -205,3 +206,111 @@ What happens if ZooKeeper fails?	Kafka continues running, but no new leader elec
 How does Kafka store metadata in ZooKeeper?	Uses ZNodes to store broker, topic, partition, and consumer metadata.
 What is Kafka KRaft mode?	Kafka’s built-in metadata system replacing ZooKeeper (from Kafka 3.0).
 Advantages of KRaft over ZooKeeper?	Faster failover, better scalability, and no external dependencies.
+
+---------------------------------------------------------------------------------------------------
+
+Producer- servics that publish events
+broker- kafka wegera ye sb broker hote hai
+consumers- who consume the events
+
+When we use kafka - jb hame Throughput bahut high chaheye.
+Throughput in Kafka refers to how much data Kafka can process (produce and consume) in a given amount of time.
+It is usually measured as:
+Messages per second (msg/sec)
+Bytes per second (MB/sec or GB/sec)
+
+
+---------------------------------------------------------------------
+Topic and events->
+
+Excellent question! This is where many beginners get confused.
+
+No. A Topic is not the same as an Event.
+
+A Topic is a container (or category), and an Event is the actual message stored inside that container.
+
+Let's understand it with an example.
+
+Real-world analogy: WhatsApp Groups
+
+Imagine you have three WhatsApp groups:
+
+📱 Family Group
+📱 Office Group
+📱 Friends Group
+
+These groups are like Kafka Topics.
+
+Now suppose people send messages.
+
+Family Group
+
+Good Morning
+Dinner at 8 PM
+Happy Birthday
+
+Each message is an Event.
+
+So:
+
+WhatsApp Group = Topic
+Individual Message = Event
+Kafka Example
+
+Suppose you have an e-commerce application.
+
+Whenever something happens, an event is generated.
+
+Examples:
+
+Customer registered
+Order placed
+Payment completed
+Product shipped
+
+Instead of putting everything into one place, Kafka organizes them into topics.
+
+Topics
+
+Customer-Topic
+--------------------
+Customer Registered
+Customer Updated
+Customer Deleted
+
+Order-Topic
+--------------------
+Order Created
+Order Cancelled
+Order Delivered
+
+Payment-Topic
+--------------------
+Payment Started
+Payment Successful
+Payment Failed
+
+Here:
+
+Customer-Topic is a Topic.
+Customer Registered is an Event.
+What exactly is an Event?
+
+An event is simply something that happened in your system.
+
+Example:
+
+A customer places an order.
+
+The application creates an event like:
+
+{
+  "orderId": 101,
+  "customer": "Dhruv",
+  "amount": 2500,
+  "status": "CREATED"
+}
+
+This JSON is the event (also called a record or message).
+
+Kafka stores it inside the Orders topic.
