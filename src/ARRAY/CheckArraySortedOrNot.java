@@ -9,6 +9,7 @@ public class CheckArraySortedOrNot {
                 flag=false;
                 break;
             }
+
         }
         System.out.println(flag);
     }
