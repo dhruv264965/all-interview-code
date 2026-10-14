@@ -11,8 +11,8 @@ public class MergeTwoSortedArray {
         Arrays.sort(arr2);
 
         // Merge the sorted arrays into ans[]
-        while (i < n && j < m) {               //  arr1-{12, 18, 40, 600};
-            if (arr1[i] < arr2[j]) {           // arr2-{47, 56, 89, 90};
+        while (i < n && j < m) {               //  arr1-{ 12, 18, 40, 600 };
+            if (arr1[i] < arr2[j]) {           // arr2-{  47, 56, 89, 90  };
                 ans[k++] = arr1[i++];
             } else {
                 ans[k++] = arr2[j++];
