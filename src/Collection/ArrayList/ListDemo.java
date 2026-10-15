@@ -8,6 +8,7 @@ public class ListDemo {
         List<Integer> a1= new ArrayList<>();
         a1.add(1);
         a1.add(2);
+        a1.add(2);
         System.out.println(a1);
         List a2=a1;   // Raw type assignment( When we use raw type(List a2) we lose type safety ->can insert any object
         System.out.println(a2);

@@ -7,7 +7,11 @@
 | **Thread Safety**              | ❌ Not thread-safe                                           | ✅ Thread-safe                                                 |
 | **Performance**                | ✅ Fast (direct iteration)                                   | ❌ Slower (due to copying or snapshot overhead)                |
 | **Modification Detected How?** | Uses a **modCount** and checks it during iteration          | No such check – uses separate copy                            |
+
+Fail-Safe- It use the copy of collection to traverse over the element.ccd..
+
 import java.util.*;
+
 
 public class FailFastExample {
     public static void main(String[] args) {

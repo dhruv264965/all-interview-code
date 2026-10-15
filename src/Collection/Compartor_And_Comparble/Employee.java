@@ -53,8 +53,8 @@ public class Employee implements Comparable<Employee> {
     public int compareTo(Employee o) {
        //return this.id-o.id;                 // compare Integer Increasing order
       // return this.name.compareTo(o.name);  // compare String  Increasing order
-      //  return o.id-this.id;                   // compare Integer decrasing order
-        return o.name.compareTo(this.name);       // compare String  decrasing order
+        return o.id-this.id;                   // compare Integer decrasing order
+       // return o.name.compareTo(this.name);       // compare String  decrasing order
 
     }
 

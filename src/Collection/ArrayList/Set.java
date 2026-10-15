@@ -10,6 +10,8 @@ public class Set {
         list.add(20);
         list.add(30);
         list.add(40);
+        list.add(40);
+        System.out.println(list);
         System.out.println(list.get(1));
       //  list.remove(20);  // runntime error in arraylist get and remove is based on index not value
         System.out.println(list.get(1));

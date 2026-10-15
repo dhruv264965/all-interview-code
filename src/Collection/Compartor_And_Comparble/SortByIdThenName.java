@@ -49,6 +49,8 @@ public class SortByIdThenName {
         ListOfPerson.add(new Person(4,"chandan"));
         ListOfPerson.add(new Person(1,"mayur"));
         ListOfPerson.add(new Person(3,"atul"));
+        System.out.print(ListOfPerson);
+        System.out.println("  ---------------------------------------  ");
 
         Collections.sort(ListOfPerson, new Comparator<Person>() {
 
@@ -61,8 +63,10 @@ public class SortByIdThenName {
                  return o1.getName().compareTo(o2.getName());
             }
         });
+//  USing java 8
+//        ListOfPerson.sort(Comparator.comparing(Person::getId).reversed().thenComparing(Person::getName).reversed());
         for(Person p:ListOfPerson){
-            System.out.println(p);
+            System.out.print(p);
         }
     }
 }

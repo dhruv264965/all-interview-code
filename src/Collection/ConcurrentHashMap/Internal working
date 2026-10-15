@@ -1,6 +1,6 @@
 ConcurrentHashMap in Java is designed to allow concurrent access to the map without blocking threads unnecessarily.
 
-Internal Working->
+Internal Working-> java 7
 1->Segmentation-- (A)->concurrentHashMap divide int 16 segment
                   (B)->each segment acts as separate hashtable
                   (C)->we can access different segmnet without locking of entire map
@@ -29,3 +29,19 @@ If thread A and thread C both want to update keys that hash to the same segment,
  because in a concurrent environment, map.get(key) returning null could mean either the key doesn't exist or its value
  is null, which creates ambiguity. This can lead to race conditions and hard-to-debug errors. So, ConcurrentHashMap
  throws NullPointerException to enforce safety and clarity."
+
+
+ -----------------------------------------------------------------------------------------------------------
+ ConcurrentHashMap (CHM) is a thread-safe hash map that avoids locking the whole map. Reads are mostly lock-free,
+ and writes lock only a small portion of the table
+ If the bucket is empty, CHM inserts using CAS(compare and swap) with no lock. If the bucket already has nodes, it synchronizes on
+ the bucket’s head node, so only threads touching the same bucket contend.”
+
+
+
+ -------------------------------------------------------------------------------------------------
+ Java 8 -
+
+ 1> No segmentation- drawback - we can not extend only 16 segment is there
+ 2> Use CAS(compare and swap ) approach-> No locking except resizing or collision
+   if we do

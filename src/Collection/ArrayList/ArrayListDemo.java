@@ -58,6 +58,7 @@ public class ArrayListDemo {
         System.out.println("----------------------------------");
 
         System.out.println("List before reversing :\n" + list_Stringss);
+       // list_Strings.sort(Comparator.reverseOrder());
         Collections.reverse(list_Stringss);
         System.out.println("List after reversing :\n" + list_Stringss);
         System.out.println("--------------------------------------");

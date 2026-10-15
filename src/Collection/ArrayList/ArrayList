@@ -28,3 +28,6 @@ Set does not allow duplicates because it uses hashing or sorting to maintain uni
  HashSet and LinkedHashSet allow only one null (as duplicates are not allowed), while TreeSet does not allow null
  at all because it needs to compare elements for sorting. On the other hand, ArrayList allows duplicates and
  multiple null values since it simply stores elements in an array.
+
+
+ ArrayList - Dyanamic size-> allow duplicate->Access is easy->use generic to avoid type safety->default size is 10
