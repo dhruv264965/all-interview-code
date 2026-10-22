@@ -185,3 +185,22 @@ class InvalidAgeException extends Exception
 
 // Custom exception (unchecked)
 class NegativeNumberException extends RuntimeException
+
+Checked vs unchecked
+
+Your definitions and examples are correct. Checked exceptions (FileNotFoundException, IOException, SQLException) extend Exception but not RuntimeException. The compiler forces you to handle them with try/catch or declare them with throws.
+Unchecked exceptions (ArithmeticException, ArrayIndexOutOfBoundsException, NullPointerException) extend RuntimeException. They are not enforced by the compiler. They usually signal programming bugs.
+A small wording fix: “compile time exception” is a common phrase, but the exception is still thrown at runtime. “Checked” means the compiler checks that you handle it.
+
+final
+
+Correct for variables (can’t be reassigned) and methods (can’t be overridden). You missed classes: a final class can’t be extended (String is one).
+For a final reference variable, the reference can’t change, but the object’s contents still can.
+
+finally
+
+Correct, with one nuance: it runs almost always, whether or not an exception occurs, even after a return in try. The exceptions are System.exit(), a JVM crash, or an infinite loop or thread death in try. It’s mainly used to release resources (close files and connections).
+
+finalize
+
+Right idea, but be precise: finalize() is a method that the GC may call on an object just before reclaiming it, so you could do cleanup. It doesn’t remove the object itself, and it is not guaranteed to run. It has been deprecated since Java 9 and marked for removal. Use try-with-resources or AutoCloseable instead.
