@@ -1,0 +1,48 @@
+# what is record and how it is different with lambok
+
+```text
+A record is a special Java class introduced in Java 14 (preview) and made stable in Java 16,
+designed to hold immutable data. It's part of Project Amber to reduce boilerplate code.
+public record Employee(String name, int salary) {}
+This single line:
+Declares a class
+Adds final fields
+Creates a constructor
+Adds getters (name(), salary())
+Adds equals(), hashCode(), and toString() automatically
+| Feature                      | `record`                         | Regular Class (Java 8)             |
+| ---------------------------- | -------------------------------- | ---------------------------------- |
+| **Boilerplate**              | Minimal (auto-generated methods) | Requires manual code               |
+| **Immutability**             | Fields are implicitly `final`    | Must explicitly use `final`        |
+| **Constructor**              | Auto-generated full constructor  | Must write manually                |
+| **Getters**                  | Auto: `fieldName()`              | Need to write or generate `getX()` |
+| **`equals()`, `hashCode()`** | Auto-generated                   | Must write or generate             |
+| **Use case**                 | Simple DTOs / data carriers      | Full-featured business logic class |
+✅ When to Use record:
+Use it when:
+You just need to store and transfer data
+No mutable fields, setters, or complex logic required
+✅ Example Use Cases:
+DTOs in REST APIs (Employee, Product)
+Stream results (like your example)
+Keys for Maps or Sets
+
+| Feature                   | **Lombok**                                                                   | **Record**                                                   |
+| ------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| ✅ **Purpose**             | Reduce boilerplate with annotations (`@Getter`, `@AllArgsConstructor`, etc.) | Native Java construct for **immutable** data-only classes    |
+| 🚀 **Availability**       | Works in **any Java version**, including Java 8                              | Introduced in Java 14+, stable in Java 16                    |
+| ⚙️ **Dependency**         | Requires external **library**                                                | Built into the **Java language itself**                      |
+| 📦 **Mutability**         | Can be mutable (supports setters)                                            | Always **immutable** (`final` fields only)                   |
+| 🔧 **Customization**      | Can add fields, setters, methods, annotations                                | More restrictive – can't add setters or extend other classes |
+| 🛠 **IDE/Build Support**  | May require plugins, not 100% portable                                       | Fully supported by all modern IDEs (built-in)                |
+| 🧪 **Use in Spring Boot** | Very common for DTOs & entities                                              | Works well for DTOs, request/response bodies (read-only)     |
+✅ Advantages of record over Lombok:
+No dependency required – native Java feature
+Cleaner and safer for immutable data classes
+Better integration with the Java compiler and reflection
+More transparent (less "magic" compared to Lombok)
+✅ Advantages of Lombok over record:
+Can be used in Java 8 and above
+Allows mutable fields, business logic, inheritance, annotations
+More flexible for JPA entities, models, and general-purpose classes
+```

@@ -1,0 +1,16 @@
+# how to exclude like we dont want service then how to exclude using componentScan
+
+```text
+If you want Spring to exclude specific components, like @Service-annotated classes, from
+being picked up by @ComponentScan, you can do that using excludeFilters in the @ComponentScan annotation.
+Example->@SpringBootApplication
+         @ComponentScan(
+             basePackages = "com.example",
+             excludeFilters = @ComponentScan.Filter(
+                 type = FilterType.ANNOTATION,
+                 classes = Service.class
+             )
+         )
+         public class MyApp { }
+
+```
