@@ -1,0 +1,307 @@
+# websocket
+
+```text
+A WebSocket is a communication protocol that creates a persistent, full-duplex connection between the client
+(browser/mobile app) and the server.
+
+HTTP: Request → Response → Connection closes
+WebSocket: Connection stays open, and both client and server can send messages at any time.
+
+Great question. Let's understand how notifications work internally using a real-world example.
+
+Example: WhatsApp Message Notification
+
+Suppose User A sends "Hello" to User B.
+
+Step 1: User B Opens WhatsApp
+
+When User B opens WhatsApp, the app creates a WebSocket connection.
+
+User B App
+      |
+      | WebSocket Handshake
+      |
+Server
+
+The connection remains open.
+
+Think of it like a phone call—you don't hang up after every sentence.
+
+Step 2: User A Sends a Message
+
+User A sends:
+
+Hello
+
+This message goes to the server through an HTTP request or WebSocket (depending on the app).
+
+User A
+   |
+Hello
+   |
+Server
+Step 3: Server Saves the Message
+
+The server stores the message in the database.
+
+Messages Table
+
+ID   Sender   Receiver   Message
+1      A         B        Hello
+Step 4: Server Knows User B is Online
+
+The server keeps track of connected users.
+
+Connected Users
+
+User A -> Socket 101
+User B -> Socket 102
+User C -> Socket 103
+
+Notice User B has an active WebSocket connection (Socket 102).
+
+Step 5: Server Pushes the Notification
+
+The server immediately sends the message through User B's open socket.
+
+                 Hello
+Server ---------------------> User B
+
+No HTTP request from User B is needed.
+
+This happens almost instantly.
+
+Internally
+
+Imagine the server has something like:
+
+Map<UserId, WebSocketSession> connectedUsers;
+
+Example:
+
+connectedUsers.put("A", socket101);
+connectedUsers.put("B", socket102);
+connectedUsers.put("C", socket103);
+
+When User A sends a message:
+
+WebSocketSession session = connectedUsers.get("B");
+
+session.send("Hello");
+
+Since the connection is already open, the message reaches User B immediately.
+
+What if User B is Offline?
+
+Suppose User B closed WhatsApp.
+
+Connected Users
+
+User A
+User C
+
+User B ❌
+
+Now there is no WebSocket connection.
+
+The server:
+
+Stores the message in the database.
+Sends a push notification using services like:
+Android: Firebase Cloud Messaging (FCM)
+iPhone: Apple Push Notification service (APNs)
+User A
+   |
+Server
+   |
+Database
+   |
+FCM / APNs
+   |
+Phone Notification
+
+User B sees:
+
+New message from A
+
+When they open the app, it reconnects to the WebSocket and downloads any missed messages.
+
+Live Notification Example (Instagram)
+
+Suppose someone likes your post.
+
+Someone likes your post
+
+        ↓
+
+Instagram Server
+
+        ↓
+Checks if you're online
+
+        ↓
+Yes
+
+        ↓
+WebSocket
+
+        ↓
+❤️ John liked your photo
+
+The notification appears instantly without refreshing the page.
+
+How the Server Handles Thousands of Users
+
+The server maintains many WebSocket connections simultaneously.
+
+                 Server
+          ------------------
+
+Socket 1 --> User A
+
+Socket 2 --> User B
+
+Socket 3 --> User C
+
+Socket 4 --> User D
+
+Socket 5 --> User E
+
+...
+
+Socket 50,000 --> User X
+
+Each user has their own persistent connection. When an event occurs (a new message, notification, stock price update, etc.), the server looks up the appropriate connection(s) and writes the data directly to those sockets.
+
+Why is WebSocket so fast?
+
+With normal HTTP polling:
+
+Browser:
+Any notification?
+No
+
+2 seconds later...
+Any notification?
+No
+
+2 seconds later...
+Any notification?
+Yes
+
+There is delay and many unnecessary requests.
+
+With WebSocket:
+
+Notification created
+
+↓
+
+Server
+
+↓
+
+Pushes immediately
+
+↓
+
+Browser displays it instantly
+
+No waiting, no repeated polling.
+
+In a Java Spring Boot application
+
+A typical flow looks like this:
+
+The client establishes a WebSocket connection with the Spring Boot server.
+Spring stores the client's WebSocket session.
+When an event occurs (for example, a new chat message), your service receives it.
+The service sends the message through the existing WebSocket session (or via STOMP topics if using Spring's messaging support).
+The connected browser receives the message instantly and updates the UI.
+
+
+
+Step 1: Add Dependency
+
+If you're using Maven:
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-websocket</artifactId>
+</dependency>
+Step 2: WebSocket Configuration
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+
+        registry.addEndpoint("/chat")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+    }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+
+        registry.enableSimpleBroker("/topic");
+
+        registry.setApplicationDestinationPrefixes("/app");
+    }
+}
+What does this do?
+Browser
+
+↓
+
+ws://localhost:8080/chat
+
+↓
+
+Spring Boot
+
+When the browser connects to /chat, a WebSocket connection is established.
+
+Step 3: Message Model
+public class ChatMessage {
+
+    private String sender;
+    private String content;
+
+    // getters setters
+}
+
+Suppose:
+
+{
+ sender:"Dhruv",
+ content:"Hello"
+}
+Step 4: Controller
+@Controller
+public class ChatController {
+
+    @MessageMapping("/sendMessage")
+    @SendTo("/topic/messages")
+    public ChatMessage send(ChatMessage message) {
+
+        return message;
+    }
+}
+What happens?
+
+When a client sends:
+
+/app/sendMessage
+
+Spring executes:
+
+send()
+
+and automatically broadcasts the returned message to:
+
+/topic/messages
+
+Every connected client subscribed to that topic receives it.
+```

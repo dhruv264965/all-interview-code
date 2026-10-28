@@ -1,0 +1,49 @@
+# Throw_VS_Throws
+
+```text
+| Feature               | `throw`                                           | `throws`                                                         |
+| --------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
+| **What it does**      | Actually **throws** an exception                  | Declares that a method **may throw** an exception                |
+| **Used inside**       | A method or block                                 | Method signature                                                 |
+| **When used**         | During *runtime* to trigger an exception manually | During *compile time* to tell the caller to handle the exception |
+| **Can throw**         | Only **one** exception at a time                  | Can declare **multiple** exceptions                              |
+| **Type of exception** | Usually customized, runtime, or checked           | Only checked exceptions (mostly)                                 |
+| **Keyword position**  | After `throw new Exception()`                     | After method name                                                |
+
+
+📌 1. throw keyword (Used to throw an exception manually)
+
+You use throw when you want to create and throw your own exception.
+
+Example
+public void checkAge(int age) {
+    if(age < 18) {
+        throw new ArithmeticException("You are not eligible");
+    }
+    System.out.println("Eligible");
+}
+You are not eligible
+👉 Here the exception is actually thrown inside the method.
+
+
+📌 2. throws keyword (Used in method signature)
+
+You use throws when the method may throw an exception, but you don't want to handle it inside the method.
+
+Example
+public void readFile() throws IOException {
+    FileInputStream fis = new FileInputStream("data.txt");
+}
+
+
+👉 This tells the caller:
+“I may throw IOException, you handle it.”
+
+Caller must handle it:
+
+
+  3->if u want to handle the exception  at   compile  time then we use throws
+// 3-> if u want to trigger the exception  manually   at   Run   time then we use throw
+
+
+```

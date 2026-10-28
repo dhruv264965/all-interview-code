@@ -1,0 +1,6 @@
+# Interview
+
+```text
+Q->Can we extends functional Interface from another functional Interface.
+Answer-> yes,but it will not act as functional interface it act as normal Interface.
+```

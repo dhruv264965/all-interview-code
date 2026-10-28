@@ -1,0 +1,15 @@
+# how many ways we can create object in java class
+
+```text
+So, there are 5 main ways to create objects in Java:
+
+new keyword
+
+Reflection (Class.forName + newInstance() or getDeclaredConstructor().newInstance())
+
+clone() method
+
+Deserialization
+
+Factory methods
+```

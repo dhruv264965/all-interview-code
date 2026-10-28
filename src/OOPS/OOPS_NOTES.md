@@ -1,0 +1,101 @@
+# OOPS_NOTES
+
+```text
+1. Overriding can’t have weaker access
+
+The subclass can keep the same access level or make it wider, but never narrower.
+
+Access order (widest to narrowest): public > protected > default (package-private) > private
+
+Why: the reference type decides which methods you’re allowed to call. If a subclass could
+narrow the access, code like this would break:
+
+class Animal {
+    public void sound() { System.out.println("Some sound"); }
+}
+class Dog extends Animal {
+    @Override
+    protected void sound() { }   // ERROR: attempting to assign weaker access privileges; was public
+}
+
+Animal a = new Dog();
+a.sound();   // compiler allows this because Animal.sound() is public
+             // but Dog's version would be protected, so what happens?
+
+Substituting a Dog for an Animal must always be safe. That is the Liskov substitution principle.
+
+Allowed (same or wider):
+
+class Animal {
+    protected void sound() { System.out.println("Some sound"); }
+}
+
+class Dog extends Animal {
+    @Override
+    public void sound() { System.out.println("Bark"); }   // protected -> public is fine
+}
+2. final methods can’t be overridden
+
+final means “this implementation is locked.”
+
+class Account {
+    public final void calculateInterest() {
+        System.out.println("Fixed bank formula");
+    }
+}
+class SavingsAccount extends Account {
+    @Override
+    public void calculateInterest() { }   // ERROR: cannot override final method
+}
+
+Use it when the behavior must stay consistent and a subclass must not change it for security
+or correctness reasons. String.length() is one example.
+
+3. private methods can’t be overridden
+
+A private method isn’t visible to the subclass, so there is nothing to override. If the subclass
+declares a method with the same signature, it is a brand-new, unrelated method.
+
+class Parent {
+    private void show() { System.out.println("Parent show"); }
+
+    public void callShow() { show(); }
+}
+
+class Child extends Parent {
+    private void show() { System.out.println("Child show"); }   // NOT an override
+}
+
+new Child().callShow();   // prints "Parent show"
+
+callShow() is in Parent, so it calls Parent’s private show(). Child’s show() is unrelated.
+If you add @Override to it, you get a compile error because nothing is being overridden.
+
+4. static methods can’t be overridden (they are hidden)
+
+Static methods belong to the class, not to an object, so there is no runtime polymorphism.
+If a subclass defines a static method with the same signature, it hides the parent’s method.
+
+class Parent {
+    static void greet() { System.out.println("Hello from Parent"); }
+}
+
+class Child extends Parent {
+    static void greet() { System.out.println("Hello from Child"); }   // method hiding
+}
+
+Parent p = new Child();
+p.greet();          // prints "Hello from Parent"  (decided by reference type)
+
+Child c = new Child();
+c.greet();          // prints "Hello from Child"
+
+Compare with real overriding, where Parent p = new Child(); p.sound(); calls the Child version. For static methods, the reference type decides, not the object type. That is called method hiding.
+
+Summary
+Method type	Can override?	What happens instead
+public/protected instance	Yes (same or wider access)
+final	No	Compile error
+private	No	Subclass method is a new, unrelated method
+static	No	Method hiding, resolved at compile time
+```

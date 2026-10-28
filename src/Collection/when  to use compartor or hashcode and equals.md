@@ -1,0 +1,7 @@
+# when  to use compartor or hashcode and equals
+
+```text
+Need Comparable/Comparator → TreeSet, TreeMap, PriorityQueue.
+
+Don’t need Comparable/Comparator → HashSet, LinkedHashSet, HashMap, LinkedHashMap, ArrayList, LinkedList, Vector, Stack.
+```

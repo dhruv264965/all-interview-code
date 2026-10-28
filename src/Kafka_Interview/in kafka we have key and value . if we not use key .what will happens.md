@@ -1,0 +1,75 @@
+# in kafka we have key and value . if we not use key .what will happens
+
+```text
+“In Kafka, the key decides where the message goes, and the value is what the message contains.
+
+If the key is null, the producer distributes messages across partitions using sticky or round-robin
+
+partitioning. This gives good load balancing, but we lose ordering per entity. So I’d skip the key
+for logs or metrics, but use it for things like orders or payments, where all events of one orderId
+must go to the same partition to stay in order.
+
+If the value is null, it is called a tombstone. It’s used with log compaction to delete a key.
+For example, in a compacted user-profile topic, sending (user-123, null) marks that user as deleted,
+and Kafka eventually removes it. The consumer has to handle null values explicitly.
+
+A null key can’t be used on a compacted topic, because compaction works per key.
+
+
+Question -  i want to ask in application.yaml file we are doing configuration key key and value
+            serilizable and deserlizable what we happpens if we miss that
+
+Answer- Spring Boot: what the default means
+
+        If you configure nothing, it behaves as if you had written:
+        spring:
+          kafka:
+            producer:
+              key-serializer: org.apache.kafka.common.serialization.StringSerializer
+              value-serializer: org.apache.kafka.common.serialization.StringSerializer
+            consumer:
+              key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+              value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+So everything works as long as your key and value are Strings. The problem starts when they aren’t.
+
+Scenario 1: Sending an object without a serializer
+kafkaTemplate.send("orders", "order-1", new Order(1, "Laptop"));
+With the default StringSerializer, this fails with:
+
+ClassCastException: class Order cannot be cast to class java.lang.String
+spring:
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+ Scenario 2: Consumer deserializer missing or mismatched
+ The producer sends JSON, but the consumer uses the default StringDeserializer:
+
+ You receive the raw JSON as a String, not your Order object.
+ If your listener is @KafkaListener ... (Order order), you get a conversion or ClassCastException error.
+ The reverse is worse. If the consumer uses JsonDeserializer but the producer sent a plain string,
+  deserialization fails.
+  spring:
+    kafka:
+      consumer:
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        properties:
+          spring.json.trusted.packages: "com.myapp.model"
+
+Scenario 3: Poison pill (the dangerous one)
+If a consumer can’t deserialize a message, the exception happens inside poll(), before your
+code runs. The offset never advances, so the consumer retries the same bad message forever and the
+consumer gets stuck.
+
+Interview explanation -
+Kafka only stores bytes, so the producer needs a serializer to convert key and value to bytes, and
+the consumer needs a matching deserializer to convert them back. In plain Kafka, if you don’t set
+them, the producer fails at startup because there is no default. In Spring Boot, the default is
+String, so it works for plain text, but if I send a POJO I get a ClassCastException, so I
+configure JsonSerializer. The serializer on the producer and the deserializer on the consumer
+must match. If they don’t, the consumer can get stuck on a bad message (a poison pill), so I
+use ErrorHandlingDeserializer along with a dead letter topic
+```

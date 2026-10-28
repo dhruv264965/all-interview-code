@@ -1,0 +1,9 @@
+# Compossition
+
+```text
+*Composition is a restricted form of Aggregation in which two entities are highly dependent on each other.
+
+*It represents part-of relationship.
+*In composition, both entities are dependent on each other.
+*When there is a composition between two entities, the composed object cannot exist without the other entity.
+```
